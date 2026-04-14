@@ -648,22 +648,18 @@ function detectCategory(img, fileName) {
   if (/morning|bed|lazy|home|cozy|pj|pajama/.test(name)) return "casual";
 
   // Background color analysis
-    // Color analysis - conservative approach
   const c = analyzeImage(img);
 
-  // Pool/Beach: ONLY if overwhelming water colors (very high cyan+blue, no warm tones)
+  // Pool/Beach: ONLY if very strong water colors with no warm tones
   if (c.bgCyanPct > 0.30 && c.bgWarmPct < 0.03) return "pool-beach";
   if (c.bgBluePct > 0.35 && c.bgWarmPct < 0.03) return "pool-beach";
-
   // Outdoor: strong green
   if (c.bgGreenPct > 0.20) return "outdoor";
   if (c.bgGreenPct > 0.12 && c.bgBrightPct > 0.25) return "outdoor";
-
   // Night out: very dark
   if (c.bgDarkPct > 0.60) return "night-out";
   if (c.bgWarmPct > 0.15 && c.bgDarkPct > 0.35) return "night-out";
-
-  // Gym: indoor warm lighting, moderate brightness
+  // Gym: indoor warm lighting
   if (c.bgWarmPct > 0.06 && c.bgBrightPct > 0.10 && c.bgBluePct < 0.08) return "gym-fitness";
 
   return "selfie";
@@ -747,10 +743,14 @@ function updateUI() {
     emptyState.classList.add("hidden");
     downloadAllBtn.textContent = isMobile ? `📲 Save All (${photos.length})` : (photos.length >= 2 ? `📦 Download ZIP (${photos.length})` : `Download (${photos.length})`);
     photoCount.textContent = `${photos.length} slide${photos.length !== 1 ? "s" : ""} in story`;
+    var saveBtn = document.getElementById("saveToPhotosBtn");
+    if (saveBtn && isMobile) saveBtn.style.display = "inline-block";
   } else {
     headerBtns.style.display = "none";
     stats.classList.add("hidden");
     emptyState.classList.remove("hidden");
+    var saveBtn2 = document.getElementById("saveToPhotosBtn");
+    if (saveBtn2) saveBtn2.style.display = "none";
   }
 }
 
@@ -895,13 +895,14 @@ function downloadOne(id) {
   const idx = photos.indexOf(photo) + 1;
   const fileName = `snap_${String(idx).padStart(2,"0")}_${photo.name.replace(/\.[^.]+$/,"")}.jpg`;
   if (isIOS) {
-    canvas.toBlob((blob) => {
+    canvas.toBlob(function(blob) {
       if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], fileName, { type: "image/jpeg" })] })) {
-        navigator.share({ files: [new File([blob], fileName, { type: "image/jpeg" })] }).catch(() => {});
+        navigator.share({ files: [new File([blob], fileName, { type: "image/jpeg" })] }).catch(function() {});
       } else { openSaveModal([photo]); }
     }, "image/jpeg", 0.95);
     return;
   }
+  if (isMobile) { openSaveModal([photo]); return; }
   const link = document.createElement("a");
   link.download = fileName;
   link.href = canvas.toDataURL("image/jpeg", 0.95);
@@ -921,7 +922,7 @@ function removePhoto(id) {
 function downloadAll() {
   if (isMobile) { openSaveModal(photos); return; }
   if (photos.length >= 2) { downloadZip(); } else {
-    photos.forEach((photo, i) => { setTimeout(() => downloadOne(photo.id), i * 300); });
+    photos.forEach(function(photo, i) { setTimeout(function() { downloadOne(photo.id); }, i * 300); });
   }
 }
 
@@ -993,12 +994,12 @@ initQgen();
 
 // Update labels on mobile
 if (isMobile) {
-  const saveBtn = document.getElementById("saveToPhotosBtn");
-  if (saveBtn) saveBtn.style.display = "inline-block";
+  var saveBtnInit = document.getElementById("saveToPhotosBtn");
+  if (saveBtnInit) saveBtnInit.style.display = "inline-block";
 }
 
 // ── ALBUM CAPTIONS ──
-// Based on Sophie & Lex's real album names — engagement hooks, short, with emoji
+// ALL engagement questions — hooks that invite replies
 const ALBUM_CAPTIONS = {
   "pool-beach": [
     "Who wants to come swim? 💦",
@@ -1101,7 +1102,7 @@ const ALBUM_CAPTIONS = {
     "Rate this view 1-10? 😍",
     "Can you guess where this is? 🤔",
     "Should I stay longer? 🥺",
-    "Would you hike to see this? 🤔🦶",
+    "Would you hike to see this? 🤔🥾",
     "Mountains or beach which is better? 🤔",
     "Who wants to explore with me? 🗺️",
     "Is this postcard worthy? 📸🤔",
@@ -1120,43 +1121,39 @@ const ALBUM_CAPTIONS = {
     "Who else is still in bed? ☁️👀",
     "Am I allowed another nap? 😴🤔"
   ]
-}};
+};
 
 let currentThumbIdx = 0;
 let thumbScores = [];
 
 // ── THUMBNAIL SCORING ──
-// Scores each photo on qualities that make a good album cover
+// Picks the most appealing photo: skin visible, warm tones, good lighting
 function scoreForThumbnail(photo) {
   if (!photo.img) return 0;
-  const canvas = document.createElement("canvas");
-  const size = 100;
+  var canvas = document.createElement("canvas");
+  var size = 100;
   canvas.width = size; canvas.height = size;
-  const ctx = canvas.getContext("2d");
+  var ctx = canvas.getContext("2d");
   ctx.drawImage(photo.img, 0, 0, size, size);
-  const data = ctx.getImageData(0, 0, size, size).data;
+  var data = ctx.getImageData(0, 0, size, size).data;
 
-  let brightness = 0, saturation = 0, skinTone = 0, centerSkin = 0;
-  let centerCount = 0, centerBright = 0, warmCenter = 0;
-  let values = [];
+  var brightness = 0, saturation = 0, skinTone = 0, centerSkin = 0;
+  var centerCount = 0, centerBright = 0, warmCenter = 0;
+  var values = [];
 
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      const i = (y * size + x) * 4;
-      const r = data[i], g = data[i+1], b = data[i+2];
-      const bright = (r + g + b) / 3;
+  for (var y = 0; y < size; y++) {
+    for (var x = 0; x < size; x++) {
+      var i = (y * size + x) * 4;
+      var r = data[i], g = data[i+1], b = data[i+2];
+      var bright = (r + g + b) / 3;
       brightness += bright;
       values.push(bright);
-
-      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+      var max = Math.max(r, g, b), min = Math.min(r, g, b);
       saturation += (max - min) / (max || 1);
-
-      // Skin tone detection: warm, reddish-tan colors
-      const isSkin = r > 120 && r > g && r > b && (r - b) > 30 && g > 80 && bright > 80 && bright < 230;
-
-      // Center region = where the model's body/face likely is (middle 50%)
-      const isCenter = x > size * 0.25 && x < size * 0.75 && y > size * 0.15 && y < size * 0.75;
-
+      // Skin tone: warm reddish-tan colors
+      var isSkin = r > 120 && r > g && r > b && (r - b) > 30 && g > 80 && bright > 80 && bright < 230;
+      // Center = where the model likely is
+      var isCenter = x > size * 0.25 && x < size * 0.75 && y > size * 0.15 && y < size * 0.75;
       if (isCenter) {
         centerCount++;
         centerBright += bright;
@@ -1167,39 +1164,31 @@ function scoreForThumbnail(photo) {
     }
   }
 
-  const pixels = size * size;
-  const avgBright = brightness / pixels;
-  const avgSat = saturation / pixels;
-  const centerSkinPct = centerCount > 0 ? centerSkin / centerCount : 0;
-  const warmCenterPct = centerCount > 0 ? warmCenter / centerCount : 0;
-  const avgCenterBright = centerCount > 0 ? centerBright / centerCount : avgBright;
-  const variance = values.reduce((sum, v) => sum + (v - avgBright) ** 2, 0) / pixels;
-  const contrast = Math.sqrt(variance);
+  var pixels = size * size;
+  var avgBright = brightness / pixels;
+  var avgSat = saturation / pixels;
+  var centerSkinPct = centerCount > 0 ? centerSkin / centerCount : 0;
+  var warmCenterPct = centerCount > 0 ? warmCenter / centerCount : 0;
+  var avgCenterBright = centerCount > 0 ? centerBright / centerCount : avgBright;
+  var variance = values.reduce(function(sum, v) { return sum + (v - avgBright) * (v - avgBright); }, 0) / pixels;
+  var contrast = Math.sqrt(variance);
 
-  let score = 0;
-
-  // HIGHEST PRIORITY: Skin showing in center (model's body visible)
+  var score = 0;
+  // HIGHEST PRIORITY: Skin showing in center (model visible)
   score += centerSkinPct * 200;
-
-  // Warm tones in center (appealing skin/body tones)
+  // Warm tones in center
   score += warmCenterPct * 80;
-
-  // Good lighting (well-lit but not blown out)
+  // Good lighting
   score += avgBright > 90 && avgBright < 200 ? 25 : 5;
-
-  // Center subject brighter than edges (model is well-lit)
+  // Center brighter than edges
   score += avgCenterBright > avgBright ? 20 : 0;
-
-  // Color saturation (vibrant, not washed out)
+  // Saturation
   score += avgSat * 30;
-
-  // Good contrast
+  // Contrast
   score += Math.min(contrast, 50);
-
-  // Portrait orientation bonus (full body shots)
+  // Portrait orientation bonus
   if (photo.img.height > photo.img.width) score += 15;
-
-  // Overall skin tone presence
+  // Overall skin tone
   score += (skinTone / pixels) * 60;
 
   return score;
@@ -1289,41 +1278,42 @@ function copyAlbumCaption() {
 // ── ZIP DOWNLOAD ──
 async function downloadZip() {
   if (isMobile) { openSaveModal(photos); return; }
-  const btn = document.querySelector(".album-actions .btn-primary") || document.getElementById("downloadAllBtn");
-  const origText = btn ? btn.textContent : "";
+  var btn = document.querySelector(".album-actions .btn-primary") || document.getElementById("downloadAllBtn");
+  var origText = btn ? btn.textContent : "";
   if (btn) { btn.textContent = "⏳ Building ZIP..."; btn.disabled = true; }
+
   try {
-    const zip = new JSZip();
-    const albumName = document.getElementById("albumCaption").value || "snap_story";
-    const safeName = albumName.replace(/[^a-zA-Z0-9 _-]/g, "").trim() || "snap_story";
-    const folder = zip.folder(safeName);
-    for (let i = 0; i < photos.length; i++) {
-      const photo = photos[i];
-      const canvas = document.getElementById(`canvas-${photo.id}`);
+    var zip = new JSZip();
+    var albumName = document.getElementById("albumCaption").value || "snap_story";
+    var safeName = albumName.replace(/[^a-zA-Z0-9 _-]/g, "").trim() || "snap_story";
+    var folder = zip.folder(safeName);
+
+    for (var i = 0; i < photos.length; i++) {
+      var photo = photos[i];
+      var canvas = document.getElementById("canvas-" + photo.id);
       if (!canvas) continue;
-      const dataUrl = canvas.toDataURL("image/jpeg", 0.95);
-      const base64 = dataUrl.split(",")[1];
-      const fileName = `snap_${String(i + 1).padStart(2, "0")}_${photo.name.replace(/\.[^.]+$/, "")}.jpg`;
+      var dataUrl = canvas.toDataURL("image/jpeg", 0.95);
+      var base64 = dataUrl.split(",")[1];
+      var fileName = "snap_" + String(i + 1).padStart(2, "0") + "_" + photo.name.replace(/\.[^.]+$/, "") + ".jpg";
       folder.file(fileName, base64, { base64: true });
     }
-    const blob = await zip.generateAsync({ type: "blob" });
-    if (isIOS && navigator.share && navigator.canShare) {
-      const file = new File([blob], `${safeName}.zip`, { type: "application/zip" });
-      if (navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: safeName }); }
-      else { triggerBlobDownload(blob, `${safeName}.zip`); }
-    } else { triggerBlobDownload(blob, `${safeName}.zip`); }
+
+    var blob = await zip.generateAsync({ type: "blob" });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement("a");
+    link.href = url;
+    link.download = safeName + ".zip";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(function() { URL.revokeObjectURL(url); }, 5000);
   } catch (e) {
     console.error("ZIP error:", e);
-    if (isIOS) { openSaveModal(photos); } else { alert("Error creating ZIP. Try downloading individually."); }
+    alert("Error creating ZIP. Try downloading individually.");
   }
-  if (btn) { btn.textContent = origText; btn.disabled = false; }
-}
-function triggerBlobDownload(blob, filename) {
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url; link.download = filename;
-  document.body.appendChild(link); link.click(); document.body.removeChild(link);
-  setTimeout(() => URL.revokeObjectURL(url), 5000);
+
+  btn.textContent = origText;
+  btn.disabled = false;
 }
 
 // ── SAVE TO CAMERA ROLL MODAL (iOS/Mobile) ──
@@ -1343,7 +1333,7 @@ function openSaveModal(photoList) {
 
   const hint = document.createElement("div");
   hint.className = "save-modal-hint";
-  hint.textContent = 'Hold each image \u2192 tap \"Add to Photos\"'
+  hint.textContent = 'Hold each image \u2192 tap "Add to Photos"';
   overlay.appendChild(hint);
 
   const grid = document.createElement("div");
