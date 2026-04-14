@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mando Captions</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>ð¸</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📸</text></svg>">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif; background: #0a0a0a; color: #fff; min-height: 100vh; }
@@ -127,7 +127,7 @@ body { font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-seri
     </div>
     <div class="header-btns" id="headerBtns" style="display:none;">
       <button class="btn btn-ghost btn-sm" onclick="clearAll()">Clear All</button>
-      <button class="btn btn-ghost btn-sm" onclick="regenerateAll()">ð New Captions</button>
+      <button class="btn btn-ghost btn-sm" onclick="regenerateAll()">🔄 New Captions</button>
       <button class="btn btn-primary btn-sm" id="downloadAllBtn" onclick="downloadAll()">Download All</button>
       <button class="btn btn-ghost btn-sm" id="saveToPhotosBtn" onclick="openSaveModal(photos)" style="display:none;">📲 Save to Photos</button>
     </div>
@@ -138,10 +138,10 @@ body { font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-seri
   <!-- QUESTION GENERATOR -->
   <div class="qgen" id="qgenSection">
     <div class="qgen-header">
-      <h3>ð¬ Caption Generator</h3>
+      <h3>💬 Caption Generator</h3>
       <div>
-        <button class="btn btn-ghost btn-sm" onclick="generateQuestions()">ð Generate More</button>
-        <button class="btn btn-primary btn-sm" onclick="copyAllQuestions()">ð Copy All</button>
+        <button class="btn btn-ghost btn-sm" onclick="generateQuestions()">🔄 Generate More</button>
+        <button class="btn btn-primary btn-sm" onclick="copyAllQuestions()">📋 Copy All</button>
       </div>
     </div>
     <div class="qgen-cats" id="qgenCats"></div>
@@ -151,9 +151,9 @@ body { font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-seri
   <hr class="section-divider">
 
   <div class="upload-zone" id="uploadZone">
-    <div class="icon">ð¸</div>
+    <div class="icon">📸</div>
     <h2>Drop photos in story order</h2>
-    <p>Upload a batch â each photo is analyzed and gets a matching engagement question</p>
+    <p>Upload a batch — each photo is analyzed and gets a matching engagement question</p>
     <input type="file" id="fileInput" multiple accept="image/*">
   </div>
 
@@ -167,7 +167,7 @@ body { font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-seri
 
   <!-- ALBUM PANEL -->
   <div class="album-panel hidden" id="albumPanel">
-    <h3>ð Album Settings</h3>
+    <h3>📁 Album Settings</h3>
     <div class="album-row">
       <div class="album-left">
         <div class="album-caption-box">
@@ -176,19 +176,19 @@ body { font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-seri
         </div>
         <div class="album-suggestions" id="albumSuggestions"></div>
         <div class="album-actions">
-          <button class="btn btn-ghost btn-sm" onclick="generateAlbumCaptions()">ð New Suggestions</button>
-          <button class="btn btn-ghost btn-sm" onclick="copyAlbumCaption()">ð Copy Caption</button>
-          <button class="btn btn-primary btn-sm" id="albumDownloadBtn" onclick="downloadZip()">ð¦ Download All as ZIP</button>
+          <button class="btn btn-ghost btn-sm" onclick="generateAlbumCaptions()">🔄 New Suggestions</button>
+          <button class="btn btn-ghost btn-sm" onclick="copyAlbumCaption()">📋 Copy Caption</button>
+          <button class="btn btn-primary btn-sm" id="albumDownloadBtn" onclick="downloadZip()">📦 Download All as ZIP</button>
         </div>
       </div>
       <div class="album-right">
         <div class="album-thumb" id="albumThumb">
           <img id="albumThumbImg" src="" alt="Thumbnail">
-          <div class="album-thumb-label">â­ Recommended Thumbnail</div>
+          <div class="album-thumb-label">⭐ Recommended Thumbnail</div>
         </div>
         <div class="album-thumb-nav">
-          <button onclick="prevThumb()">â Prev</button>
-          <button onclick="nextThumb()">Next â</button>
+          <button onclick="prevThumb()">← Prev</button>
+          <button onclick="nextThumb()">Next →</button>
         </div>
       </div>
     </div>
@@ -200,396 +200,396 @@ body { font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-seri
       <div class="step"><span class="step-num">1.</span><span>Upload photos in story order</span></div>
       <div class="step"><span class="step-num">2.</span><span>Each photo is analyzed (pool, outdoor, selfie, etc.)</span></div>
       <div class="step"><span class="step-num">3.</span><span>Every caption is an engagement question</span></div>
-      <div class="step"><span class="step-num">4.</span><span>Download all â numbered and ready to post</span></div>
+      <div class="step"><span class="step-num">4.</span><span>Download all — numbered and ready to post</span></div>
     </div>
   </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
-// ââ ENGAGEMENT QUESTION CAPTIONS ââ
+// ── ENGAGEMENT QUESTION CAPTIONS ──
 // EVERY caption is a question, prompt, or engagement hook that invites replies.
 // NO statements. NO descriptions. ONLY reply triggers.
 // 40+ per category. All Snap-safe.
 const CAPTIONS = {
   "pool-beach": [
-    "Who's coming to the pool? ð",
-    "Rate the vibes 1-10 âï¸",
-    "Would you come swim? ðââï¸",
-    "Can it be summer forever? ð¥º",
-    "Pool or beach which one? ð¤",
-    "Who else is at the pool today? ð¦",
-    "Does it get better than this? ð´",
-    "Where my water babies at? ð",
-    "Wanna come float with me? ð",
-    "How's my tan looking? âï¸",
-    "Who needs a pool day? ðââï¸",
-    "Can you guess the water temp? ð",
-    "Summer vibes or nah? âï¸",
-    "Would you live by a pool? ð¤",
-    "Who else misses the pool already? ð¥º",
-    "What's your go to pool song? ð¶ð¦",
-    "Rate my pool day 1-10 ð",
-    "Beach day or pool day which wins? ð¤",
-    "Is there anything better than this? âï¸",
-    "Who wants to come next time? ð¦",
-    "What are you doing if you're not at the pool? ð¤",
-    "Sun or shade pick one âï¸",
-    "Rate the water 1-10 ð",
-    "Wish you were here? ð´",
-    "Who else needs vitamin sea? ð",
-    "Can every weekend be like this? ð¥º",
-    "Would you swim in this? ð¦",
-    "What's your favorite pool activity? ð¤",
-    "Am I the only one who never wants to leave? ðââï¸",
-    "Rate my summer so far 1-10 âï¸",
-    "Who's jealous right now? ð´ð",
-    "Pool time or nap time? ð¦ð´",
-    "How many pool days is too many? ð¤",
-    "Best part of summer? ð",
-    "Who else is soaking up the sun? âï¸",
-    "What's your summer anthem? ð¶âï¸",
-    "Who's your pool buddy? ðââï¸",
-    "Rate the tan lines 1-10 âï¸ð",
-    "Cannonball or dive which one? ð¦ð¤",
-    "Who else could do this every day? ð"
+    "Who's coming to the pool? 💙",
+    "Rate the vibes 1-10 ☀️",
+    "Would you come swim? 🏊‍♀️",
+    "Can it be summer forever? 🥺",
+    "Pool or beach which one? 🤔",
+    "Who else is at the pool today? 💦",
+    "Does it get better than this? 🌴",
+    "Where my water babies at? 🌊",
+    "Wanna come float with me? 💙",
+    "How's my tan looking? ☀️",
+    "Who needs a pool day? 🏊‍♀️",
+    "Can you guess the water temp? 🌊",
+    "Summer vibes or nah? ☀️",
+    "Would you live by a pool? 🤔",
+    "Who else misses the pool already? 🥺",
+    "What's your go to pool song? 🎶💦",
+    "Rate my pool day 1-10 💙",
+    "Beach day or pool day which wins? 🤔",
+    "Is there anything better than this? ☀️",
+    "Who wants to come next time? 💦",
+    "What are you doing if you're not at the pool? 🤔",
+    "Sun or shade pick one ☀️",
+    "Rate the water 1-10 💙",
+    "Wish you were here? 🌴",
+    "Who else needs vitamin sea? 🌊",
+    "Can every weekend be like this? 🥺",
+    "Would you swim in this? 💦",
+    "What's your favorite pool activity? 🤔",
+    "Am I the only one who never wants to leave? 🏊‍♀️",
+    "Rate my summer so far 1-10 ☀️",
+    "Who's jealous right now? 🌴👀",
+    "Pool time or nap time? 💦😴",
+    "How many pool days is too many? 🤔",
+    "Best part of summer? 🌊",
+    "Who else is soaking up the sun? ☀️",
+    "What's your summer anthem? 🎶☀️",
+    "Who's your pool buddy? 🏊‍♀️",
+    "Rate the tan lines 1-10 ☀️😂",
+    "Cannonball or dive which one? 💦🤔",
+    "Who else could do this every day? 🌊"
   ],
   "selfie": [
-    "Rate it 1-10? ð¤",
-    "What vibe am I giving? ð­",
-    "Guess what I'm about to do ð¤",
-    "Am I having a good hair day? ðââï¸",
-    "What do you think? ð",
-    "Rate my mood 1-10 ð­",
-    "What's the first thing you notice? ð¤",
-    "What emoji describes this pic? ð¤",
-    "How's the angle? ð±",
-    "Am I giving main character? ð¬",
-    "What would you caption this? ð­",
-    "What's the energy here? ð¤",
-    "Rate my selfie game 1-10 ð±",
-    "What are you doing right now? ð¤",
-    "Who else is just snapping today? ð¸",
-    "What should I do with my day? ð¤",
-    "How many selfies is too many? ð",
-    "Rate my smile 1-10 ð",
-    "Who else is having a good day? âï¸",
-    "What do I look like I'm thinking about? ð­",
-    "Am I glowing or is that the light? ð",
-    "Who wants to see more snaps? ð",
-    "Good morning or good night which one? ð¤",
-    "How's everyone doing? ð­",
-    "What song goes with this? ð¶",
-    "Guess where I am? ð¤",
-    "What's everyone's plans today? ð¤",
-    "Who else is bored right now? ð",
-    "Rate my energy today 1-10 ð­",
-    "What's the best part of your day so far? ð¤",
-    "Who's still up? ð",
-    "What are we doing this weekend? ð¤",
-    "Who else takes way too many selfies? ðð±",
-    "Rate the lighting 1-10 â¨",
-    "What's on your mind right now? ð­",
-    "How would you describe my mood? ð¤",
-    "Who's having a better day than me? ð",
-    "What are you listening to right now? ð¶",
-    "Snap me back? ð¸",
-    "Who relates to this energy? ð¤"
+    "Rate it 1-10? 🤔",
+    "What vibe am I giving? 💭",
+    "Guess what I'm about to do 🤔",
+    "Am I having a good hair day? 💇‍♀️",
+    "What do you think? 👀",
+    "Rate my mood 1-10 💭",
+    "What's the first thing you notice? 🤔",
+    "What emoji describes this pic? 🤔",
+    "How's the angle? 📱",
+    "Am I giving main character? 🎬",
+    "What would you caption this? 💭",
+    "What's the energy here? 🤔",
+    "Rate my selfie game 1-10 📱",
+    "What are you doing right now? 🤔",
+    "Who else is just snapping today? 📸",
+    "What should I do with my day? 🤔",
+    "How many selfies is too many? 😂",
+    "Rate my smile 1-10 😊",
+    "Who else is having a good day? ☀️",
+    "What do I look like I'm thinking about? 💭",
+    "Am I glowing or is that the light? 😂",
+    "Who wants to see more snaps? 👀",
+    "Good morning or good night which one? 🤔",
+    "How's everyone doing? 💭",
+    "What song goes with this? 🎶",
+    "Guess where I am? 🤔",
+    "What's everyone's plans today? 🤔",
+    "Who else is bored right now? 😂",
+    "Rate my energy today 1-10 💭",
+    "What's the best part of your day so far? 🤔",
+    "Who's still up? 👀",
+    "What are we doing this weekend? 🤔",
+    "Who else takes way too many selfies? 😂📱",
+    "Rate the lighting 1-10 ✨",
+    "What's on your mind right now? 💭",
+    "How would you describe my mood? 🤔",
+    "Who's having a better day than me? 👀",
+    "What are you listening to right now? 🎶",
+    "Snap me back? 📸",
+    "Who relates to this energy? 🤔"
   ],
   "outfit": [
-    "Rate the fit 1-10? ð¤",
-    "Would you wear this? ð­",
-    "This outfit or the last one? ð",
-    "What should I change? ð¤",
-    "Does this work? Be honest ð",
-    "Which color looks better? ð¤",
-    "Keep or return what do you think? ð­",
-    "Rate my style 1-10? â¨",
-    "What shoes would you wear with this? ð",
-    "Overdressed or underdressed? ð¤",
-    "Is this giving what it's supposed to give? ð",
-    "Would you rock this? ð­",
-    "What's missing from this fit? ð¤",
-    "Am I pulling this off? ð",
-    "Should I wear this out? ð¤",
-    "Rate the color combo 1-10 â¨",
-    "Dress up or dress down which is better? ð",
-    "What would you pair with this? ð¤",
-    "Is this too much or not enough? ð­",
-    "Help me pick â this or all black? ð¤",
-    "What vibe is this fit giving? ð",
-    "Should I add a jacket? ð¤",
-    "Hair up or hair down with this? ðââï¸",
-    "Rate the mirror pic 1-10 ð±",
-    "Can I get a fit check? â¨",
-    "Is this a go or a no? ð",
-    "What do we think about this one? ð¤",
-    "Top or bottom which is cuter? ð­",
-    "Would you compliment this fit? ð",
-    "Am I ready or do I need to change? ð¤",
-    "What occasion does this look say? ð­",
-    "Should I buy this in another color? ð¤",
-    "Rate the outfit honestly 1-10 ð",
-    "Who else takes forever to pick an outfit? ð",
-    "Casual or dressy which do I do better? ð¤",
-    "Is this a summer or fall fit? ð",
-    "What's your go to outfit? ð¤",
-    "Should I accessorize more? ð­",
-    "First thoughts? ð",
-    "Closet raid was it worth it? ð¤"
+    "Rate the fit 1-10? 🤔",
+    "Would you wear this? 💭",
+    "This outfit or the last one? 👀",
+    "What should I change? 🤔",
+    "Does this work? Be honest 👀",
+    "Which color looks better? 🤔",
+    "Keep or return what do you think? 💭",
+    "Rate my style 1-10? ✨",
+    "What shoes would you wear with this? 👟",
+    "Overdressed or underdressed? 🤔",
+    "Is this giving what it's supposed to give? 👀",
+    "Would you rock this? 💭",
+    "What's missing from this fit? 🤔",
+    "Am I pulling this off? 👀",
+    "Should I wear this out? 🤔",
+    "Rate the color combo 1-10 ✨",
+    "Dress up or dress down which is better? 👀",
+    "What would you pair with this? 🤔",
+    "Is this too much or not enough? 💭",
+    "Help me pick — this or all black? 🤔",
+    "What vibe is this fit giving? 👀",
+    "Should I add a jacket? 🤔",
+    "Hair up or hair down with this? 💇‍♀️",
+    "Rate the mirror pic 1-10 📱",
+    "Can I get a fit check? ✨",
+    "Is this a go or a no? 👀",
+    "What do we think about this one? 🤔",
+    "Top or bottom which is cuter? 💭",
+    "Would you compliment this fit? 👀",
+    "Am I ready or do I need to change? 🤔",
+    "What occasion does this look say? 💭",
+    "Should I buy this in another color? 🤔",
+    "Rate the outfit honestly 1-10 👀",
+    "Who else takes forever to pick an outfit? 😂",
+    "Casual or dressy which do I do better? 🤔",
+    "Is this a summer or fall fit? 👀",
+    "What's your go to outfit? 🤔",
+    "Should I accessorize more? 💭",
+    "First thoughts? 👀",
+    "Closet raid was it worth it? 🤔"
   ],
   "night-out": [
-    "Who's coming out tonight? ð",
-    "Where should we go? ð",
-    "Rate the going out look 1-10? â¨",
-    "Should I stay out or go home? ð¤",
-    "Who else is out tonight? ð",
-    "What are we drinking? ð¥",
-    "Is it too late to go out? ð¤ð",
-    "Who's still awake? ð",
-    "Should I call it a night? ð¤",
-    "What song is playing right now for you? ð¶",
-    "Rate the night vibes 1-10? ð",
-    "Anyone else having a late night? ð",
-    "Who wants to come next time? ð",
-    "Is this a weeknight or weekend energy? ð¤",
-    "Where's everyone at tonight? ð",
-    "Should we go somewhere else? ð",
-    "Rate my going out energy 1-10 ð",
-    "Who needs a night out? ð¤",
-    "Best spot in your city for a night out? ð",
-    "Am I overdressed for this? ð",
-    "Who else needed this tonight? ð¥",
-    "Stay or leave what would you do? ð¤",
-    "What's the best night out song? ð¶",
-    "Is it a going out kind of night? ð",
-    "Are we staying out or going home? ðð",
-    "Rate the squad 1-10 ð",
-    "Who's the best person to go out with? ð¤",
-    "Friday or Saturday which is the better night? ð",
-    "Would you go out on a weeknight? ð¤",
-    "What time do you usually go home? ð",
-    "Is this too much fun? ðð",
-    "Who else loves going out? ð",
-    "Next spot suggestions? ð¤",
-    "Rate my night out 1-10 â¨",
-    "Are we going again tomorrow? ðð"
+    "Who's coming out tonight? 🌙",
+    "Where should we go? 👀",
+    "Rate the going out look 1-10? ✨",
+    "Should I stay out or go home? 🤔",
+    "Who else is out tonight? 🌃",
+    "What are we drinking? 🥂",
+    "Is it too late to go out? 🤔🌙",
+    "Who's still awake? 👀",
+    "Should I call it a night? 🤔",
+    "What song is playing right now for you? 🎶",
+    "Rate the night vibes 1-10? 🌙",
+    "Anyone else having a late night? 🌃",
+    "Who wants to come next time? 👀",
+    "Is this a weeknight or weekend energy? 🤔",
+    "Where's everyone at tonight? 🌙",
+    "Should we go somewhere else? 👀",
+    "Rate my going out energy 1-10 🌃",
+    "Who needs a night out? 🤔",
+    "Best spot in your city for a night out? 🌙",
+    "Am I overdressed for this? 👀",
+    "Who else needed this tonight? 🥂",
+    "Stay or leave what would you do? 🤔",
+    "What's the best night out song? 🎶",
+    "Is it a going out kind of night? 🌙",
+    "Are we staying out or going home? 👀😂",
+    "Rate the squad 1-10 🌃",
+    "Who's the best person to go out with? 🤔",
+    "Friday or Saturday which is the better night? 👀",
+    "Would you go out on a weeknight? 🤔",
+    "What time do you usually go home? 🌙",
+    "Is this too much fun? 😂🌃",
+    "Who else loves going out? 👀",
+    "Next spot suggestions? 🤔",
+    "Rate my night out 1-10 ✨",
+    "Are we going again tomorrow? 🌙👀"
   ],
   "pet": [
-    "Rate my baby 1-10? ð¶",
-    "How cute is this face? ð¥º",
-    "Could you say no to them? ð¤",
-    "Who's cuter me or my pet? ð",
-    "What should I name their album? ð¾",
-    "Does your pet do this too? ð¤",
-    "Who else is obsessed with their pet? ð¥º",
-    "Rate this cuteness 1-10 ð¶",
-    "Would you pet them? ð¤ð",
-    "Is this the cutest thing you've seen today? ð¥º",
-    "What breed do you think? ð",
-    "Who's a better companion cats or dogs? ð¤",
-    "Can you handle this level of cute? ð¥º",
-    "Should I get another one? ð¤ð¾",
-    "Who else comes home to this? ð",
-    "Would you steal my pet? ð",
-    "Rate their pose 1-10 ð¶ð",
-    "What's your pet's name? ð¤",
-    "Is my pet cuter than yours? ð",
-    "Who wants to see more of them? ð¾",
-    "Can they be any cuter? ð¥º",
-    "What are they thinking right now? ð¤ð­",
-    "Should I make them their own snap? ð¶ð",
-    "Who else talks to their pet like a person? ð",
-    "Rate their energy today 1-10 ð¾",
-    "Isn't this the best face? ð¥º",
-    "Do you think they know how cute they are? ð¤",
-    "What trick should I teach them? ð¾",
-    "Who wants to babysit? ðð",
-    "Is there anything better than coming home to this? ð¥º",
-    "Pet content or people content which do you prefer? ð¤",
-    "Should they have their own Instagram? ð¶ð",
-    "Who has the cutest pet? Show me ð¤",
-    "Would your pet and mine be friends? ð¾ð",
-    "Tell me your pet isn't this cute? ð"
+    "Rate my baby 1-10? 🐶",
+    "How cute is this face? 🥺",
+    "Could you say no to them? 🤔",
+    "Who's cuter me or my pet? 👀",
+    "What should I name their album? 🐾",
+    "Does your pet do this too? 🤔",
+    "Who else is obsessed with their pet? 🥺",
+    "Rate this cuteness 1-10 🐶",
+    "Would you pet them? 🤔💕",
+    "Is this the cutest thing you've seen today? 🥺",
+    "What breed do you think? 👀",
+    "Who's a better companion cats or dogs? 🤔",
+    "Can you handle this level of cute? 🥺",
+    "Should I get another one? 🤔🐾",
+    "Who else comes home to this? 💕",
+    "Would you steal my pet? 👀",
+    "Rate their pose 1-10 🐶😂",
+    "What's your pet's name? 🤔",
+    "Is my pet cuter than yours? 👀",
+    "Who wants to see more of them? 🐾",
+    "Can they be any cuter? 🥺",
+    "What are they thinking right now? 🤔💭",
+    "Should I make them their own snap? 🐶👀",
+    "Who else talks to their pet like a person? 😂",
+    "Rate their energy today 1-10 🐾",
+    "Isn't this the best face? 🥺",
+    "Do you think they know how cute they are? 🤔",
+    "What trick should I teach them? 🐾",
+    "Who wants to babysit? 👀😂",
+    "Is there anything better than coming home to this? 🥺",
+    "Pet content or people content which do you prefer? 🤔",
+    "Should they have their own Instagram? 🐶👀",
+    "Who has the cutest pet? Show me 🤔",
+    "Would your pet and mine be friends? 🐾💕",
+    "Tell me your pet isn't this cute? 👀"
   ],
   "food-drink": [
-    "Rate this plate 1-10? ð½ï¸",
-    "Would you eat this? ð",
-    "What should I order next? ð¤",
-    "Have you tried this before? ð½ï¸",
-    "Should I get seconds? ð",
-    "Rate the presentation 1-10? â¨",
-    "Who wants to come eat with me? ð¤",
-    "Is this a 10/10 plate? ð½ï¸",
-    "Foodies where are you? ð",
-    "What's your go to order? ð¤",
-    "Should I finish it all? ðð½ï¸",
-    "Who else is hungry right now? ð¤¤",
-    "Rate this meal honestly 1-10 ð½ï¸",
-    "Would you share or keep it all? ð¤",
-    "What's missing from this plate? ð",
-    "Have you been here before? ð¤",
-    "Should I order dessert too? ð½ï¸ð",
-    "What's the best food you've had this week? ð¤",
-    "Am I eating good or eating good? ð",
-    "Who cooks better you or restaurants? ð¤",
-    "Rate the vibes of this spot 1-10 â¨",
-    "What would you add to this? ð½ï¸",
-    "Should I become a food reviewer? ðð",
-    "Is brunch the best meal? ð¤",
-    "Who else lives to eat? ð½ï¸",
-    "Dessert first or last? ð¤",
-    "Should I come back here? ð",
-    "What's your comfort food? ð¤",
-    "Rate my food choices 1-10 ð½ï¸",
-    "Who wants the recipe? ð",
-    "Is this better than cooking at home? ð¤",
-    "What's the best restaurant you know? ð½ï¸",
-    "Should I try something new next time? ð¤",
-    "Who's down for a food date? ð",
-    "Calories don't count today right? ð"
+    "Rate this plate 1-10? 🍽️",
+    "Would you eat this? 👀",
+    "What should I order next? 🤔",
+    "Have you tried this before? 🍽️",
+    "Should I get seconds? 😂",
+    "Rate the presentation 1-10? ✨",
+    "Who wants to come eat with me? 🤔",
+    "Is this a 10/10 plate? 🍽️",
+    "Foodies where are you? 👀",
+    "What's your go to order? 🤔",
+    "Should I finish it all? 😂🍽️",
+    "Who else is hungry right now? 🤤",
+    "Rate this meal honestly 1-10 🍽️",
+    "Would you share or keep it all? 🤔",
+    "What's missing from this plate? 👀",
+    "Have you been here before? 🤔",
+    "Should I order dessert too? 🍽️😂",
+    "What's the best food you've had this week? 🤔",
+    "Am I eating good or eating good? 👀",
+    "Who cooks better you or restaurants? 🤔",
+    "Rate the vibes of this spot 1-10 ✨",
+    "What would you add to this? 🍽️",
+    "Should I become a food reviewer? 😂👀",
+    "Is brunch the best meal? 🤔",
+    "Who else lives to eat? 🍽️",
+    "Dessert first or last? 🤔",
+    "Should I come back here? 👀",
+    "What's your comfort food? 🤔",
+    "Rate my food choices 1-10 🍽️",
+    "Who wants the recipe? 👀",
+    "Is this better than cooking at home? 🤔",
+    "What's the best restaurant you know? 🍽️",
+    "Should I try something new next time? 🤔",
+    "Who's down for a food date? 👀",
+    "Calories don't count today right? 😂"
   ],
   "car": [
-    "Where are we driving to? ð¤",
-    "Road trip who's coming? ð",
-    "Rate the car lighting 1-10 ð±",
-    "Ride along with me? ð",
-    "Where should I go? ð¤",
-    "Who else takes car selfies? ð±ð",
-    "Windows down or AC? ð¤",
-    "What song should I play? ð¶",
-    "Should I go somewhere fun? ðð",
-    "Who wants to ride? ð¤",
-    "Am I the only one who sits in the car after parking? ð",
-    "Rate my car vibes 1-10 ð",
-    "Where would you drive right now? ð¤",
-    "Passenger seat is open who wants it? ð",
-    "Music up or music down? ð¶ð¤",
-    "Gas is expensive but should I still drive? ð",
-    "Who else lives in their car? ð",
-    "Quick pic before I drive thoughts? ð±",
-    "What's your dream road trip? ð¤",
-    "Should I go left or right? ðð",
-    "Rate my driving playlist 1-10 ð¶",
-    "Who else gets the best lighting in the car? ð±",
-    "Where was the last place you drove to? ð¤",
-    "Should I take the long way home? ð",
-    "Sunroof or no sunroof? ð¤âï¸",
-    "Who's riding with me today? ð",
-    "Is the car selfie angle played out? ð¤ð±",
-    "What's playing on your car radio? ð¶",
-    "Adventure or stay home which one? ðð¤",
-    "Keep driving or stop here? ð"
+    "Where are we driving to? 🤔",
+    "Road trip who's coming? 👀",
+    "Rate the car lighting 1-10 📱",
+    "Ride along with me? 🚗",
+    "Where should I go? 🤔",
+    "Who else takes car selfies? 📱😂",
+    "Windows down or AC? 🤔",
+    "What song should I play? 🎶",
+    "Should I go somewhere fun? 🚗👀",
+    "Who wants to ride? 🤔",
+    "Am I the only one who sits in the car after parking? 😂",
+    "Rate my car vibes 1-10 🚗",
+    "Where would you drive right now? 🤔",
+    "Passenger seat is open who wants it? 👀",
+    "Music up or music down? 🎶🤔",
+    "Gas is expensive but should I still drive? 😂",
+    "Who else lives in their car? 🚗",
+    "Quick pic before I drive thoughts? 📱",
+    "What's your dream road trip? 🤔",
+    "Should I go left or right? 🚗👀",
+    "Rate my driving playlist 1-10 🎶",
+    "Who else gets the best lighting in the car? 📱",
+    "Where was the last place you drove to? 🤔",
+    "Should I take the long way home? 🚗",
+    "Sunroof or no sunroof? 🤔☀️",
+    "Who's riding with me today? 👀",
+    "Is the car selfie angle played out? 🤔📱",
+    "What's playing on your car radio? 🎶",
+    "Adventure or stay home which one? 🚗🤔",
+    "Keep driving or stop here? 👀"
   ],
   "gym-fitness": [
-    "Rate the progress 1-10? ðª",
-    "Who else is at the gym today? ðï¸",
-    "Should I do one more set? ð¤",
-    "What's your go to workout? ðª",
-    "Am I making progress? ð",
-    "Leg day or arm day which is worse? ð¤",
-    "Who wants to be gym buddies? ðï¸",
-    "Rate my form 1-10 ðª",
-    "Should I go heavier? ð¤",
-    "Who else is grinding today? ðªð",
-    "Morning or night gym which is better? ð¤",
-    "How many days a week do you work out? ðª",
-    "Should I try a new routine? ð¤",
-    "Rate the gym fit 1-10 ðï¸",
-    "Who's skipping leg day? Be honest ð",
-    "Is this good progress? ð¤ðª",
-    "What should I work on next? ðï¸",
-    "Am I gym ready? ð",
-    "Who's been consistent this week? ðªð¤",
-    "Should I add cardio? ððï¸",
-    "Rate my dedication 1-10 ðª",
-    "What's your workout split? ð¤",
-    "Who else takes gym selfies? ð±ðï¸",
-    "Transformation pics who wants to see? ð",
-    "Before or after which is more motivating? ð¤",
-    "Who needs a workout buddy? ðª",
-    "What's harder diet or exercise? ð¤",
-    "Am I overtraining or under training? ð",
-    "Rate the pump 1-10 ðªð",
-    "Who's starting their fitness journey? ðï¸ð¤"
+    "Rate the progress 1-10? 💪",
+    "Who else is at the gym today? 🏋️",
+    "Should I do one more set? 🤔",
+    "What's your go to workout? 💪",
+    "Am I making progress? 👀",
+    "Leg day or arm day which is worse? 🤔",
+    "Who wants to be gym buddies? 🏋️",
+    "Rate my form 1-10 💪",
+    "Should I go heavier? 🤔",
+    "Who else is grinding today? 💪👀",
+    "Morning or night gym which is better? 🤔",
+    "How many days a week do you work out? 💪",
+    "Should I try a new routine? 🤔",
+    "Rate the gym fit 1-10 🏋️",
+    "Who's skipping leg day? Be honest 👀",
+    "Is this good progress? 🤔💪",
+    "What should I work on next? 🏋️",
+    "Am I gym ready? 👀",
+    "Who's been consistent this week? 💪🤔",
+    "Should I add cardio? 😂🏋️",
+    "Rate my dedication 1-10 💪",
+    "What's your workout split? 🤔",
+    "Who else takes gym selfies? 📱🏋️",
+    "Transformation pics who wants to see? 👀",
+    "Before or after which is more motivating? 🤔",
+    "Who needs a workout buddy? 💪",
+    "What's harder diet or exercise? 🤔",
+    "Am I overtraining or under training? 👀",
+    "Rate the pump 1-10 💪😂",
+    "Who's starting their fitness journey? 🏋️🤔"
   ],
   "outdoor": [
-    "Would you come here? ð¤",
-    "Rate this view 1-10? ð",
-    "Where should I go next? ð",
-    "Have you been somewhere like this? ð¤",
-    "Should I stay longer? ð¥º",
-    "Who else loves the outdoors? ð¿",
-    "Can you guess where this is? ð¤",
-    "Is this real life? ðð",
-    "Would you live here? ð¤",
-    "What's the best view you've ever seen? ð",
-    "Rate the scenery 1-10 â¨",
-    "Who wants to explore with me? ðºï¸",
-    "Should I come back here? ð¤",
-    "Does anyone else need this right now? ð¿",
-    "What's your favorite outdoor spot? ð¤",
-    "Rate the sky right now 1-10 ð",
-    "Who else finds peace outside? ð¿",
-    "Would you hike to see this? ð¤ð¥¾",
-    "Where should I travel next? ð",
-    "Am I the only one who loves sunsets? ðð¤",
-    "Should I take more outdoor pics? ð¸",
-    "What's better mountains or beach? ð¤",
-    "Who needs some fresh air? ð¿ð",
-    "Is this the best part of the day? ð",
-    "Would you walk here with me? ð¤",
-    "Rate my nature photography 1-10 ð¸",
-    "What sounds better forest or lake? ð¤",
-    "Can every day look like this? ð¥º",
-    "Who else is an outdoor person? ð¿ð¤",
-    "Should I explore more or head back? ð",
-    "What do you love most about nature? ð¿",
-    "Is this postcard worthy? ð¸ð¤",
-    "Who's coming on the next adventure? ðºï¸",
-    "Golden hour or blue hour? ðð¤",
-    "How do you spend your weekends? ð"
+    "Would you come here? 🤔",
+    "Rate this view 1-10? 😍",
+    "Where should I go next? 👀",
+    "Have you been somewhere like this? 🤔",
+    "Should I stay longer? 🥺",
+    "Who else loves the outdoors? 🌿",
+    "Can you guess where this is? 🤔",
+    "Is this real life? 😍👀",
+    "Would you live here? 🤔",
+    "What's the best view you've ever seen? 🌅",
+    "Rate the scenery 1-10 ✨",
+    "Who wants to explore with me? 🗺️",
+    "Should I come back here? 🤔",
+    "Does anyone else need this right now? 🌿",
+    "What's your favorite outdoor spot? 🤔",
+    "Rate the sky right now 1-10 🌅",
+    "Who else finds peace outside? 🌿",
+    "Would you hike to see this? 🤔🥾",
+    "Where should I travel next? 👀",
+    "Am I the only one who loves sunsets? 🌅🤔",
+    "Should I take more outdoor pics? 📸",
+    "What's better mountains or beach? 🤔",
+    "Who needs some fresh air? 🌿👀",
+    "Is this the best part of the day? 🌅",
+    "Would you walk here with me? 🤔",
+    "Rate my nature photography 1-10 📸",
+    "What sounds better forest or lake? 🤔",
+    "Can every day look like this? 🥺",
+    "Who else is an outdoor person? 🌿🤔",
+    "Should I explore more or head back? 👀",
+    "What do you love most about nature? 🌿",
+    "Is this postcard worthy? 📸🤔",
+    "Who's coming on the next adventure? 🗺️",
+    "Golden hour or blue hour? 🌅🤔",
+    "How do you spend your weekends? 👀"
   ],
   "casual": [
-    "What should I do today? ð¤",
-    "Who else has no plans? ð",
-    "Stay in or go out? ð¤",
-    "Rate my lazy day fit 1-10 âï¸",
-    "What are you watching right now? ðº",
-    "Should I leave the house today? ð¤",
-    "Who else is being lazy? âï¸ð",
-    "What's the move today? ð¤",
-    "Netflix recommendations? ðº",
-    "Am I the only one doing nothing? ð",
-    "Should I nap or get up? ð¤",
-    "Who else loves a day off? âï¸",
-    "What should I order for delivery? ð¤ð",
-    "Rate my chill vibes 1-10 âï¸",
-    "Is it okay to do nothing all day? ð",
-    "What's your comfort show? ðºð¤",
-    "Who else is still in bed? âï¸ð",
-    "Should I be productive or nah? ð¤",
-    "What's the best snack right now? ð¿",
-    "Who needs a lazy day? âï¸",
-    "Am I the only one who loves rainy days? ð¤â",
-    "Should I cook or get takeout? ð¤",
-    "What would you do with a free day? ð­",
-    "Who's bored right now too? ðð",
-    "Rate my cozy setup 1-10 âï¸",
-    "Coffee or tea to start the day? ð¤â",
-    "Is anyone else just vibing? âï¸",
-    "What's the best part of a lazy day? ð¤",
-    "Should I actually get dressed today? ð",
-    "Who else appreciates doing nothing? âï¸ð­",
-    "Breakfast in bed or at the table? ð¤",
-    "What's everyone up to? ð",
-    "Am I allowed another nap? ð´ð¤",
-    "Who's coming over to hang? âï¸",
-    "What should I binge watch? ðºð¤"
+    "What should I do today? 🤔",
+    "Who else has no plans? 😂",
+    "Stay in or go out? 🤔",
+    "Rate my lazy day fit 1-10 ☁️",
+    "What are you watching right now? 📺",
+    "Should I leave the house today? 🤔",
+    "Who else is being lazy? ☁️👀",
+    "What's the move today? 🤔",
+    "Netflix recommendations? 📺",
+    "Am I the only one doing nothing? 😂",
+    "Should I nap or get up? 🤔",
+    "Who else loves a day off? ☁️",
+    "What should I order for delivery? 🤔🍕",
+    "Rate my chill vibes 1-10 ☁️",
+    "Is it okay to do nothing all day? 😂",
+    "What's your comfort show? 📺🤔",
+    "Who else is still in bed? ☁️👀",
+    "Should I be productive or nah? 🤔",
+    "What's the best snack right now? 🍿",
+    "Who needs a lazy day? ☁️",
+    "Am I the only one who loves rainy days? 🤔☔",
+    "Should I cook or get takeout? 🤔",
+    "What would you do with a free day? 💭",
+    "Who's bored right now too? 😂👀",
+    "Rate my cozy setup 1-10 ☁️",
+    "Coffee or tea to start the day? 🤔☕",
+    "Is anyone else just vibing? ☁️",
+    "What's the best part of a lazy day? 🤔",
+    "Should I actually get dressed today? 😂",
+    "Who else appreciates doing nothing? ☁️💭",
+    "Breakfast in bed or at the table? 🤔",
+    "What's everyone up to? 👀",
+    "Am I allowed another nap? 😴🤔",
+    "Who's coming over to hang? ☁️",
+    "What should I binge watch? 📺🤔"
   ]
 };
 
-// ââ SMARTER IMAGE ANALYSIS ââ
+// ── SMARTER IMAGE ANALYSIS ──
 // Samples background (edges/corners) separately from center (subject)
 function analyzeImage(img) {
   const canvas = document.createElement("canvas");
@@ -662,7 +662,7 @@ function detectCategory(img, fileName) {
   return "selfie";
 }
 
-// ââ STATE ââ
+// ── STATE ──
 let photos = [];
 let idCounter = 0;
 let dragSrcId = null;
@@ -682,7 +682,7 @@ function assignAllCaptions() {
   photos.forEach(p => { p.caption = getCaption(p.category); });
 }
 
-// ââ DRAW SNAP-STYLE CAPTION ââ
+// ── DRAW SNAP-STYLE CAPTION ──
 // Matches real Snapchat: thin translucent bar, regular weight white text, centered
 function drawCard(photo) {
   const canvas = document.getElementById(`canvas-${photo.id}`);
@@ -706,7 +706,7 @@ function drawCard(photo) {
   const text = photo.caption;
   if (!text) return;
 
-  // ââ EXACT SNAP STYLE ââ
+  // ── EXACT SNAP STYLE ──
   // Real Snap caption: light gray text on dark translucent bar
   const fontSize = 44;
   ctx.font = `normal ${fontSize}px -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif`;
@@ -721,7 +721,7 @@ function drawCard(photo) {
   ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
   ctx.fillRect(0, barY, W, barHeight);
 
-  // Snap text is NOT pure white â it's a muted grayish-white ~#d0d0d0
+  // Snap text is NOT pure white — it's a muted grayish-white ~#d0d0d0
   ctx.fillStyle = "#d1d1d1";
   ctx.textAlign = "center";
   ctx.fillText(text, W / 2, barY + barHeight / 2, W - 60);
@@ -748,16 +748,16 @@ function updateUI() {
 }
 
 const CAT_LABELS = {
-  "pool-beach": "ð Pool / Beach",
-  "selfie": "ð¤³ Selfie",
-  "outfit": "ð Outfit",
-  "night-out": "ð Night Out",
-  "pet": "ð¶ Pet",
-  "food-drink": "ð½ï¸ Food / Drink",
-  "car": "ð Car",
-  "gym-fitness": "ðª Gym / Fitness",
-  "outdoor": "ð¿ Outdoor",
-  "casual": "âï¸ Casual"
+  "pool-beach": "🏊 Pool / Beach",
+  "selfie": "🤳 Selfie",
+  "outfit": "👗 Outfit",
+  "night-out": "🌙 Night Out",
+  "pet": "🐶 Pet",
+  "food-drink": "🍽️ Food / Drink",
+  "car": "🚗 Car",
+  "gym-fitness": "💪 Gym / Fitness",
+  "outdoor": "🌿 Outdoor",
+  "casual": "☁️ Casual"
 };
 
 function renderGrid() {
@@ -787,9 +787,9 @@ function renderGrid() {
         <div class="detected-label">Detected: <b>${CAT_LABELS[photo.category]}</b></div>
         <textarea id="input-${photo.id}" rows="2">${photo.caption}</textarea>
         <div class="card-btns">
-          <button class="btn btn-ghost btn-sm" onclick="regenerateOne(${photo.id})">ð New</button>
-          <button class="btn btn-primary btn-sm" onclick="downloadOne(${photo.id})">â¬ Save</button>
-          <button class="btn-x" onclick="removePhoto(${photo.id})">â</button>
+          <button class="btn btn-ghost btn-sm" onclick="regenerateOne(${photo.id})">🔄 New</button>
+          <button class="btn btn-primary btn-sm" onclick="downloadOne(${photo.id})">⬇ Save</button>
+          <button class="btn-x" onclick="removePhoto(${photo.id})">✕</button>
         </div>
       </div>
     `;
@@ -912,12 +912,8 @@ function removePhoto(id) {
 }
 
 function downloadAll() {
-  if (photos.length >= 2) {
-    downloadZip();
-  } else {
-    photos.forEach((photo, i) => {
-      setTimeout(() => downloadOne(photo.id), i * 300);
-    });
+  if (photos.length >= 2) { downloadZip(); } else {
+    photos.forEach((photo, i) => { setTimeout(() => downloadOne(photo.id), i * 300); });
   }
 }
 
@@ -928,7 +924,7 @@ function clearAll() {
   renderGrid();
 }
 
-// ââ QUESTION GENERATOR ââ
+// ── QUESTION GENERATOR ──
 let qgenCategory = "pool-beach";
 
 function initQgen() {
@@ -980,7 +976,7 @@ function copyAllQuestions() {
   navigator.clipboard.writeText(all).then(() => {
     const btn = document.querySelector(".qgen-header .btn-primary");
     const orig = btn.textContent;
-    btn.textContent = "â Copied!";
+    btn.textContent = "✅ Copied!";
     setTimeout(() => { btn.textContent = orig; }, 1500);
   });
 }
@@ -989,139 +985,139 @@ initQgen();
 
 // Update labels on mobile
 if (isMobile) {
-  const albumBtn = document.getElementById("albumDownloadBtn");
-  if (albumBtn) albumBtn.textContent = "ð² Save All to Camera Roll";
+  const saveBtn = document.getElementById("saveToPhotosBtn");
+  if (saveBtn) saveBtn.style.display = "inline-block";
 }
 
-// ââ ALBUM CAPTIONS ââ
-// Based on Sophie & Lex's real album names â engagement hooks, short, with emoji
+// ── ALBUM CAPTIONS ──
+// Based on Sophie & Lex's real album names — engagement hooks, short, with emoji
 const ALBUM_CAPTIONS = {
   "pool-beach": [
-    "Pool day hits different ð",
-    "Water baby era ð",
-    "Summer state of mind âï¸",
-    "Catch me by the water ð¦",
-    "Sun kissed and happy âï¸",
-    "Living for pool days ðââï¸",
-    "Vitamin sea ðâ¨",
-    "Made for summer ð´",
-    "Blue vibes only ð",
-    "Poolside diaries ð¦"
+    "Pool day hits different 💙",
+    "Water baby era 🌊",
+    "Summer state of mind ☀️",
+    "Catch me by the water 💦",
+    "Sun kissed and happy ☀️",
+    "Living for pool days 🏊‍♀️",
+    "Vitamin sea 🌊✨",
+    "Made for summer 🌴",
+    "Blue vibes only 💙",
+    "Poolside diaries 💦"
   ],
   "selfie": [
-    "Some experiences are just lessons â¨",
-    "Energy too good to ignore ð« ",
-    "Radiating good energy ð¤",
-    "Pretty things come in small packages ð",
-    "Just a lil something ðâ¨",
-    "Cute but I got attitude ðâ¨",
-    "Face card never declines ð³",
-    "Main character energy ð¬",
-    "Mirror mirror ðâ¨",
-    "Daily dose ð¸"
+    "Some experiences are just lessons ✨",
+    "Energy too good to ignore 🫠",
+    "Radiating good energy 🤍",
+    "Pretty things come in small packages 😌",
+    "Just a lil something 💋✨",
+    "Cute but I got attitude 😏✨",
+    "Face card never declines 💳",
+    "Main character energy 🎬",
+    "Mirror mirror 👀✨",
+    "Daily dose 📸"
   ],
   "outfit": [
-    "Fit check era ðâ¨",
-    "Closet MVP ð",
-    "Mirror pic diaries ð±",
-    "OOTD collection ð",
-    "Style points â¨",
-    "Rate the fits ð¤",
-    "Getting ready ð",
-    "Dress up diaries ð",
-    "Fashion moments ð¸",
-    "Outfit rotation ð"
+    "Fit check era 👗✨",
+    "Closet MVP 🏆",
+    "Mirror pic diaries 📱",
+    "OOTD collection 😌",
+    "Style points ✨",
+    "Rate the fits 🤔",
+    "Getting ready 💅",
+    "Dress up diaries 👗",
+    "Fashion moments 📸",
+    "Outfit rotation 🔄"
   ],
   "night-out": [
-    "Night out diaries ð",
-    "City lights ðâ¨",
-    "Weekend vibes ð¥",
-    "Late night adventures ð",
-    "Going out going out ð",
-    "Friday mode ðâ¨",
-    "After dark â¨",
-    "Night crew ð",
-    "Good times only ð¥",
-    "Out and about ð"
+    "Night out diaries 🌙",
+    "City lights 🌃✨",
+    "Weekend vibes 🥂",
+    "Late night adventures 🌙",
+    "Going out going out 🌃",
+    "Friday mode 🌙✨",
+    "After dark ✨",
+    "Night crew 🌃",
+    "Good times only 🥂",
+    "Out and about 🌙"
   ],
   "pet": [
-    "My whole heart ðð¾",
-    "Best friend check ð¶",
-    "Pet parent diaries ð¾",
-    "This face though ð¥º",
-    "My ride or die ðð",
-    "Unconditional love ð¾",
-    "Main character of the house ð¶",
-    "Cuteness overload ð¥º",
-    "Four legged bestie ð¾â¨",
-    "Home is where they are ð"
+    "My whole heart 💕🐾",
+    "Best friend check 🐶",
+    "Pet parent diaries 🐾",
+    "This face though 🥺",
+    "My ride or die 🐕💕",
+    "Unconditional love 🐾",
+    "Main character of the house 🐶",
+    "Cuteness overload 🥺",
+    "Four legged bestie 🐾✨",
+    "Home is where they are 💕"
   ],
   "food-drink": [
-    "Eating good ð½ï¸â¨",
-    "Food is my love language ð",
-    "Brunch diaries ð³",
-    "Taste test ð½ï¸",
-    "Foodies only ð¤¤",
-    "Menu highlights ð½ï¸â¨",
-    "Good food good mood â¨",
-    "Feed me forever ð½ï¸",
-    "Treat yourself era ð¤¤",
-    "Food coma incoming ð"
+    "Eating good 🍽️✨",
+    "Food is my love language 💕",
+    "Brunch diaries 🍳",
+    "Taste test 🍽️",
+    "Foodies only 🤤",
+    "Menu highlights 🍽️✨",
+    "Good food good mood ✨",
+    "Feed me forever 🍽️",
+    "Treat yourself era 🤤",
+    "Food coma incoming 😂"
   ],
   "car": [
-    "Car selfie era ð±",
-    "Road trip diaries ð",
-    "On the move â¨",
-    "Dashboard views ð",
-    "Driving vibes ð¶",
-    "Passenger princess ð",
-    "Adventure loading ðºï¸",
-    "Best lighting in the car ð±â¨",
-    "Going somewhere good ð",
-    "Window down music up ð¶"
+    "Car selfie era 📱",
+    "Road trip diaries 🚗",
+    "On the move ✨",
+    "Dashboard views 🚗",
+    "Driving vibes 🎶",
+    "Passenger princess 👑",
+    "Adventure loading 🗺️",
+    "Best lighting in the car 📱✨",
+    "Going somewhere good 🚗",
+    "Window down music up 🎶"
   ],
   "gym-fitness": [
-    "Grind mode ðªâ¨",
-    "Progress check ð",
-    "No days off ðª",
-    "Trust the process ðï¸",
-    "Building something ðªâ¨",
-    "Gym diaries ðï¸",
-    "Consistency is key ð",
-    "Earned not given â¨",
-    "Results loading ð",
-    "Fitness era ðª"
+    "Grind mode 💪✨",
+    "Progress check 📈",
+    "No days off 💪",
+    "Trust the process 🏋️",
+    "Building something 💪✨",
+    "Gym diaries 🏋️",
+    "Consistency is key 🔑",
+    "Earned not given ✨",
+    "Results loading 📈",
+    "Fitness era 💪"
   ],
   "outdoor": [
-    "Nature therapy ð¿",
-    "Golden hour collection ð",
-    "Adventures over everything â¨",
-    "Take me back ð¥ºð",
-    "Exploring new spots ðºï¸",
-    "Outdoor vibes ð¿â¨",
-    "Fresh air diaries âï¸",
-    "Views for days ð",
-    "The great outdoors ð¿",
-    "Lost in the best way ðºï¸"
+    "Nature therapy 🌿",
+    "Golden hour collection 🌅",
+    "Adventures over everything ✨",
+    "Take me back 🥺💕",
+    "Exploring new spots 🗺️",
+    "Outdoor vibes 🌿✨",
+    "Fresh air diaries ☀️",
+    "Views for days 🌅",
+    "The great outdoors 🌿",
+    "Lost in the best way 🗺️"
   ],
   "casual": [
-    "Chill day diaries âï¸",
-    "No plans and I love it ð",
-    "Cozy mode activated âï¸",
-    "Lazy day era ð",
-    "Weekend mode âï¸â¨",
-    "Home vibes ð ",
-    "Rest day earned ð",
-    "Doing nothing diaries âï¸",
-    "Maximum chill ð",
-    "Recharge mode ð"
+    "Chill day diaries ☁️",
+    "No plans and I love it 😌",
+    "Cozy mode activated ☁️",
+    "Lazy day era 😌",
+    "Weekend mode ☁️✨",
+    "Home vibes 🏠",
+    "Rest day earned 😌",
+    "Doing nothing diaries ☁️",
+    "Maximum chill 😌",
+    "Recharge mode 🔋"
   ]
 };
 
 let currentThumbIdx = 0;
 let thumbScores = [];
 
-// ââ THUMBNAIL SCORING ââ
+// ── THUMBNAIL SCORING ──
 // Scores each photo on qualities that make a good album cover
 function scoreForThumbnail(photo) {
   if (!photo.img) return 0;
@@ -1238,7 +1234,7 @@ function updateThumbDisplay() {
   const img = document.getElementById("albumThumbImg");
   img.src = entry.photo.url;
   const label = document.querySelector(".album-thumb-label");
-  label.textContent = `â­ #${currentThumbIdx + 1} Best Thumbnail (Slide ${entry.idx + 1})`;
+  label.textContent = `⭐ #${currentThumbIdx + 1} Best Thumbnail (Slide ${entry.idx + 1})`;
 }
 
 function prevThumb() {
@@ -1258,16 +1254,16 @@ function copyAlbumCaption() {
   navigator.clipboard.writeText(cap).then(() => {
     const btn = document.querySelector(".album-actions .btn-ghost:nth-child(2)");
     const orig = btn.textContent;
-    btn.textContent = "â Copied!";
+    btn.textContent = "✅ Copied!";
     setTimeout(() => { btn.textContent = orig; }, 1500);
   });
 }
 
-// ââ ZIP DOWNLOAD ââ
+// ── ZIP DOWNLOAD ──
 async function downloadZip() {
   const btn = document.querySelector(".album-actions .btn-primary") || document.getElementById("downloadAllBtn");
   const origText = btn ? btn.textContent : "";
-  if (btn) { btn.textContent = "\u23F3 Building ZIP..."; btn.disabled = true; }
+  if (btn) { btn.textContent = "⏳ Building ZIP..."; btn.disabled = true; }
   try {
     const zip = new JSZip();
     const albumName = document.getElementById("albumCaption").value || "snap_story";
@@ -1302,7 +1298,7 @@ function triggerBlobDownload(blob, filename) {
   setTimeout(() => URL.revokeObjectURL(url), 5000);
 }
 
-// ââ SAVE TO CAMERA ROLL MODAL (iOS/Mobile) ââ
+// ── SAVE TO CAMERA ROLL MODAL (iOS/Mobile) ──
 function openSaveModal(photoList) {
   // Remove existing modal if any
   const existing = document.getElementById("saveModal");
@@ -1314,7 +1310,7 @@ function openSaveModal(photoList) {
 
   const header = document.createElement("div");
   header.className = "save-modal-header";
-  header.innerHTML = `<h3>ð² Save to Camera Roll</h3><button class="save-modal-close" onclick="closeSaveModal()">â Close</button>`;
+  header.innerHTML = `<h3>📲 Save to Camera Roll</h3><button class="save-modal-close" onclick="closeSaveModal()">✕ Close</button>`;
   overlay.appendChild(header);
 
   const hint = document.createElement("div");
