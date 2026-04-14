@@ -650,19 +650,23 @@ function detectCategory(img, fileName) {
   // Background color analysis
   const c = analyzeImage(img);
 
-  // Strong water indicators only (raise thresholds to avoid gym/indoor false positives)
-  if (c.bgCyanPct > 0.20) return "pool-beach";
-  if (c.bgBluePct > 0.25) return "pool-beach";
-  if (c.bgBluePct > 0.15 && c.bgBrightPct > 0.30 && c.bgWarmPct < 0.05) return "pool-beach";
-  if (c.bgCyanPct > 0.10 && c.bgBluePct > 0.10 && c.bgWarmPct < 0.05) return "pool-beach";
+  // Color analysis - conservative approach
+  const c = analyzeImage(img);
 
-  // Indoor gym: warm tones + moderate brightness + some contrast (mirrors/equipment)
-  if (c.bgWarmPct > 0.08 && c.bgBrightPct > 0.15 && c.bgDarkPct < 0.40 && c.bgBluePct < 0.10) return "gym-fitness";
+  // Pool/Beach: ONLY if overwhelming water colors (very high cyan+blue, no warm tones)
+  if (c.bgCyanPct > 0.30 && c.bgWarmPct < 0.03) return "pool-beach";
+  if (c.bgBluePct > 0.35 && c.bgWarmPct < 0.03) return "pool-beach";
 
-  if (c.bgGreenPct > 0.18) return "outdoor";
-  if (c.bgGreenPct > 0.10 && c.bgBrightPct > 0.25) return "outdoor";
-  if (c.bgDarkPct > 0.55) return "night-out";
-  if (c.bgWarmPct > 0.15 && c.bgDarkPct > 0.30) return "night-out";
+  // Outdoor: strong green
+  if (c.bgGreenPct > 0.20) return "outdoor";
+  if (c.bgGreenPct > 0.12 && c.bgBrightPct > 0.25) return "outdoor";
+
+  // Night out: very dark
+  if (c.bgDarkPct > 0.60) return "night-out";
+  if (c.bgWarmPct > 0.15 && c.bgDarkPct > 0.35) return "night-out";
+
+  // Gym: indoor warm lighting, moderate brightness
+  if (c.bgWarmPct > 0.06 && c.bgBrightPct > 0.10 && c.bgBluePct < 0.08) return "gym-fitness";
 
   return "selfie";
 }
@@ -999,126 +1003,126 @@ if (isMobile) {
 // Based on Sophie & Lex's real album names — engagement hooks, short, with emoji
 const ALBUM_CAPTIONS = {
   "pool-beach": [
-    "Pool day hits different 💙",
-    "Water baby era 🌊",
-    "Summer state of mind ☀️",
-    "Catch me by the water 💦",
-    "Sun kissed and happy ☀️",
-    "Living for pool days 🏊‍♀️",
-    "Vitamin sea 🌊✨",
-    "Made for summer 🌴",
-    "Blue vibes only 💙",
-    "Poolside diaries 💦"
+    "Who wants to come swim? 💦",
+    "Rate my pool day 1-10? ☀️",
+    "Beach or pool which one? 🤔",
+    "Can it be summer forever? 🥺",
+    "Who else needs a pool day? 🏊‍♀️",
+    "Would you come float with me? 💙",
+    "Is this real life? 🌴",
+    "Who's jealous right now? 👀",
+    "Summer vibes or nah? ☀️",
+    "Who else is at the water today? 🌊"
   ],
   "selfie": [
-    "Some experiences are just lessons ✨",
-    "Energy too good to ignore 🫠",
-    "Radiating good energy 🤍",
-    "Pretty things come in small packages 😌",
-    "Just a lil something 💋✨",
-    "Cute but I got attitude 😏✨",
-    "Face card never declines 💳",
-    "Main character energy 🎬",
-    "Mirror mirror 👀✨",
-    "Daily dose 📸"
+    "What vibe am I giving? 💭",
+    "Rate it 1-10 be honest? 🤔",
+    "What do you notice first? 👀",
+    "Am I giving main character? 🎬",
+    "What emoji matches this? 🤔",
+    "Who else is just vibing today? ✨",
+    "Would you sit next to me? 💭",
+    "Guess what I'm about to do? 🤔",
+    "Be honest 1 or 2🤔? 👀",
+    "Almost deleted this should I have? 🤔"
   ],
   "outfit": [
-    "Fit check era 👗✨",
-    "Closet MVP 🏆",
-    "Mirror pic diaries 📱",
-    "OOTD collection 😌",
-    "Style points ✨",
-    "Rate the fits 🤔",
-    "Getting ready 💅",
-    "Dress up diaries 👗",
-    "Fashion moments 📸",
-    "Outfit rotation 🔄"
+    "Rate the fit 1-10? 🤔",
+    "Would you wear this? 👀",
+    "Keep or return what do you think? 💭",
+    "This or all black? 🤔",
+    "Can I get a fit check? ✨",
+    "What shoes would you pair? 👟",
+    "Is this a go or a no? 👀",
+    "Hair up or down with this? 🤔",
+    "Am I overdressed or underdressed? 💭",
+    "First thoughts? 👀"
   ],
   "night-out": [
-    "Night out diaries 🌙",
-    "City lights 🌃✨",
-    "Weekend vibes 🥂",
-    "Late night adventures 🌙",
-    "Going out going out 🌃",
-    "Friday mode 🌙✨",
-    "After dark ✨",
-    "Night crew 🌃",
-    "Good times only 🥂",
-    "Out and about 🌙"
+    "Who's coming out tonight? 🌙",
+    "Rate the going out look 1-10? ✨",
+    "Where should we go? 👀",
+    "Stay out or go home? 🤔",
+    "Who else is out tonight? 🌃",
+    "Is it too late to go out? 🤔",
+    "Best spot in your city? 🌙",
+    "Friday or Saturday which is better? 👀",
+    "Who needs a night out? 🤔",
+    "Are we going again tomorrow? 🌙👀"
   ],
   "pet": [
-    "My whole heart 💕🐾",
-    "Best friend check 🐶",
-    "Pet parent diaries 🐾",
-    "This face though 🥺",
-    "My ride or die 🐕💕",
-    "Unconditional love 🐾",
-    "Main character of the house 🐶",
-    "Cuteness overload 🥺",
-    "Four legged bestie 🐾✨",
-    "Home is where they are 💕"
+    "Rate my baby 1-10? 🐶",
+    "Who's cuter me or them? 👀",
+    "Could you say no to this face? 🥺",
+    "Should I get another one? 🤔🐾",
+    "Would you steal my pet? 👀",
+    "What are they thinking right now? 🤔",
+    "Can they be any cuter? 🥺",
+    "Who wants to babysit? 👀😂",
+    "Is this the cutest thing today? 🥺",
+    "Does your pet do this too? 🤔"
   ],
   "food-drink": [
-    "Eating good 🍽️✨",
-    "Food is my love language 💕",
-    "Brunch diaries 🍳",
-    "Taste test 🍽️",
-    "Foodies only 🤤",
-    "Menu highlights 🍽️✨",
-    "Good food good mood ✨",
-    "Feed me forever 🍽️",
-    "Treat yourself era 🤤",
-    "Food coma incoming 😂"
+    "Rate this plate 1-10? 🍽️",
+    "Would you eat this? 👀",
+    "Should I get seconds? 😂",
+    "What should I order next? 🤔",
+    "Am I eating good or eating good? 👀",
+    "Who wants to come eat? 🤔",
+    "Dessert first or last? 🤔",
+    "Who cooks better you or restaurants? 🤔",
+    "Should I become a food reviewer? 😂👀",
+    "Calories don't count today right? 😂"
   ],
   "car": [
-    "Car selfie era 📱",
-    "Road trip diaries 🚗",
-    "On the move ✨",
-    "Dashboard views 🚗",
-    "Driving vibes 🎶",
-    "Passenger princess 👑",
-    "Adventure loading 🗺️",
-    "Best lighting in the car 📱✨",
-    "Going somewhere good 🚗",
-    "Window down music up 🎶"
+    "Where are we driving? 🤔",
+    "Road trip who's coming? 👀",
+    "What song should I play? 🎶",
+    "Passenger seat is open who wants it? 👀",
+    "Should I take the long way home? 🚗",
+    "Windows down or AC? 🤔",
+    "Who else lives in their car? 🚗",
+    "Adventure or stay home? 🤔",
+    "Rate my car vibes 1-10? 🚗",
+    "Keep driving or stop here? 👀"
   ],
   "gym-fitness": [
-    "Grind mode 💪✨",
-    "Progress check 📈",
-    "No days off 💪",
-    "Trust the process 🏋️",
-    "Building something 💪✨",
-    "Gym diaries 🏋️",
-    "Consistency is key 🔑",
-    "Earned not given ✨",
-    "Results loading 📈",
-    "Fitness era 💪"
+    "Rate the progress 1-10? 💪",
+    "Should I do one more set? 🤔",
+    "Am I making progress? 👀",
+    "Who wants to be gym buddies? 🏋️",
+    "Leg day or arm day which is worse? 🤔",
+    "Who else is grinding today? 💪👀",
+    "Is this good progress? 🤔",
+    "Should I go heavier? 🤔",
+    "Who's been consistent this week? 💪",
+    "Rate my dedication 1-10? 💪"
   ],
   "outdoor": [
-    "Nature therapy 🌿",
-    "Golden hour collection 🌅",
-    "Adventures over everything ✨",
-    "Take me back 🥺💕",
-    "Exploring new spots 🗺️",
-    "Outdoor vibes 🌿✨",
-    "Fresh air diaries ☀️",
-    "Views for days 🌅",
-    "The great outdoors 🌿",
-    "Lost in the best way 🗺️"
+    "Would you come here? 🤔",
+    "Rate this view 1-10? 😍",
+    "Can you guess where this is? 🤔",
+    "Should I stay longer? 🥺",
+    "Would you hike to see this? 🤔🦶",
+    "Mountains or beach which is better? 🤔",
+    "Who wants to explore with me? 🗺️",
+    "Is this postcard worthy? 📸🤔",
+    "Can every day look like this? 🥺",
+    "Where should I travel next? 👀"
   ],
   "casual": [
-    "Chill day diaries ☁️",
-    "No plans and I love it 😌",
-    "Cozy mode activated ☁️",
-    "Lazy day era 😌",
-    "Weekend mode ☁️✨",
-    "Home vibes 🏠",
-    "Rest day earned 😌",
-    "Doing nothing diaries ☁️",
-    "Maximum chill 😌",
-    "Recharge mode 🔋"
+    "What should I do today? 🤔",
+    "Stay in or go out? 🤔",
+    "Who else has no plans? 😂",
+    "Should I leave the house? 🤔",
+    "Netflix recommendations? 📺",
+    "What's the move today? 🤔",
+    "Should I nap or get up? 🤔",
+    "Coffee or tea to start? 🤔☕",
+    "Who else is still in bed? ☁️👀",
+    "Am I allowed another nap? 😴🤔"
   ]
-};
+}};
 
 let currentThumbIdx = 0;
 let thumbScores = [];
@@ -1129,17 +1133,13 @@ function scoreForThumbnail(photo) {
   if (!photo.img) return 0;
   const canvas = document.createElement("canvas");
   const size = 100;
-  canvas.width = size;
-  canvas.height = size;
+  canvas.width = size; canvas.height = size;
   const ctx = canvas.getContext("2d");
   ctx.drawImage(photo.img, 0, 0, size, size);
   const data = ctx.getImageData(0, 0, size, size).data;
 
-  let brightness = 0;
-  let saturation = 0;
-  let contrast = 0;
-  let centerBright = 0;
-  let centerCount = 0;
+  let brightness = 0, saturation = 0, skinTone = 0, centerSkin = 0;
+  let centerCount = 0, centerBright = 0, warmCenter = 0;
   let values = [];
 
   for (let y = 0; y < size; y++) {
@@ -1150,36 +1150,59 @@ function scoreForThumbnail(photo) {
       brightness += bright;
       values.push(bright);
 
-      // Saturation estimate
       const max = Math.max(r, g, b), min = Math.min(r, g, b);
       saturation += (max - min) / (max || 1);
 
-      // Center focus bonus
-      const isCenter = x > size * 0.25 && x < size * 0.75 && y > size * 0.2 && y < size * 0.7;
-      if (isCenter) { centerBright += bright; centerCount++; }
+      // Skin tone detection: warm, reddish-tan colors
+      const isSkin = r > 120 && r > g && r > b && (r - b) > 30 && g > 80 && bright > 80 && bright < 230;
+
+      // Center region = where the model's body/face likely is (middle 50%)
+      const isCenter = x > size * 0.25 && x < size * 0.75 && y > size * 0.15 && y < size * 0.75;
+
+      if (isCenter) {
+        centerCount++;
+        centerBright += bright;
+        if (isSkin) centerSkin++;
+        if (r > 150 && r > b * 1.3) warmCenter++;
+      }
+      if (isSkin) skinTone++;
     }
   }
 
   const pixels = size * size;
   const avgBright = brightness / pixels;
   const avgSat = saturation / pixels;
+  const centerSkinPct = centerCount > 0 ? centerSkin / centerCount : 0;
+  const warmCenterPct = centerCount > 0 ? warmCenter / centerCount : 0;
   const avgCenterBright = centerCount > 0 ? centerBright / centerCount : avgBright;
-
-  // Contrast: standard deviation of brightness
   const variance = values.reduce((sum, v) => sum + (v - avgBright) ** 2, 0) / pixels;
-  contrast = Math.sqrt(variance);
+  const contrast = Math.sqrt(variance);
 
   let score = 0;
-  // Prefer well-lit photos (not too dark, not blown out)
-  score += avgBright > 80 && avgBright < 200 ? 30 : 10;
-  // Prefer higher saturation (more colorful)
-  score += avgSat * 40;
-  // Prefer good contrast
-  score += Math.min(contrast, 60);
-  // Prefer center subject being bright (face likely lit)
-  score += avgCenterBright > avgBright ? 15 : 0;
-  // Slight bonus for portrait orientation
-  if (photo.img.height > photo.img.width) score += 5;
+
+  // HIGHEST PRIORITY: Skin showing in center (model's body visible)
+  score += centerSkinPct * 200;
+
+  // Warm tones in center (appealing skin/body tones)
+  score += warmCenterPct * 80;
+
+  // Good lighting (well-lit but not blown out)
+  score += avgBright > 90 && avgBright < 200 ? 25 : 5;
+
+  // Center subject brighter than edges (model is well-lit)
+  score += avgCenterBright > avgBright ? 20 : 0;
+
+  // Color saturation (vibrant, not washed out)
+  score += avgSat * 30;
+
+  // Good contrast
+  score += Math.min(contrast, 50);
+
+  // Portrait orientation bonus (full body shots)
+  if (photo.img.height > photo.img.width) score += 15;
+
+  // Overall skin tone presence
+  score += (skinTone / pixels) * 60;
 
   return score;
 }
@@ -1267,6 +1290,7 @@ function copyAlbumCaption() {
 
 // ── ZIP DOWNLOAD ──
 async function downloadZip() {
+  if (isMobile) { openSaveModal(photos); return; }
   const btn = document.querySelector(".album-actions .btn-primary") || document.getElementById("downloadAllBtn");
   const origText = btn ? btn.textContent : "";
   if (btn) { btn.textContent = "⏳ Building ZIP..."; btn.disabled = true; }
