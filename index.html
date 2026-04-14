@@ -104,6 +104,17 @@ body { font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-seri
 .album-actions { display: flex; gap: 10px; margin-top: 12px; }
 
 .hidden { display: none !important; }
+
+/* Save-to-Camera-Roll Modal (iOS) */
+.save-modal-overlay { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.95); overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; align-items: center; padding: 20px 16px 40px; }
+.save-modal-header { width: 100%; max-width: 500px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; position: sticky; top: 0; z-index: 10; background: rgba(0,0,0,0.9); padding: 10px 0; backdrop-filter: blur(8px); }
+.save-modal-header h3 { font-size: 17px; font-weight: 700; color: #fff; }
+.save-modal-close { background: #1a1a1a; border: 1px solid #333; color: #fff; font-size: 14px; padding: 8px 16px; border-radius: 20px; cursor: pointer; }
+.save-modal-hint { color: #FFFC00; font-size: 13px; text-align: center; margin-bottom: 16px; padding: 10px 16px; background: rgba(255,252,0,0.08); border: 1px solid rgba(255,252,0,0.2); border-radius: 12px; max-width: 500px; width: 100%; }
+.save-modal-grid { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 500px; align-items: center; }
+.save-modal-item { width: 100%; text-align: center; }
+.save-modal-item img { width: 100%; border-radius: 12px; display: block; }
+.save-modal-item .save-modal-label { font-size: 12px; color: #666; margin-top: 6px; }
 </style>
 </head>
 <body>
@@ -166,7 +177,7 @@ body { font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-seri
         <div class="album-actions">
           <button class="btn btn-ghost btn-sm" onclick="generateAlbumCaptions()">🔄 New Suggestions</button>
           <button class="btn btn-ghost btn-sm" onclick="copyAlbumCaption()">📋 Copy Caption</button>
-          <button class="btn btn-primary btn-sm" onclick="downloadZip()">📦 Download All as ZIP</button>
+          <button class="btn btn-primary btn-sm" id="albumDownloadBtn" onclick="downloadZip()">📦 Download All as ZIP</button>
         </div>
       </div>
       <div class="album-right">
@@ -188,7 +199,7 @@ body { font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-seri
       <div class="step"><span class="step-num">1.</span><span>Upload photos in story order</span></div>
       <div class="step"><span class="step-num">2.</span><span>Each photo is analyzed (pool, outdoor, selfie, etc.)</span></div>
       <div class="step"><span class="step-num">3.</span><span>Every caption is an engagement question</span></div>
-      <div class="step"><span class="step-num">4.</span><span>Download all — numbered and ready to post</span></div>
+      <div class="step"><span class="step-num">4.</span><span id="step4Text">Download all — numbered and ready to post</span></div>
     </div>
   </div>
 </div>
@@ -726,7 +737,7 @@ function updateUI() {
     headerBtns.style.display = "flex";
     stats.classList.remove("hidden");
     emptyState.classList.add("hidden");
-    downloadAllBtn.textContent = `Download All (${photos.length})`;
+    downloadAllBtn.textContent = isMobile ? `📲 Save All (${photos.length})` : `Download All (${photos.length})`;
     photoCount.textContent = `${photos.length} slide${photos.length !== 1 ? "s" : ""} in story`;
   } else {
     headerBtns.style.display = "none";
@@ -776,7 +787,7 @@ function renderGrid() {
         <textarea id="input-${photo.id}" rows="2">${photo.caption}</textarea>
         <div class="card-btns">
           <button class="btn btn-ghost btn-sm" onclick="regenerateOne(${photo.id})">🔄 New</button>
-          <button class="btn btn-primary btn-sm" onclick="downloadOne(${photo.id})">⬇ Save</button>
+          <button class="btn btn-primary btn-sm" onclick="downloadOne(${photo.id})">${isMobile ? '📲 Save' : '⬇ Save'}</button>
           <button class="btn-x" onclick="removePhoto(${photo.id})">✕</button>
         </div>
       </div>
@@ -865,10 +876,15 @@ function regenerateAll() {
   renderGrid();
 }
 
+// iOS / mobile detection
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const isMobile = isIOS || /Android/i.test(navigator.userAgent);
+
 function downloadOne(id) {
   const photo = photos.find(p => p.id === id);
   const canvas = document.getElementById(`canvas-${id}`);
   if (!canvas || !photo) return;
+  if (isMobile) { openSaveModal([photo]); return; }
   const link = document.createElement("a");
   const idx = photos.indexOf(photo) + 1;
   link.download = `snap_${String(idx).padStart(2,"0")}_${photo.name.replace(/\.[^.]+$/,"")}.jpg`;
@@ -887,6 +903,7 @@ function removePhoto(id) {
 }
 
 function downloadAll() {
+  if (isMobile) { openSaveModal(photos); return; }
   photos.forEach((photo, i) => {
     setTimeout(() => downloadOne(photo.id), i * 300);
   });
@@ -957,6 +974,14 @@ function copyAllQuestions() {
 }
 
 initQgen();
+
+// Update labels on mobile
+if (isMobile) {
+  const albumBtn = document.getElementById("albumDownloadBtn");
+  if (albumBtn) albumBtn.textContent = "📲 Save All to Camera Roll";
+  const step4 = document.getElementById("step4Text");
+  if (step4) step4.textContent = "Save all to camera roll — ready to post";
+}
 
 // ── ALBUM CAPTIONS ──
 // Based on Sophie & Lex's real album names — engagement hooks, short, with emoji
@@ -1230,6 +1255,7 @@ function copyAlbumCaption() {
 
 // ── ZIP DOWNLOAD ──
 async function downloadZip() {
+  if (isMobile) { openSaveModal(photos); return; }
   const btn = document.querySelector(".album-actions .btn-primary");
   const origText = btn.textContent;
   btn.textContent = "⏳ Building ZIP...";
@@ -1264,6 +1290,56 @@ async function downloadZip() {
 
   btn.textContent = origText;
   btn.disabled = false;
+}
+
+// ── SAVE TO CAMERA ROLL MODAL (iOS/Mobile) ──
+function openSaveModal(photoList) {
+  // Remove existing modal if any
+  const existing = document.getElementById("saveModal");
+  if (existing) existing.remove();
+
+  const overlay = document.createElement("div");
+  overlay.id = "saveModal";
+  overlay.className = "save-modal-overlay";
+
+  const header = document.createElement("div");
+  header.className = "save-modal-header";
+  header.innerHTML = `<h3>📲 Save to Camera Roll</h3><button class="save-modal-close" onclick="closeSaveModal()">✕ Close</button>`;
+  overlay.appendChild(header);
+
+  const hint = document.createElement("div");
+  hint.className = "save-modal-hint";
+  hint.textContent = "Hold each image → tap "Add to Photos"";
+  overlay.appendChild(hint);
+
+  const grid = document.createElement("div");
+  grid.className = "save-modal-grid";
+
+  photoList.forEach((photo, i) => {
+    const canvas = document.getElementById(`canvas-${photo.id}`);
+    if (!canvas) return;
+    const item = document.createElement("div");
+    item.className = "save-modal-item";
+    const img = document.createElement("img");
+    img.src = canvas.toDataURL("image/jpeg", 0.95);
+    img.alt = `Snap ${i + 1}`;
+    item.appendChild(img);
+    const label = document.createElement("div");
+    label.className = "save-modal-label";
+    label.textContent = `${i + 1} of ${photoList.length}`;
+    item.appendChild(label);
+    grid.appendChild(item);
+  });
+
+  overlay.appendChild(grid);
+  document.body.appendChild(overlay);
+  document.body.style.overflow = "hidden";
+}
+
+function closeSaveModal() {
+  const modal = document.getElementById("saveModal");
+  if (modal) modal.remove();
+  document.body.style.overflow = "";
 }
 
 // Upload zone
