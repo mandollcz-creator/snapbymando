@@ -199,7 +199,7 @@ body { font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-seri
       <div class="step"><span class="step-num">1.</span><span>Upload photos in story order</span></div>
       <div class="step"><span class="step-num">2.</span><span>Each photo is analyzed (pool, outdoor, selfie, etc.)</span></div>
       <div class="step"><span class="step-num">3.</span><span>Every caption is an engagement question</span></div>
-      <div class="step"><span class="step-num">4.</span><span id="step4Text">Download all — numbered and ready to post</span></div>
+      <div class="step"><span class="step-num">4.</span><span>Download all — numbered and ready to post</span></div>
     </div>
   </div>
 </div>
@@ -737,7 +737,7 @@ function updateUI() {
     headerBtns.style.display = "flex";
     stats.classList.remove("hidden");
     emptyState.classList.add("hidden");
-    downloadAllBtn.textContent = isMobile ? `📲 Save All (${photos.length})` : `Download All (${photos.length})`;
+    downloadAllBtn.textContent = `Download All (${photos.length})`;
     photoCount.textContent = `${photos.length} slide${photos.length !== 1 ? "s" : ""} in story`;
   } else {
     headerBtns.style.display = "none";
@@ -787,7 +787,7 @@ function renderGrid() {
         <textarea id="input-${photo.id}" rows="2">${photo.caption}</textarea>
         <div class="card-btns">
           <button class="btn btn-ghost btn-sm" onclick="regenerateOne(${photo.id})">🔄 New</button>
-          <button class="btn btn-primary btn-sm" onclick="downloadOne(${photo.id})">${isMobile ? '📲 Save' : '⬇ Save'}</button>
+          <button class="btn btn-primary btn-sm" onclick="downloadOne(${photo.id})">⬇ Save</button>
           <button class="btn-x" onclick="removePhoto(${photo.id})">✕</button>
         </div>
       </div>
@@ -979,8 +979,6 @@ initQgen();
 if (isMobile) {
   const albumBtn = document.getElementById("albumDownloadBtn");
   if (albumBtn) albumBtn.textContent = "📲 Save All to Camera Roll";
-  const step4 = document.getElementById("step4Text");
-  if (step4) step4.textContent = "Save all to camera roll — ready to post";
 }
 
 // ── ALBUM CAPTIONS ──
