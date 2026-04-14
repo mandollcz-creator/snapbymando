@@ -648,9 +648,7 @@ function detectCategory(img, fileName) {
   if (/morning|bed|lazy|home|cozy|pj|pajama/.test(name)) return "casual";
 
   // Background color analysis
-  const c = analyzeImage(img);
-
-  // Color analysis - conservative approach
+    // Color analysis - conservative approach
   const c = analyzeImage(img);
 
   // Pool/Beach: ONLY if overwhelming water colors (very high cyan+blue, no warm tones)
