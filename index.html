@@ -129,6 +129,7 @@ body { font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-seri
       <button class="btn btn-ghost btn-sm" onclick="clearAll()">Clear All</button>
       <button class="btn btn-ghost btn-sm" onclick="regenerateAll()">🔄 New Captions</button>
       <button class="btn btn-primary btn-sm" id="downloadAllBtn" onclick="downloadAll()">Download All</button>
+      <button class="btn btn-ghost btn-sm" id="saveToPhotosBtn" onclick="openSaveModal(photos)" style="display:none;">📲 Save to Photos</button>
     </div>
   </div>
 </div>
@@ -737,12 +738,17 @@ function updateUI() {
     headerBtns.style.display = "flex";
     stats.classList.remove("hidden");
     emptyState.classList.add("hidden");
-    downloadAllBtn.textContent = `Download All (${photos.length})`;
+    downloadAllBtn.textContent = photos.length >= 2 ? `📦 Download ZIP (${photos.length})` : `Download (${photos.length})`;
     photoCount.textContent = `${photos.length} slide${photos.length !== 1 ? "s" : ""} in story`;
+    // Show save-to-photos button on mobile when there are photos
+    const saveBtn = document.getElementById("saveToPhotosBtn");
+    if (saveBtn && isMobile) saveBtn.style.display = "inline-block";
   } else {
     headerBtns.style.display = "none";
     stats.classList.add("hidden");
     emptyState.classList.remove("hidden");
+    const saveBtn = document.getElementById("saveToPhotosBtn");
+    if (saveBtn) saveBtn.style.display = "none";
   }
 }
 
@@ -884,10 +890,24 @@ function downloadOne(id) {
   const photo = photos.find(p => p.id === id);
   const canvas = document.getElementById(`canvas-${id}`);
   if (!canvas || !photo) return;
-  if (isMobile) { openSaveModal([photo]); return; }
-  const link = document.createElement("a");
   const idx = photos.indexOf(photo) + 1;
-  link.download = `snap_${String(idx).padStart(2,"0")}_${photo.name.replace(/\.[^.]+$/,"")}.jpg`;
+  const fileName = `snap_${String(idx).padStart(2,"0")}_${photo.name.replace(/\.[^.]+$/,"")}.jpg`;
+
+  if (isIOS) {
+    // iOS: convert to blob and use share/download
+    canvas.toBlob((blob) => {
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], fileName, { type: "image/jpeg" })] })) {
+        navigator.share({ files: [new File([blob], fileName, { type: "image/jpeg" })] }).catch(() => {});
+      } else {
+        // Fallback: open in new tab for long-press save
+        openSaveModal([photo]);
+      }
+    }, "image/jpeg", 0.95);
+    return;
+  }
+
+  const link = document.createElement("a");
+  link.download = fileName;
   link.href = canvas.toDataURL("image/jpeg", 0.95);
   link.click();
 }
@@ -903,10 +923,14 @@ function removePhoto(id) {
 }
 
 function downloadAll() {
-  if (isMobile) { openSaveModal(photos); return; }
-  photos.forEach((photo, i) => {
-    setTimeout(() => downloadOne(photo.id), i * 300);
-  });
+  if (photos.length >= 2) {
+    // Always use ZIP for bulk download (works on iOS Safari too)
+    downloadZip();
+  } else {
+    photos.forEach((photo, i) => {
+      setTimeout(() => downloadOne(photo.id), i * 300);
+    });
+  }
 }
 
 function clearAll() {
@@ -975,10 +999,10 @@ function copyAllQuestions() {
 
 initQgen();
 
-// Update labels on mobile
+// Update labels on mobile — show both ZIP and Camera Roll options
 if (isMobile) {
-  const albumBtn = document.getElementById("albumDownloadBtn");
-  if (albumBtn) albumBtn.textContent = "📲 Save All to Camera Roll";
+  const saveBtn = document.getElementById("saveToPhotosBtn");
+  if (saveBtn) saveBtn.style.display = "inline-block";
 }
 
 // ── ALBUM CAPTIONS ──
@@ -1253,16 +1277,15 @@ function copyAlbumCaption() {
 
 // ── ZIP DOWNLOAD ──
 async function downloadZip() {
-  if (isMobile) { openSaveModal(photos); return; }
-  const btn = document.querySelector(".album-actions .btn-primary");
-  const origText = btn.textContent;
-  btn.textContent = "⏳ Building ZIP...";
-  btn.disabled = true;
+  const btn = document.querySelector(".album-actions .btn-primary") || document.getElementById("downloadAllBtn");
+  const origText = btn ? btn.textContent : "";
+  if (btn) { btn.textContent = "⏳ Building ZIP..."; btn.disabled = true; }
 
   try {
     const zip = new JSZip();
     const albumName = document.getElementById("albumCaption").value || "snap_story";
-    const folder = zip.folder(albumName.replace(/[^a-zA-Z0-9 _-]/g, "").trim());
+    const safeName = albumName.replace(/[^a-zA-Z0-9 _-]/g, "").trim() || "snap_story";
+    const folder = zip.folder(safeName);
 
     for (let i = 0; i < photos.length; i++) {
       const photo = photos[i];
@@ -1276,18 +1299,41 @@ async function downloadZip() {
     }
 
     const blob = await zip.generateAsync({ type: "blob" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = `${albumName.replace(/[^a-zA-Z0-9 _-]/g, "").trim() || "snap_story"}.zip`;
-    link.click();
-    URL.revokeObjectURL(link.href);
+
+    if (isIOS && navigator.share && navigator.canShare) {
+      // iOS: try Web Share API for zip file
+      const file = new File([blob], `${safeName}.zip`, { type: "application/zip" });
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: safeName });
+      } else {
+        // Fallback: open blob URL (Safari will show download prompt)
+        triggerBlobDownload(blob, `${safeName}.zip`);
+      }
+    } else {
+      triggerBlobDownload(blob, `${safeName}.zip`);
+    }
   } catch (e) {
     console.error("ZIP error:", e);
-    alert("Error creating ZIP. Try downloading individually.");
+    if (isIOS) {
+      // Last resort fallback for iOS
+      openSaveModal(photos);
+    } else {
+      alert("Error creating ZIP. Try downloading individually.");
+    }
   }
 
-  btn.textContent = origText;
-  btn.disabled = false;
+  if (btn) { btn.textContent = origText; btn.disabled = false; }
+}
+
+function triggerBlobDownload(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
 }
 
 // ── SAVE TO CAMERA ROLL MODAL (iOS/Mobile) ──
