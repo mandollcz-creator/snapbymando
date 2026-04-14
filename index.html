@@ -855,22 +855,43 @@ function changeCategory(id, newCat) {
 }
 
 function processFiles(files) {
-  Array.from(files).filter(f => f.type.startsWith("image/")).forEach((file) => {
-    const id = ++idCounter;
-    const url = URL.createObjectURL(file);
-    const photo = { id, name: file.name, caption: "Analyzing...", url, img: null, category: "selfie" };
-    photos.push(photo);
+  var imageFiles = Array.from(files).filter(function(f) { return f.type.startsWith("image/"); });
+  var queue = imageFiles.slice();
 
-    const img = new Image();
-    img.onload = () => {
-      photo.img = img;
-      photo.category = detectCategory(img, file.name);
-      photo.caption = getCaption(photo.category);
-      renderGrid();
-    };
-    img.src = url;
+  // Add all photos to state immediately (shows placeholders)
+  queue.forEach(function(file) {
+    var id = ++idCounter;
+    var url = URL.createObjectURL(file);
+    var photo = { id: id, name: file.name, caption: "Analyzing...", url: url, img: null, category: "selfie", _file: file };
+    photos.push(photo);
   });
   renderGrid();
+
+  // Process images one at a time to prevent crashes
+  var idx = 0;
+  function processNext() {
+    if (idx >= photos.length) return;
+    var photo = photos[idx];
+    idx++;
+    if (photo.img) { processNext(); return; } // already loaded
+    if (!photo.url) { processNext(); return; }
+    var img = new Image();
+    img.onload = function() {
+      photo.img = img;
+      photo.category = detectCategory(img, photo.name);
+      photo.caption = getCaption(photo.category);
+      renderGrid();
+      // Small delay before next to prevent browser freeze
+      setTimeout(processNext, 50);
+    };
+    img.onerror = function() {
+      photo.caption = "Could not load";
+      renderGrid();
+      setTimeout(processNext, 50);
+    };
+    img.src = photo.url;
+  }
+  processNext();
 }
 
 function regenerateOne(id) {
@@ -1131,69 +1152,66 @@ let currentThumbIdx = 0;
 let thumbScores = [];
 
 // ── THUMBNAIL SCORING ──
-// Picks the most eye-catching photo: full body shots, skin visible, curves
+// Picks the most eye-catching: full body > booty > bikini > face selfie
 function scoreForThumbnail(photo) {
   if (!photo.img) return 0;
   var canvas = document.createElement("canvas");
-  var size = 100;
+  var size = 80;
   canvas.width = size; canvas.height = size;
   var ctx = canvas.getContext("2d");
   ctx.drawImage(photo.img, 0, 0, size, size);
   var data = ctx.getImageData(0, 0, size, size).data;
 
-  var brightness = 0, saturation = 0;
-  var totalSkin = 0, lowerSkin = 0, midSkin = 0, upperSkin = 0;
-  var totalWarm = 0, values = [];
+  // Split image into 4 horizontal bands
+  var bands = [0, 0, 0, 0]; // top quarter, upper-mid, lower-mid, bottom quarter
+  var bandCount = [0, 0, 0, 0];
+  var totalSkin = 0;
+  var totalWarm = 0;
+  var pixels = size * size;
 
   for (var y = 0; y < size; y++) {
+    var band = y < size * 0.25 ? 0 : y < size * 0.5 ? 1 : y < size * 0.75 ? 2 : 3;
     for (var x = 0; x < size; x++) {
       var i = (y * size + x) * 4;
       var r = data[i], g = data[i+1], b = data[i+2];
-      var bright = (r + g + b) / 3;
-      brightness += bright;
-      values.push(bright);
-      var max = Math.max(r, g, b), min = Math.min(r, g, b);
-      saturation += (max - min) / (max || 1);
-      // Skin tone detection
-      var isSkin = r > 120 && r > g && r > b && (r - b) > 25 && g > 70 && bright > 75 && bright < 235;
-      var isWarm = r > 140 && r > b * 1.2;
-      if (isSkin) {
-        totalSkin++;
-        // Track where skin appears — lower body = more revealing
-        if (y > size * 0.55) lowerSkin++;
-        else if (y > size * 0.25) midSkin++;
-        else upperSkin++;
-      }
+      // Broad skin/body detection — warm tones
+      var isSkin = r > 110 && r > b && (r - b) > 20 && g > 60;
+      var isWarm = r > 130 && r > b * 1.15;
+      bandCount[band]++;
+      if (isSkin) { bands[band]++; totalSkin++; }
       if (isWarm) totalWarm++;
     }
   }
 
-  var pixels = size * size;
-  var avgBright = brightness / pixels;
-  var avgSat = saturation / pixels;
   var skinPct = totalSkin / pixels;
-  var lowerSkinPct = totalSkin > 0 ? lowerSkin / totalSkin : 0;
-  var skinSpread = (upperSkin > 0 ? 1 : 0) + (midSkin > 0 ? 1 : 0) + (lowerSkin > 0 ? 1 : 0);
-  var variance = values.reduce(function(s, v) { return s + (v - avgBright) * (v - avgBright); }, 0) / pixels;
-  var contrast = Math.sqrt(variance);
+  var bandPcts = bands.map(function(v, i) { return bandCount[i] > 0 ? v / bandCount[i] : 0; });
+  // How many bands have significant skin (>10%)
+  var bandsWithSkin = bandPcts.filter(function(p) { return p > 0.10; }).length;
+  // Lower body skin (bands 2+3)
+  var lowerBodySkin = (bands[2] + bands[3]) / (bandCount[2] + bandCount[3] || 1);
+  // Upper only = face selfie (band 0 has skin, bands 2+3 don't)
+  var isFaceOnly = bandPcts[0] > 0.15 && lowerBodySkin < 0.05;
 
   var score = 0;
-  // HIGHEST: Total skin visible (full body shows more skin than face)
-  score += skinPct * 300;
-  // BIG BONUS: Skin spread across image (full body, not just face)
-  score += skinSpread * 40;
-  // BONUS: Skin in lower half (body/booty/legs)
-  score += lowerSkinPct * 120;
+
+  // TOTAL SKIN — more skin visible = higher score
+  score += skinPct * 250;
+
+  // FULL BODY BONUS — skin across 3+ bands = full body shot
+  if (bandsWithSkin >= 3) score += 100;
+  else if (bandsWithSkin >= 2) score += 40;
+
+  // LOWER BODY BONUS — booty/legs/curves
+  score += lowerBodySkin * 150;
+
+  // PENALTY: Face-only selfie (skin only in top, nothing below)
+  if (isFaceOnly) score -= 80;
+
   // Warm tones overall
-  score += (totalWarm / pixels) * 80;
-  // Good lighting
-  score += avgBright > 85 && avgBright < 210 ? 25 : 5;
-  // Saturation
-  score += avgSat * 25;
-  // Contrast
-  score += Math.min(contrast, 45);
-  // Portrait orientation (full body shots)
-  if (photo.img.height > photo.img.width) score += 20;
+  score += (totalWarm / pixels) * 50;
+
+  // Portrait orientation bonus
+  if (photo.img.height > photo.img.width) score += 15;
 
   return score;
 }
