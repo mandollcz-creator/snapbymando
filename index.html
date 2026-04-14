@@ -650,10 +650,15 @@ function detectCategory(img, fileName) {
   // Background color analysis
   const c = analyzeImage(img);
 
-  if (c.bgCyanPct > 0.10) return "pool-beach";
-  if (c.bgBluePct > 0.15) return "pool-beach";
-  if (c.bgBluePct > 0.08 && c.bgBrightPct > 0.20) return "pool-beach";
-  if (c.bgCyanPct > 0.05 && c.bgBluePct > 0.05) return "pool-beach";
+  // Strong water indicators only (raise thresholds to avoid gym/indoor false positives)
+  if (c.bgCyanPct > 0.20) return "pool-beach";
+  if (c.bgBluePct > 0.25) return "pool-beach";
+  if (c.bgBluePct > 0.15 && c.bgBrightPct > 0.30 && c.bgWarmPct < 0.05) return "pool-beach";
+  if (c.bgCyanPct > 0.10 && c.bgBluePct > 0.10 && c.bgWarmPct < 0.05) return "pool-beach";
+
+  // Indoor gym: warm tones + moderate brightness + some contrast (mirrors/equipment)
+  if (c.bgWarmPct > 0.08 && c.bgBrightPct > 0.15 && c.bgDarkPct < 0.40 && c.bgBluePct < 0.10) return "gym-fitness";
+
   if (c.bgGreenPct > 0.18) return "outdoor";
   if (c.bgGreenPct > 0.10 && c.bgBrightPct > 0.25) return "outdoor";
   if (c.bgDarkPct > 0.55) return "night-out";
@@ -738,7 +743,7 @@ function updateUI() {
     headerBtns.style.display = "flex";
     stats.classList.remove("hidden");
     emptyState.classList.add("hidden");
-    downloadAllBtn.textContent = photos.length >= 2 ? `📦 Download ZIP (${photos.length})` : `Download (${photos.length})`;
+    downloadAllBtn.textContent = isMobile ? `📲 Save All (${photos.length})` : (photos.length >= 2 ? `📦 Download ZIP (${photos.length})` : `Download (${photos.length})`);
     photoCount.textContent = `${photos.length} slide${photos.length !== 1 ? "s" : ""} in story`;
   } else {
     headerBtns.style.display = "none";
@@ -912,6 +917,7 @@ function removePhoto(id) {
 }
 
 function downloadAll() {
+  if (isMobile) { openSaveModal(photos); return; }
   if (photos.length >= 2) { downloadZip(); } else {
     photos.forEach((photo, i) => { setTimeout(() => downloadOne(photo.id), i * 300); });
   }
