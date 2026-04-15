@@ -715,21 +715,21 @@ function drawCard(photo) {
 
   // ── EXACT SNAP STYLE ──
   // Real Snap caption: white text on dark translucent bar
-  const fontSize = 44;
-  ctx.font = `500 ${fontSize}px "Avenir Next", "Avenir", -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif`;
+  const fontSize = 40;
+  ctx.font = `600 ${fontSize}px "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif`;
   ctx.textBaseline = "middle";
 
   // Bar sizing and position — tight around text like real Snapchat
-  const paddingV = 22;
+  const paddingV = 18;
   const barHeight = fontSize + paddingV * 2;
-  const barY = H * 0.67;
+  const barY = H * 0.60;
 
   // Dark translucent bar
-  ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
+  ctx.fillStyle = "rgba(0, 0, 0, 0.40)";
   ctx.fillRect(0, barY, W, barHeight);
 
   // Pure white, matching Snapchat
-  ctx.fillStyle = "#f2f2f2";
+  ctx.fillStyle = "#ffffff";
   ctx.textAlign = "center";
   ctx.fillText(text, W / 2, barY + barHeight / 2, W - 60);
 }
