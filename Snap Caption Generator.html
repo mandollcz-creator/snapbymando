@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snap Caption Generator — Mando Media</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif; background: #0a0a0a; color: #fff; min-height: 100vh; }
+
+.header { position: sticky; top: 0; z-index: 50; background: rgba(10,10,10,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid #1a1a1a; }
+.header-inner { max-width: 1400px; margin: 0 auto; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
+.logo { font-size: 22px; font-weight: 700; }
+.logo span { color: #FFFC00; }
+.logo-sub { color: #666; font-size: 12px; margin-top: 2px; }
+.header-btns { display: flex; gap: 10px; align-items: center; }
+.btn { padding: 10px 18px; border-radius: 24px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.btn-ghost { background: #1a1a1a; color: #aaa; }
+.btn-ghost:hover { background: #252525; color: #fff; }
+.btn-primary { background: #FFFC00; color: #000; }
+.btn-primary:hover { background: #e6e300; }
+.btn-sm { padding: 8px 14px; font-size: 12px; }
+
+.container { max-width: 1400px; margin: 0 auto; padding: 28px 20px; }
+
+/* Question Generator */
+.qgen { background: #111; border: 1px solid #1a1a1a; border-radius: 16px; padding: 20px; margin-bottom: 28px; }
+.qgen-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+.qgen-header h3 { font-size: 16px; font-weight: 600; color: #ccc; }
+.qgen-cats { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.qgen-cat { padding: 7px 14px; border-radius: 20px; border: 1px solid #333; background: transparent; color: #888; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+.qgen-cat:hover { border-color: #555; color: #ccc; }
+.qgen-cat.active { background: #FFFC00; color: #000; border-color: #FFFC00; font-weight: 600; }
+.qgen-results { display: flex; flex-direction: column; gap: 8px; max-height: 320px; overflow-y: auto; }
+.qgen-results::-webkit-scrollbar { width: 4px; }
+.qgen-results::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+.qgen-item { display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 12px 16px; border-radius: 10px; font-size: 14px; color: #ddd; }
+.qgen-item .copy-btn { background: none; border: 1px solid #333; color: #888; padding: 4px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.qgen-item .copy-btn:hover { border-color: #FFFC00; color: #FFFC00; }
+.qgen-item .copy-btn.copied { border-color: #4ade80; color: #4ade80; }
+
+.section-divider { border: none; border-top: 1px solid #1a1a1a; margin: 8px 0 28px 0; }
+
+.upload-zone { border: 2px dashed #333; border-radius: 16px; padding: 50px 20px; text-align: center; cursor: pointer; transition: all 0.3s; background: rgba(20,20,20,0.5); }
+.upload-zone:hover { border-color: #555; }
+.upload-zone.drag-over { border-color: #FFFC00; background: rgba(255,252,0,0.03); }
+.upload-zone .icon { font-size: 40px; margin-bottom: 14px; }
+.upload-zone h2 { font-size: 18px; font-weight: 600; color: #ccc; margin-bottom: 6px; }
+.upload-zone p { color: #555; font-size: 13px; }
+.upload-zone input { display: none; }
+
+.stats { margin: 20px 0; display: flex; align-items: center; gap: 14px; font-size: 13px; color: #666; flex-wrap: wrap; }
+.stats .badge { background: #1a1a1a; padding: 5px 12px; border-radius: 8px; color: #aaa; }
+
+.story-flow { display: flex; gap: 16px; overflow-x: auto; padding: 8px 0 20px 0; scroll-snap-type: x mandatory; }
+.story-flow::-webkit-scrollbar { height: 6px; }
+.story-flow::-webkit-scrollbar-track { background: #111; border-radius: 3px; }
+.story-flow::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+.card { flex: 0 0 300px; scroll-snap-align: start; background: #111; border-radius: 14px; overflow: hidden; border: 1px solid #1a1a1a; position: relative; }
+.card-order { position: absolute; top: 10px; left: 10px; z-index: 5; background: rgba(0,0,0,0.7); color: #FFFC00; font-size: 13px; font-weight: 700; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.card-tag { position: absolute; top: 10px; right: 10px; z-index: 5; }
+.card-tag select { background: rgba(0,0,0,0.7); color: #fff; border: 1px solid #444; border-radius: 8px; padding: 4px 8px; font-size: 11px; cursor: pointer; outline: none; -webkit-appearance: none; }
+.card-tag select:focus { border-color: #FFFC00; }
+.card canvas { width: 100%; display: block; }
+.card-body { padding: 12px; }
+.card-body textarea { width: 100%; background: #1a1a1a; color: #fff; padding: 10px 12px; border-radius: 10px; border: 1px solid #2a2a2a; font-size: 13px; outline: none; resize: none; font-family: inherit; min-height: 56px; }
+.card-body textarea:focus { border-color: #FFFC00; }
+.card-btns { display: flex; gap: 6px; margin-top: 8px; }
+.card-btns .btn { flex: 1; font-size: 12px; padding: 8px 10px; }
+.card-btns .btn-x { flex: 0 0 36px; background: #1a1a1a; color: #555; border: none; border-radius: 10px; cursor: pointer; font-size: 14px; }
+.card-btns .btn-x:hover { background: #2a0a0a; color: #f66; }
+.detected-label { font-size: 11px; color: #666; margin-bottom: 6px; }
+.detected-label b { color: #FFFC00; }
+
+.card.dragging { opacity: 0.4; }
+.card.drag-over-card { border-color: #FFFC00; }
+
+.empty { margin-top: 50px; text-align: center; }
+.empty-box { display: inline-block; background: #111; border-radius: 14px; padding: 28px; max-width: 420px; text-align: left; }
+.empty-box h3 { font-size: 16px; font-weight: 600; color: #ccc; margin-bottom: 14px; }
+.step { display: flex; gap: 10px; margin-bottom: 10px; font-size: 13px; color: #777; }
+.step-num { color: #FFFC00; font-weight: 700; }
+
+/* Album Panel */
+.album-panel { background: #111; border: 1px solid #1a1a1a; border-radius: 16px; padding: 20px; margin-top: 24px; }
+.album-panel h3 { font-size: 16px; font-weight: 600; color: #ccc; margin-bottom: 16px; }
+.album-row { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+.album-left { flex: 1; min-width: 260px; }
+.album-right { flex: 0 0 200px; }
+.album-caption-box { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+.album-caption-box label { font-size: 11px; color: #666; display: block; margin-bottom: 6px; }
+.album-caption-box input { width: 100%; background: transparent; border: none; color: #fff; font-size: 15px; outline: none; font-family: inherit; }
+.album-suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.album-sug { padding: 6px 12px; border-radius: 16px; border: 1px solid #2a2a2a; background: transparent; color: #999; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+.album-sug:hover { border-color: #FFFC00; color: #FFFC00; }
+.album-thumb { position: relative; border-radius: 10px; overflow: hidden; border: 2px solid #FFFC00; }
+.album-thumb img { width: 100%; display: block; }
+.album-thumb-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); color: #FFFC00; font-size: 11px; font-weight: 600; text-align: center; padding: 4px; }
+.album-thumb-nav { display: flex; gap: 6px; margin-top: 8px; justify-content: center; }
+.album-thumb-nav button { padding: 4px 12px; border-radius: 8px; border: 1px solid #333; background: transparent; color: #888; font-size: 11px; cursor: pointer; }
+.album-thumb-nav button:hover { border-color: #FFFC00; color: #FFFC00; }
+.album-actions { display: flex; gap: 10px; margin-top: 12px; }
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div>
+      <div class="logo"><span>Snap</span> Caption Generator</div>
+      <div class="logo-sub">by Mando Media</div>
+    </div>
+    <div class="header-btns" id="headerBtns" style="display:none;">
+      <button class="btn btn-ghost btn-sm" onclick="clearAll()">Clear All</button>
+      <button class="btn btn-ghost btn-sm" onclick="regenerateAll()">🔄 New Captions</button>
+      <button class="btn btn-primary btn-sm" id="downloadAllBtn" onclick="downloadAll()">Download All</button>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <!-- QUESTION GENERATOR -->
+  <div class="qgen" id="qgenSection">
+    <div class="qgen-header">
+      <h3>💬 Caption Generator</h3>
+      <div>
+        <button class="btn btn-ghost btn-sm" onclick="generateQuestions()">🔄 Generate More</button>
+        <button class="btn btn-primary btn-sm" onclick="copyAllQuestions()">📋 Copy All</button>
+      </div>
+    </div>
+    <div class="qgen-cats" id="qgenCats"></div>
+    <div class="qgen-results" id="qgenResults"></div>
+  </div>
+
+  <hr class="section-divider">
+
+  <div class="upload-zone" id="uploadZone">
+    <div class="icon">📸</div>
+    <h2>Drop photos in story order</h2>
+    <p>Upload a batch — each photo is analyzed and gets a matching engagement question</p>
+    <input type="file" id="fileInput" multiple accept="image/*">
+  </div>
+
+  <div class="stats hidden" id="stats">
+    <span class="badge" id="photoCount"></span>
+    <span style="color:#222">|</span>
+    <span>Photos auto-analyzed. Change category with dropdown. Drag to reorder.</span>
+  </div>
+
+  <div class="story-flow" id="storyFlow"></div>
+
+  <!-- ALBUM PANEL -->
+  <div class="album-panel hidden" id="albumPanel">
+    <h3>📁 Album Settings</h3>
+    <div class="album-row">
+      <div class="album-left">
+        <div class="album-caption-box">
+          <label>Album Caption</label>
+          <input type="text" id="albumCaption" placeholder="Loading...">
+        </div>
+        <div class="album-suggestions" id="albumSuggestions"></div>
+        <div class="album-actions">
+          <button class="btn btn-ghost btn-sm" onclick="generateAlbumCaptions()">🔄 New Suggestions</button>
+          <button class="btn btn-ghost btn-sm" onclick="copyAlbumCaption()">📋 Copy Caption</button>
+          <button class="btn btn-primary btn-sm" onclick="downloadZip()">📦 Download All as ZIP</button>
+        </div>
+      </div>
+      <div class="album-right">
+        <div class="album-thumb" id="albumThumb">
+          <img id="albumThumbImg" src="" alt="Thumbnail">
+          <div class="album-thumb-label">⭐ Recommended Thumbnail</div>
+        </div>
+        <div class="album-thumb-nav">
+          <button onclick="prevThumb()">← Prev</button>
+          <button onclick="nextThumb()">Next →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty" id="emptyState">
+    <div class="empty-box">
+      <h3>How it works</h3>
+      <div class="step"><span class="step-num">1.</span><span>Upload photos in story order</span></div>
+      <div class="step"><span class="step-num">2.</span><span>Each photo is analyzed (pool, outdoor, selfie, etc.)</span></div>
+      <div class="step"><span class="step-num">3.</span><span>Every caption is an engagement question</span></div>
+      <div class="step"><span class="step-num">4.</span><span>Download all — numbered and ready to post</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+// ── ENGAGEMENT QUESTION CAPTIONS ──
+// EVERY caption is a question, prompt, or engagement hook that invites replies.
+// NO statements. NO descriptions. ONLY reply triggers.
+// 40+ per category. All Snap-safe.
+const CAPTIONS = {
+  "pool-beach": [
+    "Who's coming to the pool? 💙",
+    "Rate the vibes 1-10 ☀️",
+    "Would you come swim? 🏊‍♀️",
+    "Can it be summer forever? 🥺",
+    "Pool or beach which one? 🤔",
+    "Who else is at the pool today? 💦",
+    "Does it get better than this? 🌴",
+    "Where my water babies at? 🌊",
+    "Wanna come float with me? 💙",
+    "How's my tan looking? ☀️",
+    "Who needs a pool day? 🏊‍♀️",
+    "Can you guess the water temp? 🌊",
+    "Summer vibes or nah? ☀️",
+    "Would you live by a pool? 🤔",
+    "Who else misses the pool already? 🥺",
+    "What's your go to pool song? 🎶💦",
+    "Rate my pool day 1-10 💙",
+    "Beach day or pool day which wins? 🤔",
+    "Is there anything better than this? ☀️",
+    "Who wants to come next time? 💦",
+    "What are you doing if you're not at the pool? 🤔",
+    "Sun or shade pick one ☀️",
+    "Rate the water 1-10 💙",
+    "Wish you were here? 🌴",
+    "Who else needs vitamin sea? 🌊",
+    "Can every weekend be like this? 🥺",
+    "Would you swim in this? 💦",
+    "What's your favorite pool activity? 🤔",
+    "Am I the only one who never wants to leave? 🏊‍♀️",
+    "Rate my summer so far 1-10 ☀️",
+    "Who's jealous right now? 🌴👀",
+    "Pool time or nap time? 💦😴",
+    "How many pool days is too many? 🤔",
+    "Best part of summer? 🌊",
+    "Who else is soaking up the sun? ☀️",
+    "What's your summer anthem? 🎶☀️",
+    "Who's your pool buddy? 🏊‍♀️",
+    "Rate the tan lines 1-10 ☀️😂",
+    "Cannonball or dive which one? 💦🤔",
+    "Who else could do this every day? 🌊"
+  ],
+  "selfie": [
+    "Rate it 1-10? 🤔",
+    "What vibe am I giving? 💭",
+    "Guess what I'm about to do 🤔",
+    "Am I having a good hair day? 💇‍♀️",
+    "What do you think? 👀",
+    "Rate my mood 1-10 💭",
+    "What's the first thing you notice? 🤔",
+    "What emoji describes this pic? 🤔",
+    "How's the angle? 📱",
+    "Am I giving main character? 🎬",
+    "What would you caption this? 💭",
+    "What's the energy here? 🤔",
+    "Rate my selfie game 1-10 📱",
+    "What are you doing right now? 🤔",
+    "Who else is just snapping today? 📸",
+    "What should I do with my day? 🤔",
+    "How many selfies is too many? 😂",
+    "Rate my smile 1-10 😊",
+    "Who else is having a good day? ☀️",
+    "What do I look like I'm thinking about? 💭",
+    "Am I glowing or is that the light? 😂",
+    "Who wants to see more snaps? 👀",
+    "Good morning or good night which one? 🤔",
+    "How's everyone doing? 💭",
+    "What song goes with this? 🎶",
+    "Guess where I am? 🤔",
+    "What's everyone's plans today? 🤔",
+    "Who else is bored right now? 😂",
+    "Rate my energy today 1-10 💭",
+    "What's the best part of your day so far? 🤔",
+    "Who's still up? 👀",
+    "What are we doing this weekend? 🤔",
+    "Who else takes way too many selfies? 😂📱",
+    "Rate the lighting 1-10 ✨",
+    "What's on your mind right now? 💭",
+    "How would you describe my mood? 🤔",
+    "Who's having a better day than me? 👀",
+    "What are you listening to right now? 🎶",
+    "Snap me back? 📸",
+    "Who relates to this energy? 🤔"
+  ],
+  "outfit": [
+    "Rate the fit 1-10? 🤔",
+    "Would you wear this? 💭",
+    "This outfit or the last one? 👀",
+    "What should I change? 🤔",
+    "Does this work? Be honest 👀",
+    "Which color looks better? 🤔",
+    "Keep or return what do you think? 💭",
+    "Rate my style 1-10? ✨",
+    "What shoes would you wear with this? 👟",
+    "Overdressed or underdressed? 🤔",
+    "Is this giving what it's supposed to give? 👀",
+    "Would you rock this? 💭",
+    "What's missing from this fit? 🤔",
+    "Am I pulling this off? 👀",
+    "Should I wear this out? 🤔",
+    "Rate the color combo 1-10 ✨",
+    "Dress up or dress down which is better? 👀",
+    "What would you pair with this? 🤔",
+    "Is this too much or not enough? 💭",
+    "Help me pick — this or all black? 🤔",
+    "What vibe is this fit giving? 👀",
+    "Should I add a jacket? 🤔",
+    "Hair up or hair down with this? 💇‍♀️",
+    "Rate the mirror pic 1-10 📱",
+    "Can I get a fit check? ✨",
+    "Is this a go or a no? 👀",
+    "What do we think about this one? 🤔",
+    "Top or bottom which is cuter? 💭",
+    "Would you compliment this fit? 👀",
+    "Am I ready or do I need to change? 🤔",
+    "What occasion does this look say? 💭",
+    "Should I buy this in another color? 🤔",
+    "Rate the outfit honestly 1-10 👀",
+    "Who else takes forever to pick an outfit? 😂",
+    "Casual or dressy which do I do better? 🤔",
+    "Is this a summer or fall fit? 👀",
+    "What's your go to outfit? 🤔",
+    "Should I accessorize more? 💭",
+    "First thoughts? 👀",
+    "Closet raid was it worth it? 🤔"
+  ],
+  "night-out": [
+    "Who's coming out tonight? 🌙",
+    "Where should we go? 👀",
+    "Rate the going out look 1-10? ✨",
+    "Should I stay out or go home? 🤔",
+    "Who else is out tonight? 🌃",
+    "What are we drinking? 🥂",
+    "Is it too late to go out? 🤔🌙",
+    "Who's still awake? 👀",
+    "Should I call it a night? 🤔",
+    "What song is playing right now for you? 🎶",
+    "Rate the night vibes 1-10? 🌙",
+    "Anyone else having a late night? 🌃",
+    "Who wants to come next time? 👀",
+    "Is this a weeknight or weekend energy? 🤔",
+    "Where's everyone at tonight? 🌙",
+    "Should we go somewhere else? 👀",
+    "Rate my going out energy 1-10 🌃",
+    "Who needs a night out? 🤔",
+    "Best spot in your city for a night out? 🌙",
+    "Am I overdressed for this? 👀",
+    "Who else needed this tonight? 🥂",
+    "Stay or leave what would you do? 🤔",
+    "What's the best night out song? 🎶",
+    "Is it a going out kind of night? 🌙",
+    "Are we staying out or going home? 👀😂",
+    "Rate the squad 1-10 🌃",
+    "Who's the best person to go out with? 🤔",
+    "Friday or Saturday which is the better night? 👀",
+    "Would you go out on a weeknight? 🤔",
+    "What time do you usually go home? 🌙",
+    "Is this too much fun? 😂🌃",
+    "Who else loves going out? 👀",
+    "Next spot suggestions? 🤔",
+    "Rate my night out 1-10 ✨",
+    "Are we going again tomorrow? 🌙👀"
+  ],
+  "pet": [
+    "Rate my baby 1-10? 🐶",
+    "How cute is this face? 🥺",
+    "Could you say no to them? 🤔",
+    "Who's cuter me or my pet? 👀",
+    "What should I name their album? 🐾",
+    "Does your pet do this too? 🤔",
+    "Who else is obsessed with their pet? 🥺",
+    "Rate this cuteness 1-10 🐶",
+    "Would you pet them? 🤔💕",
+    "Is this the cutest thing you've seen today? 🥺",
+    "What breed do you think? 👀",
+    "Who's a better companion cats or dogs? 🤔",
+    "Can you handle this level of cute? 🥺",
+    "Should I get another one? 🤔🐾",
+    "Who else comes home to this? 💕",
+    "Would you steal my pet? 👀",
+    "Rate their pose 1-10 🐶😂",
+    "What's your pet's name? 🤔",
+    "Is my pet cuter than yours? 👀",
+    "Who wants to see more of them? 🐾",
+    "Can they be any cuter? 🥺",
+    "What are they thinking right now? 🤔💭",
+    "Should I make them their own snap? 🐶👀",
+    "Who else talks to their pet like a person? 😂",
+    "Rate their energy today 1-10 🐾",
+    "Isn't this the best face? 🥺",
+    "Do you think they know how cute they are? 🤔",
+    "What trick should I teach them? 🐾",
+    "Who wants to babysit? 👀😂",
+    "Is there anything better than coming home to this? 🥺",
+    "Pet content or people content which do you prefer? 🤔",
+    "Should they have their own Instagram? 🐶👀",
+    "Who has the cutest pet? Show me 🤔",
+    "Would your pet and mine be friends? 🐾💕",
+    "Tell me your pet isn't this cute? 👀"
+  ],
+  "food-drink": [
+    "Rate this plate 1-10? 🍽️",
+    "Would you eat this? 👀",
+    "What should I order next? 🤔",
+    "Have you tried this before? 🍽️",
+    "Should I get seconds? 😂",
+    "Rate the presentation 1-10? ✨",
+    "Who wants to come eat with me? 🤔",
+    "Is this a 10/10 plate? 🍽️",
+    "Foodies where are you? 👀",
+    "What's your go to order? 🤔",
+    "Should I finish it all? 😂🍽️",
+    "Who else is hungry right now? 🤤",
+    "Rate this meal honestly 1-10 🍽️",
+    "Would you share or keep it all? 🤔",
+    "What's missing from this plate? 👀",
+    "Have you been here before? 🤔",
+    "Should I order dessert too? 🍽️😂",
+    "What's the best food you've had this week? 🤔",
+    "Am I eating good or eating good? 👀",
+    "Who cooks better you or restaurants? 🤔",
+    "Rate the vibes of this spot 1-10 ✨",
+    "What would you add to this? 🍽️",
+    "Should I become a food reviewer? 😂👀",
+    "Is brunch the best meal? 🤔",
+    "Who else lives to eat? 🍽️",
+    "Dessert first or last? 🤔",
+    "Should I come back here? 👀",
+    "What's your comfort food? 🤔",
+    "Rate my food choices 1-10 🍽️",
+    "Who wants the recipe? 👀",
+    "Is this better than cooking at home? 🤔",
+    "What's the best restaurant you know? 🍽️",
+    "Should I try something new next time? 🤔",
+    "Who's down for a food date? 👀",
+    "Calories don't count today right? 😂"
+  ],
+  "car": [
+    "Where are we driving to? 🤔",
+    "Road trip who's coming? 👀",
+    "Rate the car lighting 1-10 📱",
+    "Ride along with me? 🚗",
+    "Where should I go? 🤔",
+    "Who else takes car selfies? 📱😂",
+    "Windows down or AC? 🤔",
+    "What song should I play? 🎶",
+    "Should I go somewhere fun? 🚗👀",
+    "Who wants to ride? 🤔",
+    "Am I the only one who sits in the car after parking? 😂",
+    "Rate my car vibes 1-10 🚗",
+    "Where would you drive right now? 🤔",
+    "Passenger seat is open who wants it? 👀",
+    "Music up or music down? 🎶🤔",
+    "Gas is expensive but should I still drive? 😂",
+    "Who else lives in their car? 🚗",
+    "Quick pic before I drive thoughts? 📱",
+    "What's your dream road trip? 🤔",
+    "Should I go left or right? 🚗👀",
+    "Rate my driving playlist 1-10 🎶",
+    "Who else gets the best lighting in the car? 📱",
+    "Where was the last place you drove to? 🤔",
+    "Should I take the long way home? 🚗",
+    "Sunroof or no sunroof? 🤔☀️",
+    "Who's riding with me today? 👀",
+    "Is the car selfie angle played out? 🤔📱",
+    "What's playing on your car radio? 🎶",
+    "Adventure or stay home which one? 🚗🤔",
+    "Keep driving or stop here? 👀"
+  ],
+  "gym-fitness": [
+    "Rate the progress 1-10? 💪",
+    "Who else is at the gym today? 🏋️",
+    "Should I do one more set? 🤔",
+    "What's your go to workout? 💪",
+    "Am I making progress? 👀",
+    "Leg day or arm day which is worse? 🤔",
+    "Who wants to be gym buddies? 🏋️",
+    "Rate my form 1-10 💪",
+    "Should I go heavier? 🤔",
+    "Who else is grinding today? 💪👀",
+    "Morning or night gym which is better? 🤔",
+    "How many days a week do you work out? 💪",
+    "Should I try a new routine? 🤔",
+    "Rate the gym fit 1-10 🏋️",
+    "Who's skipping leg day? Be honest 👀",
+    "Is this good progress? 🤔💪",
+    "What should I work on next? 🏋️",
+    "Am I gym ready? 👀",
+    "Who's been consistent this week? 💪🤔",
+    "Should I add cardio? 😂🏋️",
+    "Rate my dedication 1-10 💪",
+    "What's your workout split? 🤔",
+    "Who else takes gym selfies? 📱🏋️",
+    "Transformation pics who wants to see? 👀",
+    "Before or after which is more motivating? 🤔",
+    "Who needs a workout buddy? 💪",
+    "What's harder diet or exercise? 🤔",
+    "Am I overtraining or under training? 👀",
+    "Rate the pump 1-10 💪😂",
+    "Who's starting their fitness journey? 🏋️🤔"
+  ],
+  "outdoor": [
+    "Would you come here? 🤔",
+    "Rate this view 1-10? 😍",
+    "Where should I go next? 👀",
+    "Have you been somewhere like this? 🤔",
+    "Should I stay longer? 🥺",
+    "Who else loves the outdoors? 🌿",
+    "Can you guess where this is? 🤔",
+    "Is this real life? 😍👀",
+    "Would you live here? 🤔",
+    "What's the best view you've ever seen? 🌅",
+    "Rate the scenery 1-10 ✨",
+    "Who wants to explore with me? 🗺️",
+    "Should I come back here? 🤔",
+    "Does anyone else need this right now? 🌿",
+    "What's your favorite outdoor spot? 🤔",
+    "Rate the sky right now 1-10 🌅",
+    "Who else finds peace outside? 🌿",
+    "Would you hike to see this? 🤔🥾",
+    "Where should I travel next? 👀",
+    "Am I the only one who loves sunsets? 🌅🤔",
+    "Should I take more outdoor pics? 📸",
+    "What's better mountains or beach? 🤔",
+    "Who needs some fresh air? 🌿👀",
+    "Is this the best part of the day? 🌅",
+    "Would you walk here with me? 🤔",
+    "Rate my nature photography 1-10 📸",
+    "What sounds better forest or lake? 🤔",
+    "Can every day look like this? 🥺",
+    "Who else is an outdoor person? 🌿🤔",
+    "Should I explore more or head back? 👀",
+    "What do you love most about nature? 🌿",
+    "Is this postcard worthy? 📸🤔",
+    "Who's coming on the next adventure? 🗺️",
+    "Golden hour or blue hour? 🌅🤔",
+    "How do you spend your weekends? 👀"
+  ],
+  "casual": [
+    "What should I do today? 🤔",
+    "Who else has no plans? 😂",
+    "Stay in or go out? 🤔",
+    "Rate my lazy day fit 1-10 ☁️",
+    "What are you watching right now? 📺",
+    "Should I leave the house today? 🤔",
+    "Who else is being lazy? ☁️👀",
+    "What's the move today? 🤔",
+    "Netflix recommendations? 📺",
+    "Am I the only one doing nothing? 😂",
+    "Should I nap or get up? 🤔",
+    "Who else loves a day off? ☁️",
+    "What should I order for delivery? 🤔🍕",
+    "Rate my chill vibes 1-10 ☁️",
+    "Is it okay to do nothing all day? 😂",
+    "What's your comfort show? 📺🤔",
+    "Who else is still in bed? ☁️👀",
+    "Should I be productive or nah? 🤔",
+    "What's the best snack right now? 🍿",
+    "Who needs a lazy day? ☁️",
+    "Am I the only one who loves rainy days? 🤔☔",
+    "Should I cook or get takeout? 🤔",
+    "What would you do with a free day? 💭",
+    "Who's bored right now too? 😂👀",
+    "Rate my cozy setup 1-10 ☁️",
+    "Coffee or tea to start the day? 🤔☕",
+    "Is anyone else just vibing? ☁️",
+    "What's the best part of a lazy day? 🤔",
+    "Should I actually get dressed today? 😂",
+    "Who else appreciates doing nothing? ☁️💭",
+    "Breakfast in bed or at the table? 🤔",
+    "What's everyone up to? 👀",
+    "Am I allowed another nap? 😴🤔",
+    "Who's coming over to hang? ☁️",
+    "What should I binge watch? 📺🤔"
+  ]
+};
+
+// ── SMARTER IMAGE ANALYSIS ──
+// Samples background (edges/corners) separately from center (subject)
+function analyzeImage(img) {
+  const canvas = document.createElement("canvas");
+  const size = 150;
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0, size, size);
+  const data = ctx.getImageData(0, 0, size, size).data;
+
+  let bg = { blue: 0, green: 0, dark: 0, bright: 0, warm: 0, cyan: 0, total: 0 };
+
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const i = (y * size + x) * 4;
+      const r = data[i], g = data[i+1], b = data[i+2];
+      const brightness = (r + g + b) / 3;
+
+      // Background = top 40%, bottom 15%, left/right 20% edges
+      const isEdge = y < size * 0.4 || y > size * 0.85 || x < size * 0.2 || x > size * 0.8;
+
+      if (isEdge) {
+        bg.total++;
+        if (b > 100 && (b > r * 1.15 || (g > 120 && b > 100 && r < 150))) bg.blue++;
+        if (g > 130 && b > 130 && r < 160 && Math.abs(g - b) < 60) bg.cyan++;
+        if (g > 90 && g > r * 1.15 && g > b * 1.05) bg.green++;
+        if (brightness < 55) bg.dark++;
+        if (brightness > 170) bg.bright++;
+        if (r > 160 && r > b * 1.5) bg.warm++;
+      }
+    }
+  }
+
+  return {
+    bgBluePct: bg.total > 0 ? bg.blue / bg.total : 0,
+    bgCyanPct: bg.total > 0 ? bg.cyan / bg.total : 0,
+    bgGreenPct: bg.total > 0 ? bg.green / bg.total : 0,
+    bgDarkPct: bg.total > 0 ? bg.dark / bg.total : 0,
+    bgBrightPct: bg.total > 0 ? bg.bright / bg.total : 0,
+    bgWarmPct: bg.total > 0 ? bg.warm / bg.total : 0
+  };
+}
+
+function detectCategory(img, fileName) {
+  const name = fileName.toLowerCase();
+
+  // Filename keywords (highest priority)
+  if (/pool|swim|bikini|beach|ocean|water|lake|surf|tan|wave/.test(name)) return "pool-beach";
+  if (/dog|pet|cat|puppy|kitten|pup|bunny/.test(name)) return "pet";
+  if (/gym|workout|lift|fitness|muscle|flex/.test(name)) return "gym-fitness";
+  if (/food|eat|brunch|lunch|dinner|coffee|drink|cocktail|wine|restaurant/.test(name)) return "food-drink";
+  if (/car|drive|road|uber|parking|dashboard/.test(name)) return "car";
+  if (/night|club|party|bar|lounge/.test(name)) return "night-out";
+  if (/outfit|fit|dress|ootd|mirror|closet|fashion|style/.test(name)) return "outfit";
+  if (/hike|trail|mountain|nature|park|garden|sunset|sunrise|forest/.test(name)) return "outdoor";
+  if (/morning|bed|lazy|home|cozy|pj|pajama/.test(name)) return "casual";
+
+  // Background color analysis
+  const c = analyzeImage(img);
+
+  if (c.bgCyanPct > 0.10) return "pool-beach";
+  if (c.bgBluePct > 0.15) return "pool-beach";
+  if (c.bgBluePct > 0.08 && c.bgBrightPct > 0.20) return "pool-beach";
+  if (c.bgCyanPct > 0.05 && c.bgBluePct > 0.05) return "pool-beach";
+  if (c.bgGreenPct > 0.18) return "outdoor";
+  if (c.bgGreenPct > 0.10 && c.bgBrightPct > 0.25) return "outdoor";
+  if (c.bgDarkPct > 0.55) return "night-out";
+  if (c.bgWarmPct > 0.15 && c.bgDarkPct > 0.30) return "night-out";
+
+  return "selfie";
+}
+
+// ── STATE ──
+let photos = [];
+let idCounter = 0;
+let dragSrcId = null;
+let usedCaptions = new Set();
+
+function getCaption(category) {
+  const pool = CAPTIONS[category] || CAPTIONS["selfie"];
+  const unused = pool.filter(c => !usedCaptions.has(c));
+  const source = unused.length > 0 ? unused : pool;
+  const pick = source[Math.floor(Math.random() * source.length)];
+  usedCaptions.add(pick);
+  return pick;
+}
+
+function assignAllCaptions() {
+  usedCaptions = new Set();
+  photos.forEach(p => { p.caption = getCaption(p.category); });
+}
+
+// ── DRAW SNAP-STYLE CAPTION ──
+// Matches real Snapchat: thin translucent bar, regular weight white text, centered
+function drawCard(photo) {
+  const canvas = document.getElementById(`canvas-${photo.id}`);
+  if (!canvas || !photo.img) return;
+  const ctx = canvas.getContext("2d");
+  const img = photo.img;
+
+  const W = 1080;
+  const H = 1920;
+  canvas.width = W;
+  canvas.height = H;
+
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, W, H);
+
+  const scale = Math.max(W / img.width, H / img.height);
+  const dw = img.width * scale;
+  const dh = img.height * scale;
+  ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
+
+  const text = photo.caption;
+  if (!text) return;
+
+  // ── EXACT SNAP STYLE ──
+  // Real Snap caption: light gray text on dark translucent bar
+  const fontSize = 44;
+  ctx.font = `normal ${fontSize}px -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif`;
+  ctx.textBaseline = "middle";
+
+  // Bar sizing and position
+  const paddingV = 30;
+  const barHeight = fontSize + paddingV * 2;
+  const barY = H * 0.67;
+
+  // Dark translucent bar
+  ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
+  ctx.fillRect(0, barY, W, barHeight);
+
+  // Snap text is NOT pure white — it's a muted grayish-white ~#d0d0d0
+  ctx.fillStyle = "#d1d1d1";
+  ctx.textAlign = "center";
+  ctx.fillText(text, W / 2, barY + barHeight / 2, W - 60);
+}
+
+function updateUI() {
+  const headerBtns = document.getElementById("headerBtns");
+  const stats = document.getElementById("stats");
+  const emptyState = document.getElementById("emptyState");
+  const downloadAllBtn = document.getElementById("downloadAllBtn");
+  const photoCount = document.getElementById("photoCount");
+
+  if (photos.length > 0) {
+    headerBtns.style.display = "flex";
+    stats.classList.remove("hidden");
+    emptyState.classList.add("hidden");
+    downloadAllBtn.textContent = `Download All (${photos.length})`;
+    photoCount.textContent = `${photos.length} slide${photos.length !== 1 ? "s" : ""} in story`;
+  } else {
+    headerBtns.style.display = "none";
+    stats.classList.add("hidden");
+    emptyState.classList.remove("hidden");
+  }
+}
+
+const CAT_LABELS = {
+  "pool-beach": "🏊 Pool / Beach",
+  "selfie": "🤳 Selfie",
+  "outfit": "👗 Outfit",
+  "night-out": "🌙 Night Out",
+  "pet": "🐶 Pet",
+  "food-drink": "🍽️ Food / Drink",
+  "car": "🚗 Car",
+  "gym-fitness": "💪 Gym / Fitness",
+  "outdoor": "🌿 Outdoor",
+  "casual": "☁️ Casual"
+};
+
+function renderGrid() {
+  const flow = document.getElementById("storyFlow");
+  flow.innerHTML = "";
+
+  photos.forEach((photo, idx) => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.id = `card-${photo.id}`;
+    card.draggable = true;
+    card.dataset.pid = photo.id;
+
+    let selectOpts = Object.keys(CAT_LABELS).map(k =>
+      `<option value="${k}" ${k === photo.category ? "selected" : ""}>${CAT_LABELS[k]}</option>`
+    ).join("");
+
+    card.innerHTML = `
+      <div class="card-order">${idx + 1}</div>
+      <div class="card-tag">
+        <select id="cat-${photo.id}" onchange="changeCategory(${photo.id}, this.value)">
+          ${selectOpts}
+        </select>
+      </div>
+      <canvas id="canvas-${photo.id}" style="width:100%;display:block"></canvas>
+      <div class="card-body">
+        <div class="detected-label">Detected: <b>${CAT_LABELS[photo.category]}</b></div>
+        <textarea id="input-${photo.id}" rows="2">${photo.caption}</textarea>
+        <div class="card-btns">
+          <button class="btn btn-ghost btn-sm" onclick="regenerateOne(${photo.id})">🔄 New</button>
+          <button class="btn btn-primary btn-sm" onclick="downloadOne(${photo.id})">⬇ Save</button>
+          <button class="btn-x" onclick="removePhoto(${photo.id})">✕</button>
+        </div>
+      </div>
+    `;
+    flow.appendChild(card);
+
+    card.addEventListener("dragstart", (e) => {
+      dragSrcId = photo.id;
+      card.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move";
+    });
+    card.addEventListener("dragend", () => { card.classList.remove("dragging"); });
+    card.addEventListener("dragover", (e) => { e.preventDefault(); card.classList.add("drag-over-card"); });
+    card.addEventListener("dragleave", () => { card.classList.remove("drag-over-card"); });
+    card.addEventListener("drop", (e) => {
+      e.preventDefault();
+      card.classList.remove("drag-over-card");
+      if (dragSrcId === null || dragSrcId === photo.id) return;
+      const fromIdx = photos.findIndex(p => p.id === dragSrcId);
+      const toIdx = photos.findIndex(p => p.id === photo.id);
+      if (fromIdx === -1 || toIdx === -1) return;
+      const [moved] = photos.splice(fromIdx, 1);
+      photos.splice(toIdx, 0, moved);
+      dragSrcId = null;
+      renderGrid();
+    });
+
+    const textarea = document.getElementById(`input-${photo.id}`);
+    textarea.addEventListener("input", () => {
+      photo.caption = textarea.value;
+      drawCard(photo);
+    });
+
+    if (photo.img) drawCard(photo);
+  });
+
+  updateUI();
+  // Update album panel when photos change
+  setTimeout(() => updateAlbumPanel(), 100);
+}
+
+function changeCategory(id, newCat) {
+  const photo = photos.find(p => p.id === id);
+  if (!photo) return;
+  photo.category = newCat;
+  usedCaptions.delete(photo.caption);
+  photo.caption = getCaption(newCat);
+  const ta = document.getElementById(`input-${id}`);
+  if (ta) ta.value = photo.caption;
+  const label = document.querySelector(`#card-${id} .detected-label b`);
+  if (label) label.textContent = CAT_LABELS[newCat];
+  drawCard(photo);
+}
+
+function processFiles(files) {
+  Array.from(files).filter(f => f.type.startsWith("image/")).forEach((file) => {
+    const id = ++idCounter;
+    const url = URL.createObjectURL(file);
+    const photo = { id, name: file.name, caption: "Analyzing...", url, img: null, category: "selfie" };
+    photos.push(photo);
+
+    const img = new Image();
+    img.onload = () => {
+      photo.img = img;
+      photo.category = detectCategory(img, file.name);
+      photo.caption = getCaption(photo.category);
+      renderGrid();
+    };
+    img.src = url;
+  });
+  renderGrid();
+}
+
+function regenerateOne(id) {
+  const photo = photos.find(p => p.id === id);
+  if (!photo) return;
+  usedCaptions.delete(photo.caption);
+  photo.caption = getCaption(photo.category);
+  const ta = document.getElementById(`input-${id}`);
+  if (ta) ta.value = photo.caption;
+  drawCard(photo);
+}
+
+function regenerateAll() {
+  assignAllCaptions();
+  renderGrid();
+}
+
+function downloadOne(id) {
+  const photo = photos.find(p => p.id === id);
+  const canvas = document.getElementById(`canvas-${id}`);
+  if (!canvas || !photo) return;
+  const link = document.createElement("a");
+  const idx = photos.indexOf(photo) + 1;
+  link.download = `snap_${String(idx).padStart(2,"0")}_${photo.name.replace(/\.[^.]+$/,"")}.jpg`;
+  link.href = canvas.toDataURL("image/jpeg", 0.95);
+  link.click();
+}
+
+function removePhoto(id) {
+  const idx = photos.findIndex(p => p.id === id);
+  if (idx !== -1) {
+    usedCaptions.delete(photos[idx].caption);
+    URL.revokeObjectURL(photos[idx].url);
+    photos.splice(idx, 1);
+  }
+  renderGrid();
+}
+
+function downloadAll() {
+  photos.forEach((photo, i) => {
+    setTimeout(() => downloadOne(photo.id), i * 300);
+  });
+}
+
+function clearAll() {
+  photos.forEach(p => URL.revokeObjectURL(p.url));
+  photos = [];
+  usedCaptions = new Set();
+  renderGrid();
+}
+
+// ── QUESTION GENERATOR ──
+let qgenCategory = "pool-beach";
+
+function initQgen() {
+  const container = document.getElementById("qgenCats");
+  Object.keys(CAT_LABELS).forEach(k => {
+    const btn = document.createElement("button");
+    btn.className = "qgen-cat" + (k === qgenCategory ? " active" : "");
+    btn.textContent = CAT_LABELS[k];
+    btn.onclick = () => {
+      document.querySelectorAll(".qgen-cat").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      qgenCategory = k;
+      generateQuestions();
+    };
+    container.appendChild(btn);
+  });
+  generateQuestions();
+}
+
+function generateQuestions() {
+  const results = document.getElementById("qgenResults");
+  results.innerHTML = "";
+  const pool = CAPTIONS[qgenCategory] || CAPTIONS["selfie"];
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  const picks = shuffled.slice(0, 10);
+
+  picks.forEach((caption) => {
+    const item = document.createElement("div");
+    item.className = "qgen-item";
+    item.innerHTML = `
+      <span>${caption}</span>
+      <button class="copy-btn" onclick="copyCaption(this, '${caption.replace(/'/g, "\\'")}')">Copy</button>
+    `;
+    results.appendChild(item);
+  });
+}
+
+function copyCaption(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = "Copied!";
+    btn.classList.add("copied");
+    setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 1500);
+  });
+}
+
+function copyAllQuestions() {
+  const items = document.querySelectorAll("#qgenResults .qgen-item span");
+  const all = Array.from(items).map(s => s.textContent).join("\n");
+  navigator.clipboard.writeText(all).then(() => {
+    const btn = document.querySelector(".qgen-header .btn-primary");
+    const orig = btn.textContent;
+    btn.textContent = "✅ Copied!";
+    setTimeout(() => { btn.textContent = orig; }, 1500);
+  });
+}
+
+initQgen();
+
+// ── ALBUM CAPTIONS ──
+// Based on Sophie & Lex's real album names — engagement hooks, short, with emoji
+const ALBUM_CAPTIONS = {
+  "pool-beach": [
+    "Pool day hits different 💙",
+    "Water baby era 🌊",
+    "Summer state of mind ☀️",
+    "Catch me by the water 💦",
+    "Sun kissed and happy ☀️",
+    "Living for pool days 🏊‍♀️",
+    "Vitamin sea 🌊✨",
+    "Made for summer 🌴",
+    "Blue vibes only 💙",
+    "Poolside diaries 💦"
+  ],
+  "selfie": [
+    "Some experiences are just lessons ✨",
+    "Energy too good to ignore 🫠",
+    "Radiating good energy 🤍",
+    "Pretty things come in small packages 😌",
+    "Just a lil something 💋✨",
+    "Cute but I got attitude 😏✨",
+    "Face card never declines 💳",
+    "Main character energy 🎬",
+    "Mirror mirror 👀✨",
+    "Daily dose 📸"
+  ],
+  "outfit": [
+    "Fit check era 👗✨",
+    "Closet MVP 🏆",
+    "Mirror pic diaries 📱",
+    "OOTD collection 😌",
+    "Style points ✨",
+    "Rate the fits 🤔",
+    "Getting ready 💅",
+    "Dress up diaries 👗",
+    "Fashion moments 📸",
+    "Outfit rotation 🔄"
+  ],
+  "night-out": [
+    "Night out diaries 🌙",
+    "City lights 🌃✨",
+    "Weekend vibes 🥂",
+    "Late night adventures 🌙",
+    "Going out going out 🌃",
+    "Friday mode 🌙✨",
+    "After dark ✨",
+    "Night crew 🌃",
+    "Good times only 🥂",
+    "Out and about 🌙"
+  ],
+  "pet": [
+    "My whole heart 💕🐾",
+    "Best friend check 🐶",
+    "Pet parent diaries 🐾",
+    "This face though 🥺",
+    "My ride or die 🐕💕",
+    "Unconditional love 🐾",
+    "Main character of the house 🐶",
+    "Cuteness overload 🥺",
+    "Four legged bestie 🐾✨",
+    "Home is where they are 💕"
+  ],
+  "food-drink": [
+    "Eating good 🍽️✨",
+    "Food is my love language 💕",
+    "Brunch diaries 🍳",
+    "Taste test 🍽️",
+    "Foodies only 🤤",
+    "Menu highlights 🍽️✨",
+    "Good food good mood ✨",
+    "Feed me forever 🍽️",
+    "Treat yourself era 🤤",
+    "Food coma incoming 😂"
+  ],
+  "car": [
+    "Car selfie era 📱",
+    "Road trip diaries 🚗",
+    "On the move ✨",
+    "Dashboard views 🚗",
+    "Driving vibes 🎶",
+    "Passenger princess 👑",
+    "Adventure loading 🗺️",
+    "Best lighting in the car 📱✨",
+    "Going somewhere good 🚗",
+    "Window down music up 🎶"
+  ],
+  "gym-fitness": [
+    "Grind mode 💪✨",
+    "Progress check 📈",
+    "No days off 💪",
+    "Trust the process 🏋️",
+    "Building something 💪✨",
+    "Gym diaries 🏋️",
+    "Consistency is key 🔑",
+    "Earned not given ✨",
+    "Results loading 📈",
+    "Fitness era 💪"
+  ],
+  "outdoor": [
+    "Nature therapy 🌿",
+    "Golden hour collection 🌅",
+    "Adventures over everything ✨",
+    "Take me back 🥺💕",
+    "Exploring new spots 🗺️",
+    "Outdoor vibes 🌿✨",
+    "Fresh air diaries ☀️",
+    "Views for days 🌅",
+    "The great outdoors 🌿",
+    "Lost in the best way 🗺️"
+  ],
+  "casual": [
+    "Chill day diaries ☁️",
+    "No plans and I love it 😌",
+    "Cozy mode activated ☁️",
+    "Lazy day era 😌",
+    "Weekend mode ☁️✨",
+    "Home vibes 🏠",
+    "Rest day earned 😌",
+    "Doing nothing diaries ☁️",
+    "Maximum chill 😌",
+    "Recharge mode 🔋"
+  ]
+};
+
+let currentThumbIdx = 0;
+let thumbScores = [];
+
+// ── THUMBNAIL SCORING ──
+// Scores each photo on qualities that make a good album cover
+function scoreForThumbnail(photo) {
+  if (!photo.img) return 0;
+  const canvas = document.createElement("canvas");
+  const size = 100;
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(photo.img, 0, 0, size, size);
+  const data = ctx.getImageData(0, 0, size, size).data;
+
+  let brightness = 0;
+  let saturation = 0;
+  let contrast = 0;
+  let centerBright = 0;
+  let centerCount = 0;
+  let values = [];
+
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const i = (y * size + x) * 4;
+      const r = data[i], g = data[i+1], b = data[i+2];
+      const bright = (r + g + b) / 3;
+      brightness += bright;
+      values.push(bright);
+
+      // Saturation estimate
+      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+      saturation += (max - min) / (max || 1);
+
+      // Center focus bonus
+      const isCenter = x > size * 0.25 && x < size * 0.75 && y > size * 0.2 && y < size * 0.7;
+      if (isCenter) { centerBright += bright; centerCount++; }
+    }
+  }
+
+  const pixels = size * size;
+  const avgBright = brightness / pixels;
+  const avgSat = saturation / pixels;
+  const avgCenterBright = centerCount > 0 ? centerBright / centerCount : avgBright;
+
+  // Contrast: standard deviation of brightness
+  const variance = values.reduce((sum, v) => sum + (v - avgBright) ** 2, 0) / pixels;
+  contrast = Math.sqrt(variance);
+
+  let score = 0;
+  // Prefer well-lit photos (not too dark, not blown out)
+  score += avgBright > 80 && avgBright < 200 ? 30 : 10;
+  // Prefer higher saturation (more colorful)
+  score += avgSat * 40;
+  // Prefer good contrast
+  score += Math.min(contrast, 60);
+  // Prefer center subject being bright (face likely lit)
+  score += avgCenterBright > avgBright ? 15 : 0;
+  // Slight bonus for portrait orientation
+  if (photo.img.height > photo.img.width) score += 5;
+
+  return score;
+}
+
+function updateAlbumPanel() {
+  const panel = document.getElementById("albumPanel");
+  if (photos.length < 2) {
+    panel.classList.add("hidden");
+    return;
+  }
+  panel.classList.remove("hidden");
+
+  // Determine dominant category
+  const catCounts = {};
+  photos.forEach(p => { catCounts[p.category] = (catCounts[p.category] || 0) + 1; });
+  const dominantCat = Object.entries(catCounts).sort((a, b) => b[1] - a[1])[0][0];
+
+  // Generate album caption suggestions
+  generateAlbumCaptions(dominantCat);
+
+  // Score all photos for thumbnail
+  thumbScores = photos.map((p, i) => ({ idx: i, photo: p, score: scoreForThumbnail(p) }))
+    .sort((a, b) => b.score - a.score);
+
+  currentThumbIdx = 0;
+  updateThumbDisplay();
+}
+
+function generateAlbumCaptions(dominantCat) {
+  if (!dominantCat) {
+    const catCounts = {};
+    photos.forEach(p => { catCounts[p.category] = (catCounts[p.category] || 0) + 1; });
+    dominantCat = Object.entries(catCounts).sort((a, b) => b[1] - a[1])[0][0];
+  }
+
+  const pool = ALBUM_CAPTIONS[dominantCat] || ALBUM_CAPTIONS["selfie"];
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  const picks = shuffled.slice(0, 5);
+
+  // Set first as default
+  document.getElementById("albumCaption").value = picks[0];
+
+  // Show suggestions
+  const container = document.getElementById("albumSuggestions");
+  container.innerHTML = "";
+  picks.forEach(cap => {
+    const btn = document.createElement("button");
+    btn.className = "album-sug";
+    btn.textContent = cap;
+    btn.onclick = () => { document.getElementById("albumCaption").value = cap; };
+    container.appendChild(btn);
+  });
+}
+
+function updateThumbDisplay() {
+  if (thumbScores.length === 0) return;
+  const entry = thumbScores[currentThumbIdx];
+  const img = document.getElementById("albumThumbImg");
+  img.src = entry.photo.url;
+  const label = document.querySelector(".album-thumb-label");
+  label.textContent = `⭐ #${currentThumbIdx + 1} Best Thumbnail (Slide ${entry.idx + 1})`;
+}
+
+function prevThumb() {
+  if (thumbScores.length === 0) return;
+  currentThumbIdx = (currentThumbIdx - 1 + thumbScores.length) % thumbScores.length;
+  updateThumbDisplay();
+}
+
+function nextThumb() {
+  if (thumbScores.length === 0) return;
+  currentThumbIdx = (currentThumbIdx + 1) % thumbScores.length;
+  updateThumbDisplay();
+}
+
+function copyAlbumCaption() {
+  const cap = document.getElementById("albumCaption").value;
+  navigator.clipboard.writeText(cap).then(() => {
+    const btn = document.querySelector(".album-actions .btn-ghost:nth-child(2)");
+    const orig = btn.textContent;
+    btn.textContent = "✅ Copied!";
+    setTimeout(() => { btn.textContent = orig; }, 1500);
+  });
+}
+
+// ── ZIP DOWNLOAD ──
+async function downloadZip() {
+  const btn = document.querySelector(".album-actions .btn-primary");
+  const origText = btn.textContent;
+  btn.textContent = "⏳ Building ZIP...";
+  btn.disabled = true;
+
+  try {
+    const zip = new JSZip();
+    const albumName = document.getElementById("albumCaption").value || "snap_story";
+    const folder = zip.folder(albumName.replace(/[^a-zA-Z0-9 _-]/g, "").trim());
+
+    for (let i = 0; i < photos.length; i++) {
+      const photo = photos[i];
+      const canvas = document.getElementById(`canvas-${photo.id}`);
+      if (!canvas) continue;
+
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.95);
+      const base64 = dataUrl.split(",")[1];
+      const fileName = `snap_${String(i + 1).padStart(2, "0")}_${photo.name.replace(/\.[^.]+$/, "")}.jpg`;
+      folder.file(fileName, base64, { base64: true });
+    }
+
+    const blob = await zip.generateAsync({ type: "blob" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `${albumName.replace(/[^a-zA-Z0-9 _-]/g, "").trim() || "snap_story"}.zip`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  } catch (e) {
+    console.error("ZIP error:", e);
+    alert("Error creating ZIP. Try downloading individually.");
+  }
+
+  btn.textContent = origText;
+  btn.disabled = false;
+}
+
+// Upload zone
+const zone = document.getElementById("uploadZone");
+const fileInput = document.getElementById("fileInput");
+zone.addEventListener("click", () => fileInput.click());
+zone.addEventListener("dragover", (e) => { e.preventDefault(); zone.classList.add("drag-over"); });
+zone.addEventListener("dragleave", () => { zone.classList.remove("drag-over"); });
+zone.addEventListener("drop", (e) => { e.preventDefault(); zone.classList.remove("drag-over"); processFiles(e.dataTransfer.files); });
+fileInput.addEventListener("change", (e) => { processFiles(e.target.files); e.target.value = ""; });
+</script>
+</body>
+</html>
