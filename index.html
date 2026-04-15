@@ -715,13 +715,13 @@ function drawCard(photo) {
 
   // ── EXACT SNAP STYLE ──
   // Real Snap caption: white text on dark translucent bar
-  const fontSize = 48;
+  const fontSize = 40;
   ctx.font = `400 ${fontSize}px "Helvetica Neue", -apple-system, Helvetica, Arial, sans-serif`;
   ctx.textBaseline = "middle";
 
-  // Bar sizing and position — matches real Snapchat (~10% of height)
-  const barHeight = 100;
-  const barY = H * 0.64;
+  // Bar sizing and position — matches real Snapchat
+  const barHeight = 88;
+  const barY = H * 0.65;
 
   // Dark translucent bar
   ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
