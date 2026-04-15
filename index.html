@@ -3,1401 +3,2398 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mando Captions</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📸</text></svg>">
+<title>Mando Media — Creator Hub</title>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif; background: #0a0a0a; color: #fff; min-height: 100vh; }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-.header { position: sticky; top: 0; z-index: 50; background: rgba(10,10,10,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid #1a1a1a; }
-.header-inner { max-width: 1400px; margin: 0 auto; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
-.logo { font-size: 22px; font-weight: 700; }
-.logo span { color: #FFFC00; }
-.logo-sub { color: #666; font-size: 12px; margin-top: 2px; }
-.header-btns { display: flex; gap: 10px; align-items: center; }
-.btn { padding: 10px 18px; border-radius: 24px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-.btn-ghost { background: #1a1a1a; color: #aaa; }
-.btn-ghost:hover { background: #252525; color: #fff; }
-.btn-primary { background: #FFFC00; color: #000; }
-.btn-primary:hover { background: #e6e300; }
-.btn-sm { padding: 8px 14px; font-size: 12px; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-.container { max-width: 1400px; margin: 0 auto; padding: 28px 20px; }
+  :root {
+    --bg: #0d0f11;
+    --card: #151820;
+    --card-hover: #1a1f2a;
+    --border: #1e2430;
+    --text: #e8e8e8;
+    --text-dim: #7a8299;
+    --accent: #c9a74e;
+    --accent-dim: #a0822e;
+    --green: #22c55e;
+    --red: #ef4444
+    --blue: #3b82f6;
+    --purple: #a855f7;
+  }
 
-/* Question Generator */
-.qgen { background: #111; border: 1px solid #1a1a1a; border-radius: 16px; padding: 20px; margin-bottom: 28px; }
-.qgen-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
-.qgen-header h3 { font-size: 16px; font-weight: 600; color: #ccc; }
-.qgen-cats { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
-.qgen-cat { padding: 7px 14px; border-radius: 20px; border: 1px solid #333; background: transparent; color: #888; font-size: 12px; cursor: pointer; transition: all 0.2s; }
-.qgen-cat:hover { border-color: #555; color: #ccc; }
-.qgen-cat.active { background: #FFFC00; color: #000; border-color: #FFFC00; font-weight: 600; }
-.qgen-results { display: flex; flex-direction: column; gap: 8px; max-height: 320px; overflow-y: auto; }
-.qgen-results::-webkit-scrollbar { width: 4px; }
-.qgen-results::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
-.qgen-item { display: flex; align-items: center; justify-content: space-between; background: #1a1a1a; padding: 12px 16px; border-radius: 10px; font-size: 14px; color: #ddd; }
-.qgen-item .copy-btn { background: none; border: 1px solid #333; color: #888; padding: 4px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
-.qgen-item .copy-btn:hover { border-color: #FFFC00; color: #FFFC00; }
-.qgen-item .copy-btn.copied { border-color: #4ade80; color: #4ade80; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-.section-divider { border: none; border-top: 1px solid #1a1a1a; margin: 8px 0 28px 0; }
+  /* ── Layout ── */
+  .app { display: grid; grid-template-columns: 240px 1fr 300px; min-height: 100vh; }
 
-.upload-zone { border: 2px dashed #333; border-radius: 16px; padding: 50px 20px; text-align: center; cursor: pointer; transition: all 0.3s; background: rgba(20,20,20,0.5); }
-.upload-zone:hover { border-color: #555; }
-.upload-zone.drag-over { border-color: #FFFC00; background: rgba(255,252,0,0.03); }
-.upload-zone .icon { font-size: 40px; margin-bottom: 14px; }
-.upload-zone h2 { font-size: 18px; font-weight: 600; color: #ccc; margin-bottom: 6px; }
-.upload-zone p { color: #555; font-size: 13px; }
-.upload-zone input { display: none; }
+  /* ── Sidebar ── */
+  .sidebar {
+    background: #0a0c0e;
+    border-right: 1px solid var(--border);
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-brand {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .sidebar-brand .logo {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), #e8c95a);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px; color: #000;
+  }
+  .sidebar-brand h2 { font-size: 14px; font-weight: 700; }
+  .sidebar-brand p { font-size: 11px; color: var(--text-dim); }
 
-.stats { margin: 20px 0; display: flex; align-items: center; gap: 14px; font-size: 13px; color: #666; flex-wrap: wrap; }
-.stats .badge { background: #1a1a1a; padding: 5px 12px; border-radius: 8px; color: #aaa; }
+  .sidebar-nav { padding: 16px 0; flex: 1; }
+  .nav-section { padding: 8px 20px; font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-dim); font-weight: 600; }
+  .nav-item {
+    padding: 9px 20px;
+    font-size: 13px;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; align-items: center; gap: 10px;
+    user-select: none;
+  }
+  .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .nav-item.active { color: var(--accent); background: rgba(201,167,78,0.08); border-right: 2px solid var(--accent); }
+  .nav-icon { width: 16px; text-align: center; font-size: 14px; }
 
-.story-flow { display: flex; gap: 16px; overflow-x: auto; padding: 8px 0 20px 0; scroll-snap-type: x mandatory; }
-.story-flow::-webkit-scrollbar { height: 6px; }
-.story-flow::-webkit-scrollbar-track { background: #111; border-radius: 3px; }
-.story-flow::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+  .sidebar-accounts { padding: 16px 20px; border-top: 1px solid var(--border); }
+  .sidebar-accounts h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim); margin-bottom: 12px; }
+  .account-dot {
+    display: flex; align-items: center; gap: 8px;
+    padding: 5px 0; font-size: 12px; color: var(--text-dim);
+  }
+  .account-dot .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+  .more-accounts { font-size: 11px; color: var(--text-dim); padding: 4px 0; cursor: pointer; }
+  .more-accounts:hover { color: var(--accent); }
 
-.card { flex: 0 0 300px; scroll-snap-align: start; background: #111; border-radius: 14px; overflow: hidden; border: 1px solid #1a1a1a; position: relative; }
-.card-order { position: absolute; top: 10px; left: 10px; z-index: 5; background: rgba(0,0,0,0.7); color: #FFFC00; font-size: 13px; font-weight: 700; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-.card-tag { position: absolute; top: 10px; right: 10px; z-index: 5; }
-.card-tag select { background: rgba(0,0,0,0.7); color: #fff; border: 1px solid #444; border-radius: 8px; padding: 4px 8px; font-size: 11px; cursor: pointer; outline: none; -webkit-appearance: none; }
-.card-tag select:focus { border-color: #FFFC00; }
-.card canvas { width: 100%; display: block; }
-.card-body { padding: 12px; }
-.card-body textarea { width: 100%; background: #1a1a1a; color: #fff; padding: 10px 12px; border-radius: 10px; border: 1px solid #2a2a2a; font-size: 13px; outline: none; resize: none; font-family: inherit; min-height: 56px; }
-.card-body textarea:focus { border-color: #FFFC00; }
-.card-btns { display: flex; gap: 6px; margin-top: 8px; }
-.card-btns .btn { flex: 1; font-size: 12px; padding: 8px 10px; }
-.card-btns .btn-x { flex: 0 0 36px; background: #1a1a1a; color: #555; border: none; border-radius: 10px; cursor: pointer; font-size: 14px; }
-.card-btns .btn-x:hover { background: #2a0a0a; color: #f66; }
-.detected-label { font-size: 11px; color: #666; margin-bottom: 6px; }
-.detected-label b { color: #FFFC00; }
+  /* ── Main ── */
+  .main { padding: 24px 28px; overflow-y: auto; }
 
-.card.dragging { opacity: 0.4; }
-.card.drag-over-card { border-color: #FFFC00; }
+  .header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 28px;
+  }
+  .greeting h1 { font-size: 26px; font-weight: 700; }
+  .greeting p { font-size: 13px; color: var(--text-dim); margin-top: 4px; }
+  .header-actions { display: flex; align-items: center; gap: 12px; }
+  .btn {
+    padding: 8px 16px; border-radius: 8px; border: none;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-accent { background: var(--accent); color: #000; }
+  .btn-accent:hover { background: #d4b35a; }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+  .btn-outline:hover { border-color: var(--text-dim); }
+  .badge-tx {
+    background: rgba(34,197,94,0.12); color: var(--green);
+    padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;
+  }
 
-.empty { margin-top: 50px; text-align: center; }
-.empty-box { display: inline-block; background: #111; border-radius: 14px; padding: 28px; max-width: 420px; text-align: left; }
-.empty-box h3 { font-size: 16px; font-weight: 600; color: #ccc; margin-bottom: 14px; }
-.step { display: flex; gap: 10px; margin-bottom: 10px; font-size: 13px; color: #777; }
-.step-num { color: #FFFC00; font-weight: 700; }
+  /* ── Date Picker ── */
+  .date-bar {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 20px; flex-wrap: wrap;
+  }
+  .date-presets { display: flex; gap: 6px; flex-wrap: wrap; }
+  .preset-btn {
+    padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border);
+    background: transparent; color: var(--text-dim); font-size: 12px;
+    font-weight: 500; cursor: pointer; transition: all 0.15s;
+    font-family: 'Inter', sans-serif;
+  }
+  .preset-btn:hover { border-color: var(--text-dim); color: var(--text); }
+  .preset-btn.active {
+    background: var(--accent); color: #000; border-color: var(--accent); font-weight: 600;
+  }
+  .date-separator { color: var(--text-dim); font-size: 12px; margin: 0 2px; }
+  .date-custom {
+    display: flex; align-items: center; gap: 8px;
+    margin-left: auto;
+  }
+  .date-custom label { font-size: 11px; color: var(--text-dim); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+  .date-input {
+    padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--card); color: var(--text); font-size: 12px;
+    font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.15s;
+  }
+  .date-input:focus { border-color: var(--accent); }
+  .date-input::-webkit-calendar-picker-indicator { filter: invert(0.7); cursor: pointer; }
+  .date-apply {
+    padding: 6px 14px; border-radius: 8px; border: none;
+    background: var(--accent); color: #000; font-size: 12px;
+    font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: background 0.15s;
+  }
+  .date-apply:hover { background: #d4b35a; }
+  .date-range-label {
+    font-size: 11px; color: var(--text-dim); padding: 4px 0;
+    width: 100%;
+  }
 
-/* Album Panel */
-.album-panel { background: #111; border: 1px solid #1a1a1a; border-radius: 16px; padding: 20px; margin-top: 24px; }
-.album-panel h3 { font-size: 16px; font-weight: 600; color: #ccc; margin-bottom: 16px; }
-.album-row { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
-.album-left { flex: 1; min-width: 260px; }
-.album-right { flex: 0 0 200px; }
-.album-caption-box { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
-.album-caption-box label { font-size: 11px; color: #666; display: block; margin-bottom: 6px; }
-.album-caption-box input { width: 100%; background: transparent; border: none; color: #fff; font-size: 15px; outline: none; font-family: inherit; }
-.album-suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
-.album-sug { padding: 6px 12px; border-radius: 16px; border: 1px solid #2a2a2a; background: transparent; color: #999; font-size: 12px; cursor: pointer; transition: all 0.2s; }
-.album-sug:hover { border-color: #FFFC00; color: #FFFC00; }
-.album-thumb { position: relative; border-radius: 10px; overflow: hidden; border: 2px solid #FFFC00; }
-.album-thumb img { width: 100%; display: block; }
-.album-thumb-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); color: #FFFC00; font-size: 11px; font-weight: 600; text-align: center; padding: 4px; }
-.album-thumb-nav { display: flex; gap: 6px; margin-top: 8px; justify-content: center; }
-.album-thumb-nav button { padding: 4px 12px; border-radius: 8px; border: 1px solid #333; background: transparent; color: #888; font-size: 11px; cursor: pointer; }
-.album-thumb-nav button:hover { border-color: #FFFC00; color: #FFFC00; }
-.album-actions { display: flex; gap: 10px; margin-top: 12px; }
+  /* ── KPI Cards ── */
+  .kpi-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    margin-bottom: 28px;
+  }
+  .kpi-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 20px;
+    position: relative; overflow: hidden;
+  }
+  .kpi-card .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-dim); font-weight: 500; }
+  .kpi-card .value { font-size: 28px; font-weight: 700; margin: 8px 0 4px; }
+  .kpi-card .change { font-size: 11px; font-weight: 500; }
+  .kpi-card .change.up { color: var(--green); }
+  .kpi-card .change.down { color: var(--red); }
+  .kpi-card .sparkline { position: absolute; bottom: 0; right: 0; width: 80px; height: 40px; opacity: 0.4; }
+  .kpi-card.loading .value { color: var(--accent); font-size: 14px; }
 
-.hidden { display: none !important; }
+  /* ── Account Table ── */
+  .section-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 16px;
+  }
+  .section-header h2 { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .section-header .count { background: var(--accent); color: #000; font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 700; }
 
-@media (max-width: 768px) {
-  .mobile-hide { display: none !important; }
+  .accounts-table { width: 100%; border-collapse: collapse; margin-bottom: 28px; }
+  .accounts-table th {
+    text-align: left; font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.8px; color: var(--text-dim); font-weight: 600;
+    padding: 10px 12px; border-bottom: 1px solid var(--border);
+  }
+  .accounts-table td {
+    padding: 12px; font-size: 13px; border-bottom: 1px solid rgba(30,36,48,0.5);
+    vertical-align: middle;
+  }
+  .accounts-table tr:hover td { background: rgba(255,255,255,0.015); }
+  .account-cell { display: flex; align-items: center; gap: 10px; }
+  .account-cell img {
+    width: 32px; height: 32px; border-radius: 50%; object-fit: cover;
+    border: 2px solid var(--border);
+  }
+  .account-cell .name { font-weight: 600; font-size: 13px; }
+  .account-cell .username { font-size: 11px; color: var(--text-dim); }
+  .tag-free { background: rgba(59,130,246,0.12); color: var(--blue); padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; }
+  .tag-paid { background: rgba(168,85,247,0.12); color: var(--purple); padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; }
+  .money { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .money.positive { color: var(--green); }
+  .money.negative { color: var(--red); }
+
+  /* ── Revenue Breakdown ── */
+  .revenue-breakdown {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px; margin-bottom: 28px;
+  }
+  .revenue-breakdown h3 { font-size: 14px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .bar-chart { display: flex; flex-direction: column; gap: 10px; }
+  .bar-row { display: flex; align-items: center; gap: 12px; }
+  .bar-label { width: 120px; font-size: 12px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { flex: 1; height: 24px; background: rgba(255,255,255,0.04); border-radius: 6px; overflow: hidden; position: relative; }
+  .bar-fill { height: 100%; border-radius: 6px; transition: width 0.8s ease; display: flex; align-items: center; padding-left: 8px; font-size: 11px; font-weight: 600; color: #fff; min-width: 40px; }
+  .bar-amount { width: 80px; text-align: right; font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  /* ── Right Panel ── */
+  .right-panel {
+    background: #0a0c0e;
+    border-left: 1px solid var(--border);
+    padding: 24px 20px;
+    display: flex; flex-direction: column; gap: 24px;
+    overflow-y: auto;
+  }
+
+  .system-status { text-align: center; }
+  .system-status h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim); margin-bottom: 12px; }
+
+  .jarvis-orb {
+    width: 80px; height: 80px; margin: 0 auto 12px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, var(--accent), #7a5a10);
+    box-shadow: 0 0 30px rgba(201,167,78,0.3), 0 0 60px rgba(201,167,78,0.1);
+    animation: pulse 3s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 30px rgba(201,167,78,0.3); transform: scale(1); }
+    50% { box-shadow: 0 0 50px rgba(201,167,78,0.5); transform: scale(1.04); }
+  }
+  .system-status .status-text { font-size: 12px; color: var(--green); font-weight: 600; }
+
+  .panel-section h4 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--text-dim); margin-bottom: 12px; font-weight: 600;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .pipeline-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 0; font-size: 12px;
+  }
+  .pipeline-item .bar-mini {
+    width: 100px; height: 6px; background: rgba(255,255,255,0.06);
+    border-radius: 3px; overflow: hidden; margin: 0 10px;
+  }
+  .pipeline-item .bar-mini-fill { height: 100%; border-radius: 3px; }
+  .pipeline-item .count { font-weight: 600; color: var(--text-dim); min-width: 20px; text-align: right; }
+
+  .calendar-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 0; font-size: 12px;
+    border-bottom: 1px solid rgba(30,36,48,0.5);
+  }
+  .calendar-item .cal-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .calendar-item .cal-date { color: var(--text-dim); font-size: 11px; margin-left: auto; white-space: nowrap; }
+
+  .activity-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 0;
+  }
+  .activity-item .act-icon {
+    width: 28px; height: 28px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; flex-shrink: 0;
+  }
+  .activity-item .act-text { font-size: 12px; line-height: 1.4; }
+  .activity-item .act-time { font-size: 10px; color: var(--text-dim); }
+
+  .footer-note {
+    margin-top: auto; padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 10px; color: var(--text-dim); text-align: center;
+  }
+
+  /* ── Loading States ── */
+  .skeleton {
+    background: linear-gradient(90deg, var(--card) 25%, #1e2430 50%, var(--card) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 6px;
+  }
+  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+  /* ── View System ── */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── Accounts Overview Cards ── */
+  .accounts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .account-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .account-card:hover {
+    background: var(--card-hover);
+    border-color: var(--accent);
+  }
+  .account-card .avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: var(--border);
+  }
+  .account-card .info { flex: 1; }
+  .account-card .name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .account-card .username {
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .account-card .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+  .account-card .stat-item {
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+  .account-card .stat-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* ── Dropdown Select ── */
+  .select-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .select-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .select-group select {
+    padding: 8px 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+  }
+  .select-group select:hover {
+    border-color: var(--accent);
+  }
+
+  /* ── Transaction Table ── */
+  .transaction-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .transaction-table thead {
+    background: rgba(0,0,0,0.3);
+  }
+  .transaction-table th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--border);
+  }
+  .transaction-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text);
+  }
+  .transaction-table tbody tr:hover {
+    background: rgba(255,255,255,0.02);
+  }
+  .transaction-table .money {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .transaction-table .type {
+    color: var(--text-dim);
+    font-size: 11px;
+  }
+
+  /* ── Revenue Charts ── */
+  .chart-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+  .chart-container {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .chart-container h3 {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text);
+  }
+
+  /* ── Colored Bars ── */
+  .type-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .type-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .type-bar-label {
+    width: 100px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-dim);
+  }
+  .type-bar-track {
+    flex: 1;
+    height: 24px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .type-bar-fill {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+  }
+  .type-bar-amount {
+    width: 70px;
+    text-align: right;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* ── Link Tracking Bar ── */
+  .link-bar-track {
+    height: 20px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .link-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+  }
+  .link-cell {
+    font-weight: 500;
+  }
+  .bar-cell {
+    padding: 12px 16px !important;
+  }
+  .number {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .top-button {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+
+  /* ── Calendar Grid ── */
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .calendar-header {
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    padding: 8px 0;
+    letter-spacing: 0.5px;
+  }
+  .calendar-day {
+    aspect-ratio: 1;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .calendar-day:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .calendar-day .day-num {
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .calendar-day .day-amount {
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  /* ── Settings Panel ── */
+  .settings-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .settings-section h3 {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text);
+  }
+  .settings-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .settings-row:last-child {
+    border-bottom: none;
+  }
+  .settings-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+  .settings-value {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    font-family: 'Courier New', monospace;
+  }
+
+  /* ── Pagination ── */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .pagination button {
+    padding: 8px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .pagination button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 1200px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar, .right-panel { display: none; }
+    .chart-row { grid-template-columns: 1fr; }
+  }
+
+  /*    Mobile    */
+  @media (max-width: 768px) {
+    .main-content { padding: 16px 12px; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+    .kpi-card { padding: 14px 12px; }
+    .kpi-card .label { font-size: 10px; letter-spacing: 0.5px; }
+    .kpi-card .value { font-size: 22px; margin: 4px 0 2px; }
+    .kpi-card .change { font-size: 10px; }
+    .date-bar { flex-direction: column; align-items: stretch; gap: 8px; }
+    .date-presets { justify-content: flex-start; flex-wrap: wrap; }
+    .preset-btn { padding: 6px 10px; font-size: 11px; }
+    .date-custom { margin-left: 0; flex-wrap: wrap; gap: 6px; }
+    .date-input { width: 120px; font-size: 11px; }
+    .header-bar { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .section-header { flex-wrap: wrap; gap: 8px; }
+    .accounts-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .accounts-table th, .accounts-table td { white-space: nowrap; padding: 10px 8px; font-size: 12px; }
+    .account-cell .name { font-size: 12px; }
+    .account-cell .username { font-size: 10px; }
+    .account-cell img { width: 28px; height: 28px; }
+    .bar-label { width: 80px; font-size: 11px; }
+    .bar-amount { width: 60px; font-size: 11px; }
+    .chart-row { grid-template-columns: 1fr; }
+    h1 { font-size: 22px; }
+    .revenue-breakdown { padding: 14px; }
+  }
+/* Mobile Bottom Navigation */
+.mobile-nav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+  background: #0a0c0e; border-top: 1px solid var(--border);
+  padding: 6px 0 env(safe-area-inset-bottom, 8px);
+  justify-content: space-around; align-items: center;
+}
+.mobile-nav-item {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  font-size: 10px; color: var(--text-dim); cursor: pointer;
+  padding: 4px 8px; transition: color 0.15s; user-select: none;
+}
+.mobile-nav-item span:first-child { font-size: 18px; }
+.mobile-nav-item.active { color: var(--accent); }
+@media (max-width: 1200px) {
+  .mobile-nav { display: flex; }
+  .main-content { padding-bottom: 72px; }
 }
 
-/* Save-to-Camera-Roll Modal (iOS) */
-.save-modal-overlay { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.95); overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; align-items: center; padding: 20px 16px 40px; }
-.save-modal-header { width: 100%; max-width: 500px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; position: sticky; top: 0; z-index: 10; background: rgba(0,0,0,0.9); padding: 10px 0; backdrop-filter: blur(8px); }
-.save-modal-header h3 { font-size: 17px; font-weight: 700; color: #fff; }
-.save-modal-close { background: #1a1a1a; border: 1px solid #333; color: #fff; font-size: 14px; padding: 8px 16px; border-radius: 20px; cursor: pointer; }
-.save-modal-hint { color: #FFFC00; font-size: 13px; text-align: center; margin-bottom: 16px; padding: 10px 16px; background: rgba(255,252,0,0.08); border: 1px solid rgba(255,252,0,0.2); border-radius: 12px; max-width: 500px; width: 100%; }
-.save-modal-grid { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 500px; align-items: center; }
-.save-modal-item { width: 100%; text-align: center; }
-.save-modal-item img { width: 100%; border-radius: 12px; display: block; }
-.save-modal-item .save-modal-label { font-size: 12px; color: #666; margin-top: 6px; }
-</style>
+
+/* Loading Skeleton */
+@keyframes shimmer { 0%{background-position:-200px 0} 100%{background-position:200px 0} }
+.kpi-card.is-loading .value,.kpi-card.is-loading .change{background:linear-gradient(90deg,var(--card) 25%,var(--border) 50%,var(--card) 75%);background-size:400px 100%;animation:shimmer 1.5s ease-in-out infinite;border-radius:4px;color:transparent!important;min-width:80px;display:inline-block}
+/* Light Mode */
+:root.light-mode{--bg:#f5f5f7;--card:#fff;--card-hover:#f0f0f2;--border:#e0e0e4;--text:#1a1a2e;--text-dim:#6b7280;--accent:#c9a74e;--accent-dim:#a08822;--green:#16a34a;--red:#dc2626;--blue:#2563eb;--purple:#7c3aed}
+:root.light-mode .sidebar{background:#eaeaee}
+:root.light-mode .right-panel{background:#eaeaee}
+:root.light-mode .mobile-nav{background:#eaeaee;border-top-color:var(--border)}
+:root.light-mode .transaction-table th{background:#e8e8ec;color:var(--text)}
+:root.light-mode .nav-item:hover{background:rgba(0,0,0,0.05)}
+:root.light-mode .nav-item.active{color:var(--accent);border-right-color:var(--accent)}
+/* Toggle Switch */
+.theme-toggle{display:flex;align-items:center;gap:12px}
+.toggle-switch{position:relative;width:48px;height:26px;background:var(--border);border-radius:13px;cursor:pointer;transition:background 0.3s}
+.toggle-switch.active{background:var(--accent)}
+.toggle-switch::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform 0.3s}
+.toggle-switch.active::after{transform:translateX(22px)}
+/* Comparison Badge */
+.kpi-comparison{font-size:10px;margin-top:4px;padding:2px 6px;border-radius:4px;display:inline-block;font-weight:600}
+.kpi-comparison.up{background:rgba(34,197,94,0.15);color:var(--green)}
+.kpi-comparison.down{background:rgba(239,68,68,0.15);color:var(--red)}
+.kpi-comparison.neutral{background:rgba(123,130,153,0.15);color:var(--text-dim)}
+/* Message Tracker */
+.msg-tracker-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px}
+.msg-tracker-stats{display:flex;gap:12px}
+.msg-stat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 16px;text-align:center;min-width:90px}
+.msg-stat .stat-num{font-size:22px;font-weight:700}
+.msg-stat .stat-label{font-size:10px;text-transform:uppercase;color:var(--text-dim);letter-spacing:0.5px}
+
+/* ── Today vs Yesterday Comparison ── */
+.comparison-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 28px;
+}
+.comparison-section h3 {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.comparison-table th {
+  text-align: left;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-dim);
+  font-weight: 600;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.comparison-table td {
+  padding: 12px;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(30,36,48,0.5);
+  vertical-align: middle;
+}
+.comparison-table tr:hover td {
+  background: rgba(255,255,255,0.015);
+}
+.delta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.delta-pill.up {
+  background: rgba(34,197,94,0.12);
+  color: var(--green);
+}
+.delta-pill.down {
+  background: rgba(239,68,68,0.12);
+  color: var(--red);
+}
+.delta-pill.neutral {
+  background: rgba(122,130,153,0.12);
+  color: var(--text-dim);
+}
+.delta-arrow {
+  font-size: 14px;
+  font-weight: 700;
+}
+.comparison-bar-track {
+  height: 8px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+}
+.comparison-bar-today {
+  height: 100%;
+  border-radius: 4px 0 0 4px;
+  background: var(--accent);
+  transition: width 0.8s ease;
+}
+.comparison-bar-yesterday {
+  height: 100%;
+  border-radius: 0 4px 4px 0;
+  background: rgba(122,130,153,0.3);
+  transition: width 0.8s ease;
+}
+.comparison-legend {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+.comparison-legend span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+@media (max-width: 768px) {
+  .comparison-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .comparison-table th, .comparison-table td { white-space: nowrap; padding: 10px 8px; font-size: 12px; }
+}
+
+  </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="header-inner">
-    <div>
-      <div class="logo"><span>Mando</span> Captions</div>
-      <div class="logo-sub">by Mando Media</div>
-    </div>
-    <div class="header-btns" id="headerBtns" style="display:none;">
-      <button class="btn btn-ghost btn-sm" onclick="clearAll()">Clear All</button>
-      <button class="btn btn-ghost btn-sm" onclick="regenerateAll()">🔄 New Captions</button>
-      <button class="btn btn-primary btn-sm" id="downloadAllBtn" onclick="downloadAll()">Download All</button>
-      <button class="btn btn-ghost btn-sm" id="saveToPhotosBtn" onclick="openSaveModal(photos)" style="display:none;">📲 Save to Photos</button>
-    </div>
+<!-- Password Gate -->
+<div id="login-gate" style="display:none; position:fixed; inset:0; z-index:99999; background:#0d0f11; font-family:'Inter',-apple-system,sans-serif;">
+  <div style="max-width:360px; margin:20vh auto; padding:40px; background:#151820; border-radius:16px; border:1px solid #1e2430; text-align:center;">
+    <div style="width:56px;height:56px;background:linear-gradient(135deg,#c9a74e,#e8c95a);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;color:#000;margin:0 auto 20px;">M</div>
+    <h1 style="font-size:20px;font-weight:700;color:#e8e8e8;margin-bottom:6px;">Mando Media</h1>
+    <p style="font-size:13px;color:#7a8299;margin-bottom:28px;">Enter password to continue</p>
+    <input id="login-pw" type="password" placeholder="Password" autofocus
+      style="width:100%;padding:12px 16px;background:#0d0f11;border:1px solid #1e2430;border-radius:8px;color:#e8e8e8;font-size:14px;outline:none;margin-bottom:12px;font-family:inherit;"
+      onkeydown="if(event.key==='Enter')doLogin()">
+    <button onclick="doLogin()"
+      style="width:100%;padding:12px;background:linear-gradient(135deg,#c9a74e,#b8943f);border:none;border-radius:8px;color:#000;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit;">Sign In</button>
+    <p id="login-err" style="color:#ef4444;font-size:12px;margin-top:12px;display:none;">Incorrect password</p>
   </div>
 </div>
-
-<div class="container">
-  <!-- QUESTION GENERATOR -->
-  <div class="qgen" id="qgenSection">
-    <div class="qgen-header">
-      <h3>💬 Caption Generator</h3>
-      <div>
-        <button class="btn btn-ghost btn-sm" onclick="generateQuestions()">🔄 Generate More</button>
-        <button class="btn btn-primary btn-sm" onclick="copyAllQuestions()">📋 Copy All</button>
-      </div>
-    </div>
-    <div class="qgen-cats" id="qgenCats"></div>
-    <div class="qgen-results" id="qgenResults"></div>
-  </div>
-
-  <hr class="section-divider">
-
-  <div class="upload-zone" id="uploadZone">
-    <div class="icon">📸</div>
-    <h2>Drop photos in story order</h2>
-    <p>Upload a batch — each photo is analyzed and gets a matching engagement question</p>
-    <input type="file" id="fileInput" multiple accept="image/*">
-  </div>
-
-  <div class="stats hidden" id="stats">
-    <span class="badge" id="photoCount"></span>
-    <span style="color:#222">|</span>
-    <span>Photos auto-analyzed. Change category with dropdown. Drag to reorder.</span>
-  </div>
-
-  <div class="story-flow" id="storyFlow"></div>
-
-  <!-- ALBUM PANEL -->
-  <div class="album-panel hidden" id="albumPanel">
-    <h3>📁 Album Settings</h3>
-    <div class="album-row">
-      <div class="album-left">
-        <div class="album-caption-box">
-          <label>Album Caption</label>
-          <input type="text" id="albumCaption" placeholder="Loading...">
-        </div>
-        <div class="album-suggestions" id="albumSuggestions"></div>
-        <div class="album-actions">
-          <button class="btn btn-ghost btn-sm" onclick="generateAlbumCaptions()">🔄 New Suggestions</button>
-          <button class="btn btn-ghost btn-sm" onclick="copyAlbumCaption()">📋 Copy Caption</button>
-          <button class="btn btn-primary btn-sm mobile-hide" id="albumDownloadBtn" onclick="downloadZip()">📦 Download All as ZIP</button>
-        </div>
-      </div>
-      <div class="album-right">
-        <div class="album-thumb" id="albumThumb">
-          <img id="albumThumbImg" src="" alt="Thumbnail">
-          <div class="album-thumb-label">⭐ Recommended Thumbnail</div>
-        </div>
-        <div class="album-thumb-nav">
-          <button onclick="prevThumb()">← Prev</button>
-          <button onclick="nextThumb()">Next →</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="empty" id="emptyState">
-    <div class="empty-box">
-      <h3>How it works</h3>
-      <div class="step"><span class="step-num">1.</span><span>Upload photos in story order</span></div>
-      <div class="step"><span class="step-num">2.</span><span>Each photo is analyzed (pool, outdoor, selfie, etc.)</span></div>
-      <div class="step"><span class="step-num">3.</span><span>Every caption is an engagement question</span></div>
-      <div class="step"><span class="step-num">4.</span><span>Download all — numbered and ready to post</span></div>
-    </div>
-  </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
-// ── ENGAGEMENT QUESTION CAPTIONS ──
-// EVERY caption is a question, prompt, or engagement hook that invites replies.
-// NO statements. NO descriptions. ONLY reply triggers.
-// 40+ per category. All Snap-safe.
-const CAPTIONS = {
-  "pool-beach": [
-    "Who's coming to the pool? 💙",
-    "Rate the vibes 1-10 ☀️",
-    "Would you come swim? 🏊‍♀️",
-    "Can it be summer forever? 🥺",
-    "Pool or beach which one? 🤔",
-    "Who else is at the pool today? 💦",
-    "Does it get better than this? 🌴",
-    "Where my water babies at? 🌊",
-    "Wanna come float with me? 💙",
-    "How's my tan looking? ☀️",
-    "Who needs a pool day? 🏊‍♀️",
-    "Can you guess the water temp? 🌊",
-    "Summer vibes or nah? ☀️",
-    "Would you live by a pool? 🤔",
-    "Who else misses the pool already? 🥺",
-    "What's your go to pool song? 🎶💦",
-    "Rate my pool day 1-10 💙",
-    "Beach day or pool day which wins? 🤔",
-    "Is there anything better than this? ☀️",
-    "Who wants to come next time? 💦",
-    "What are you doing if you're not at the pool? 🤔",
-    "Sun or shade pick one ☀️",
-    "Rate the water 1-10 💙",
-    "Wish you were here? 🌴",
-    "Who else needs vitamin sea? 🌊",
-    "Can every weekend be like this? 🥺",
-    "Would you swim in this? 💦",
-    "What's your favorite pool activity? 🤔",
-    "Am I the only one who never wants to leave? 🏊‍♀️",
-    "Rate my summer so far 1-10 ☀️",
-    "Who's jealous right now? 🌴👀",
-    "Pool time or nap time? 💦😴",
-    "How many pool days is too many? 🤔",
-    "Best part of summer? 🌊",
-    "Who else is soaking up the sun? ☀️",
-    "What's your summer anthem? 🎶☀️",
-    "Who's your pool buddy? 🏊‍♀️",
-    "Rate the tan lines 1-10 ☀️😂",
-    "Cannonball or dive which one? 💦🤔",
-    "Who else could do this every day? 🌊"
-  ],
-  "selfie": [
-    "Rate it 1-10? 🤔",
-    "What vibe am I giving? 💭",
-    "Guess what I'm about to do 🤔",
-    "Am I having a good hair day? 💇‍♀️",
-    "What do you think? 👀",
-    "Rate my mood 1-10 💭",
-    "What's the first thing you notice? 🤔",
-    "What emoji describes this pic? 🤔",
-    "How's the angle? 📱",
-    "Am I giving main character? 🎬",
-    "What would you caption this? 💭",
-    "What's the energy here? 🤔",
-    "Rate my selfie game 1-10 📱",
-    "What are you doing right now? 🤔",
-    "Who else is just snapping today? 📸",
-    "What should I do with my day? 🤔",
-    "How many selfies is too many? 😂",
-    "Rate my smile 1-10 😊",
-    "Who else is having a good day? ☀️",
-    "What do I look like I'm thinking about? 💭",
-    "Am I glowing or is that the light? 😂",
-    "Who wants to see more snaps? 👀",
-    "Good morning or good night which one? 🤔",
-    "How's everyone doing? 💭",
-    "What song goes with this? 🎶",
-    "Guess where I am? 🤔",
-    "What's everyone's plans today? 🤔",
-    "Who else is bored right now? 😂",
-    "Rate my energy today 1-10 💭",
-    "What's the best part of your day so far? 🤔",
-    "Who's still up? 👀",
-    "What are we doing this weekend? 🤔",
-    "Who else takes way too many selfies? 😂📱",
-    "Rate the lighting 1-10 ✨",
-    "What's on your mind right now? 💭",
-    "How would you describe my mood? 🤔",
-    "Who's having a better day than me? 👀",
-    "What are you listening to right now? 🎶",
-    "Snap me back? 📸",
-    "Who relates to this energy? 🤔"
-  ],
-  "outfit": [
-    "Rate the fit 1-10? 🤔",
-    "Would you wear this? 💭",
-    "This outfit or the last one? 👀",
-    "What should I change? 🤔",
-    "Does this work? Be honest 👀",
-    "Which color looks better? 🤔",
-    "Keep or return what do you think? 💭",
-    "Rate my style 1-10? ✨",
-    "What shoes would you wear with this? 👟",
-    "Overdressed or underdressed? 🤔",
-    "Is this giving what it's supposed to give? 👀",
-    "Would you rock this? 💭",
-    "What's missing from this fit? 🤔",
-    "Am I pulling this off? 👀",
-    "Should I wear this out? 🤔",
-    "Rate the color combo 1-10 ✨",
-    "Dress up or dress down which is better? 👀",
-    "What would you pair with this? 🤔",
-    "Is this too much or not enough? 💭",
-    "Help me pick — this or all black? 🤔",
-    "What vibe is this fit giving? 👀",
-    "Should I add a jacket? 🤔",
-    "Hair up or hair down with this? 💇‍♀️",
-    "Rate the mirror pic 1-10 📱",
-    "Can I get a fit check? ✨",
-    "Is this a go or a no? 👀",
-    "What do we think about this one? 🤔",
-    "Top or bottom which is cuter? 💭",
-    "Would you compliment this fit? 👀",
-    "Am I ready or do I need to change? 🤔",
-    "What occasion does this look say? 💭",
-    "Should I buy this in another color? 🤔",
-    "Rate the outfit honestly 1-10 👀",
-    "Who else takes forever to pick an outfit? 😂",
-    "Casual or dressy which do I do better? 🤔",
-    "Is this a summer or fall fit? 👀",
-    "What's your go to outfit? 🤔",
-    "Should I accessorize more? 💭",
-    "First thoughts? 👀",
-    "Closet raid was it worth it? 🤔"
-  ],
-  "night-out": [
-    "Who's coming out tonight? 🌙",
-    "Where should we go? 👀",
-    "Rate the going out look 1-10? ✨",
-    "Should I stay out or go home? 🤔",
-    "Who else is out tonight? 🌃",
-    "What are we drinking? 🥂",
-    "Is it too late to go out? 🤔🌙",
-    "Who's still awake? 👀",
-    "Should I call it a night? 🤔",
-    "What song is playing right now for you? 🎶",
-    "Rate the night vibes 1-10? 🌙",
-    "Anyone else having a late night? 🌃",
-    "Who wants to come next time? 👀",
-    "Is this a weeknight or weekend energy? 🤔",
-    "Where's everyone at tonight? 🌙",
-    "Should we go somewhere else? 👀",
-    "Rate my going out energy 1-10 🌃",
-    "Who needs a night out? 🤔",
-    "Best spot in your city for a night out? 🌙",
-    "Am I overdressed for this? 👀",
-    "Who else needed this tonight? 🥂",
-    "Stay or leave what would you do? 🤔",
-    "What's the best night out song? 🎶",
-    "Is it a going out kind of night? 🌙",
-    "Are we staying out or going home? 👀😂",
-    "Rate the squad 1-10 🌃",
-    "Who's the best person to go out with? 🤔",
-    "Friday or Saturday which is the better night? 👀",
-    "Would you go out on a weeknight? 🤔",
-    "What time do you usually go home? 🌙",
-    "Is this too much fun? 😂🌃",
-    "Who else loves going out? 👀",
-    "Next spot suggestions? 🤔",
-    "Rate my night out 1-10 ✨",
-    "Are we going again tomorrow? 🌙👀"
-  ],
-  "pet": [
-    "Rate my baby 1-10? 🐶",
-    "How cute is this face? 🥺",
-    "Could you say no to them? 🤔",
-    "Who's cuter me or my pet? 👀",
-    "What should I name their album? 🐾",
-    "Does your pet do this too? 🤔",
-    "Who else is obsessed with their pet? 🥺",
-    "Rate this cuteness 1-10 🐶",
-    "Would you pet them? 🤔💕",
-    "Is this the cutest thing you've seen today? 🥺",
-    "What breed do you think? 👀",
-    "Who's a better companion cats or dogs? 🤔",
-    "Can you handle this level of cute? 🥺",
-    "Should I get another one? 🤔🐾",
-    "Who else comes home to this? 💕",
-    "Would you steal my pet? 👀",
-    "Rate their pose 1-10 🐶😂",
-    "What's your pet's name? 🤔",
-    "Is my pet cuter than yours? 👀",
-    "Who wants to see more of them? 🐾",
-    "Can they be any cuter? 🥺",
-    "What are they thinking right now? 🤔💭",
-    "Should I make them their own snap? 🐶👀",
-    "Who else talks to their pet like a person? 😂",
-    "Rate their energy today 1-10 🐾",
-    "Isn't this the best face? 🥺",
-    "Do you think they know how cute they are? 🤔",
-    "What trick should I teach them? 🐾",
-    "Who wants to babysit? 👀😂",
-    "Is there anything better than coming home to this? 🥺",
-    "Pet content or people content which do you prefer? 🤔",
-    "Should they have their own Instagram? 🐶👀",
-    "Who has the cutest pet? Show me 🤔",
-    "Would your pet and mine be friends? 🐾💕",
-    "Tell me your pet isn't this cute? 👀"
-  ],
-  "food-drink": [
-    "Rate this plate 1-10? 🍽️",
-    "Would you eat this? 👀",
-    "What should I order next? 🤔",
-    "Have you tried this before? 🍽️",
-    "Should I get seconds? 😂",
-    "Rate the presentation 1-10? ✨",
-    "Who wants to come eat with me? 🤔",
-    "Is this a 10/10 plate? 🍽️",
-    "Foodies where are you? 👀",
-    "What's your go to order? 🤔",
-    "Should I finish it all? 😂🍽️",
-    "Who else is hungry right now? 🤤",
-    "Rate this meal honestly 1-10 🍽️",
-    "Would you share or keep it all? 🤔",
-    "What's missing from this plate? 👀",
-    "Have you been here before? 🤔",
-    "Should I order dessert too? 🍽️😂",
-    "What's the best food you've had this week? 🤔",
-    "Am I eating good or eating good? 👀",
-    "Who cooks better you or restaurants? 🤔",
-    "Rate the vibes of this spot 1-10 ✨",
-    "What would you add to this? 🍽️",
-    "Should I become a food reviewer? 😂👀",
-    "Is brunch the best meal? 🤔",
-    "Who else lives to eat? 🍽️",
-    "Dessert first or last? 🤔",
-    "Should I come back here? 👀",
-    "What's your comfort food? 🤔",
-    "Rate my food choices 1-10 🍽️",
-    "Who wants the recipe? 👀",
-    "Is this better than cooking at home? 🤔",
-    "What's the best restaurant you know? 🍽️",
-    "Should I try something new next time? 🤔",
-    "Who's down for a food date? 👀",
-    "Calories don't count today right? 😂"
-  ],
-  "car": [
-    "Where are we driving to? 🤔",
-    "Road trip who's coming? 👀",
-    "Rate the car lighting 1-10 📱",
-    "Ride along with me? 🚗",
-    "Where should I go? 🤔",
-    "Who else takes car selfies? 📱😂",
-    "Windows down or AC? 🤔",
-    "What song should I play? 🎶",
-    "Should I go somewhere fun? 🚗👀",
-    "Who wants to ride? 🤔",
-    "Am I the only one who sits in the car after parking? 😂",
-    "Rate my car vibes 1-10 🚗",
-    "Where would you drive right now? 🤔",
-    "Passenger seat is open who wants it? 👀",
-    "Music up or music down? 🎶🤔",
-    "Gas is expensive but should I still drive? 😂",
-    "Who else lives in their car? 🚗",
-    "Quick pic before I drive thoughts? 📱",
-    "What's your dream road trip? 🤔",
-    "Should I go left or right? 🚗👀",
-    "Rate my driving playlist 1-10 🎶",
-    "Who else gets the best lighting in the car? 📱",
-    "Where was the last place you drove to? 🤔",
-    "Should I take the long way home? 🚗",
-    "Sunroof or no sunroof? 🤔☀️",
-    "Who's riding with me today? 👀",
-    "Is the car selfie angle played out? 🤔📱",
-    "What's playing on your car radio? 🎶",
-    "Adventure or stay home which one? 🚗🤔",
-    "Keep driving or stop here? 👀"
-  ],
-  "gym-fitness": [
-    "Rate the progress 1-10? 💪",
-    "Who else is at the gym today? 🏋️",
-    "Should I do one more set? 🤔",
-    "What's your go to workout? 💪",
-    "Am I making progress? 👀",
-    "Leg day or arm day which is worse? 🤔",
-    "Who wants to be gym buddies? 🏋️",
-    "Rate my form 1-10 💪",
-    "Should I go heavier? 🤔",
-    "Who else is grinding today? 💪👀",
-    "Morning or night gym which is better? 🤔",
-    "How many days a week do you work out? 💪",
-    "Should I try a new routine? 🤔",
-    "Rate the gym fit 1-10 🏋️",
-    "Who's skipping leg day? Be honest 👀",
-    "Is this good progress? 🤔💪",
-    "What should I work on next? 🏋️",
-    "Am I gym ready? 👀",
-    "Who's been consistent this week? 💪🤔",
-    "Should I add cardio? 😂🏋️",
-    "Rate my dedication 1-10 💪",
-    "What's your workout split? 🤔",
-    "Who else takes gym selfies? 📱🏋️",
-    "Transformation pics who wants to see? 👀",
-    "Before or after which is more motivating? 🤔",
-    "Who needs a workout buddy? 💪",
-    "What's harder diet or exercise? 🤔",
-    "Am I overtraining or under training? 👀",
-    "Rate the pump 1-10 💪😂",
-    "Who's starting their fitness journey? 🏋️🤔"
-  ],
-  "outdoor": [
-    "Would you come here? 🤔",
-    "Rate this view 1-10? 😍",
-    "Where should I go next? 👀",
-    "Have you been somewhere like this? 🤔",
-    "Should I stay longer? 🥺",
-    "Who else loves the outdoors? 🌿",
-    "Can you guess where this is? 🤔",
-    "Is this real life? 😍👀",
-    "Would you live here? 🤔",
-    "What's the best view you've ever seen? 🌅",
-    "Rate the scenery 1-10 ✨",
-    "Who wants to explore with me? 🗺️",
-    "Should I come back here? 🤔",
-    "Does anyone else need this right now? 🌿",
-    "What's your favorite outdoor spot? 🤔",
-    "Rate the sky right now 1-10 🌅",
-    "Who else finds peace outside? 🌿",
-    "Would you hike to see this? 🤔🥾",
-    "Where should I travel next? 👀",
-    "Am I the only one who loves sunsets? 🌅🤔",
-    "Should I take more outdoor pics? 📸",
-    "What's better mountains or beach? 🤔",
-    "Who needs some fresh air? 🌿👀",
-    "Is this the best part of the day? 🌅",
-    "Would you walk here with me? 🤔",
-    "Rate my nature photography 1-10 📸",
-    "What sounds better forest or lake? 🤔",
-    "Can every day look like this? 🥺",
-    "Who else is an outdoor person? 🌿🤔",
-    "Should I explore more or head back? 👀",
-    "What do you love most about nature? 🌿",
-    "Is this postcard worthy? 📸🤔",
-    "Who's coming on the next adventure? 🗺️",
-    "Golden hour or blue hour? 🌅🤔",
-    "How do you spend your weekends? 👀"
-  ],
-  "casual": [
-    "What should I do today? 🤔",
-    "Who else has no plans? 😂",
-    "Stay in or go out? 🤔",
-    "Rate my lazy day fit 1-10 ☁️",
-    "What are you watching right now? 📺",
-    "Should I leave the house today? 🤔",
-    "Who else is being lazy? ☁️👀",
-    "What's the move today? 🤔",
-    "Netflix recommendations? 📺",
-    "Am I the only one doing nothing? 😂",
-    "Should I nap or get up? 🤔",
-    "Who else loves a day off? ☁️",
-    "What should I order for delivery? 🤔🍕",
-    "Rate my chill vibes 1-10 ☁️",
-    "Is it okay to do nothing all day? 😂",
-    "What's your comfort show? 📺🤔",
-    "Who else is still in bed? ☁️👀",
-    "Should I be productive or nah? 🤔",
-    "What's the best snack right now? 🍿",
-    "Who needs a lazy day? ☁️",
-    "Am I the only one who loves rainy days? 🤔☔",
-    "Should I cook or get takeout? 🤔",
-    "What would you do with a free day? 💭",
-    "Who's bored right now too? 😂👀",
-    "Rate my cozy setup 1-10 ☁️",
-    "Coffee or tea to start the day? 🤔☕",
-    "Is anyone else just vibing? ☁️",
-    "What's the best part of a lazy day? 🤔",
-    "Should I actually get dressed today? 😂",
-    "Who else appreciates doing nothing? ☁️💭",
-    "Breakfast in bed or at the table? 🤔",
-    "What's everyone up to? 👀",
-    "Am I allowed another nap? 😴🤔",
-    "Who's coming over to hang? ☁️",
-    "What should I binge watch? 📺🤔"
-  ]
+(function(){
+  var CORRECT='mando2026', COOKIE='mm_auth', DAYS=30;
+  function getCookie(n){var m=document.cookie.match('(^|;)\\s*'+n+'=([^;]*)');return m?m[2]:null;}
+  function setCookie(n,v,d){var e=new Date();e.setTime(e.getTime()+d*864e5);document.cookie=n+'='+v+';expires='+e.toUTCString()+';path=/;SameSite=Strict';}
+  if(getCookie(COOKIE)==='1'){document.getElementById('login-gate').style.display='none';}
+  else{document.getElementById('login-gate').style.display='block';}
+  document.addEventListener('DOMContentLoaded',function(){
+    var app=document.querySelector('.app');
+    if(!getCookie(COOKIE)){if(app)app.style.display='none';}
+  });
+  window.doLogin=function(){
+    var pw=document.getElementById('login-pw').value;
+    if(pw===CORRECT){setCookie(COOKIE,'1',DAYS);document.getElementById('login-gate').style.display='none';var app=document.querySelector('.app');if(app)app.style.display='grid';}
+    else{document.getElementById('login-err').style.display='block';document.getElementById('login-pw').value='';document.getElementById('login-pw').focus();}
+  };
+})();
+</script>
+
+<div class="app">
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo">MM</div>
+      <div>
+        <h2>Mando Media</h2>
+        <p>Creator Hub</p>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Analytics</div>
+      <div class="nav-item active" data-view="dashboard" onclick="switchView('dashboard')"><span class="nav-icon">&#x1F4CA;</span> Dashboard</div>
+      <div class="nav-item" data-view="accounts-overview" onclick="switchView('accounts-overview')"><span class="nav-icon">&#x1F465;</span> Accounts Overview</div>
+      <div class="nav-item" data-view="account-insights" onclick="switchView('account-insights')"><span class="nav-icon">&#x1F4A1;</span> Account Insights</div>
+      <div class="nav-item" data-view="traffic-metrics" onclick="switchView('traffic-metrics')"><span class="nav-icon">&#x1F4C8;</span> Traffic Metrics</div>
+      <div class="nav-section">Performance</div>
+      <div class="nav-item" data-view="chatting-metrics" onclick="switchView('chatting-metrics')"><span class="nav-icon">&#x1F4AC;</span> Chatting Metrics</div>
+      <div class="nav-item" data-view="message-tracker" onclick="switchView('message-tracker')"><span class="nav-icon">&#x1F4CB;</span> Message Tracker</div>
+      <div class="nav-section">Tools</div>
+      <div class="nav-item" data-view="analytics" onclick="switchView('analytics')"><span class="nav-icon">&#x1F4C9;</span> Analytics</div>
+      <div class="nav-item" data-view="calendar" onclick="switchView('calendar')"><span class="nav-icon">&#x1F4C5;</span> Calendar</div>
+      <div class="nav-item" data-view="settings" onclick="switchView('settings')"><span class="nav-icon">&#x2699;&#xFE0F;</span> Settings</div>
+    </nav>
+    <div class="sidebar-accounts">
+      <h4>All Accounts <span id="sidebar-count"></span></h4>
+      <div id="sidebar-account-list"></div>
+    </div>
+  </aside>   <!-- Mobile Bottom Nav -->   <nav class="mobile-nav" id="mobile-nav">     <div class="mobile-nav-item active" data-view="dashboard" onclick="switchView('dashboard')">       <span>&#x1F4CA;</span><span>Dashboard</span>     </div>     <div class="mobile-nav-item" data-view="accounts-overview" onclick="switchView('accounts-overview')">       <span>&#x1F465;</span><span>Accounts</span>     </div>     <div class="mobile-nav-item" data-view="account-insights" onclick="switchView('account-insights')">       <span>&#x1F4A1;</span><span>Insights</span>     </div>     <div class="mobile-nav-item" data-view="chatting-metrics" onclick="switchView('chatting-metrics')">       <span>&#x1F4AC;</span><span>Chatting</span>     </div>     <div class="mobile-nav-item" data-view="settings" onclick="switchView('settings')">       <span>&#x2699;&#xFE0F;</span><span>Settings</span>     </div>   </nav>
+
+  <!-- ── Main Content ── -->
+  <main class="main">
+    <!-- Header and Date Controls (shared across all views) -->
+    <div class="header">
+      <div class="greeting">
+        <h1 id="greeting-text">Good afternoon</h1>
+        <p>Live from OnlyMonster &middot; Last updated: <span id="last-updated">Loading...</span></p>
+      </div>
+      <div class="header-actions">
+        <span class="badge-tx" id="tx-badge">— transactions today</span>
+        <button class="btn btn-outline" onclick="refreshData()">↻ Refresh</button>
+      </div>
+    </div>
+
+    <!-- Date Picker -->
+    <div class="date-bar">
+      <div class="date-presets">
+        <button class="preset-btn active" onclick="setPreset('today')">Today</button>
+        <button class="preset-btn" onclick="setPreset('yesterday')">Yesterday</button>
+        <button class="preset-btn" onclick="setPreset('7d')">Last 7 Days</button>
+        <button class="preset-btn" onclick="setPreset('30d')">Last 30 Days</button>
+        <button class="preset-btn" onclick="setPreset('this-month')">This Month</button>
+        <button class="preset-btn" onclick="setPreset('last-month')">Last Month</button>
+      </div>
+      <div class="date-custom">
+        <label>From</label>
+        <input type="date" class="date-input" id="date-start">
+        <label>To</label>
+        <input type="date" class="date-input" id="date-end">
+        <button class="date-apply" onclick="applyCustomRange()">Apply</button>
+      </div>
+      <div class="date-range-label" id="date-range-label"></div>
+    </div>
+
+    <!-- ── VIEWS CONTAINER ── -->
+
+    <!-- Dashboard View -->
+    <div id="view-dashboard" class="view active">
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+      <div class="kpi-card" id="kpi-revenue">
+        <div class="label" id="kpi-revenue-label">Total Revenue (Today)</div>
+        <div class="value" id="kpi-revenue-val">$0</div>
+        <div class="change" id="kpi-revenue-sub">Loading...</div>
+      </div>
+      <div class="kpi-card" id="kpi-accounts">
+        <div class="label">Active Accounts</div>
+        <div class="value" id="kpi-accounts-val">0</div>
+        <div class="change up" id="kpi-accounts-sub">&nbsp;</div>
+      </div>
+      <div class="kpi-card" id="kpi-transactions">
+        <div class="label">Total Transactions</div>
+        <div class="value" id="kpi-transactions-val">0</div>
+        <div class="change" id="kpi-transactions-sub">Loading...</div>
+      </div>
+      <div class="kpi-card" id="kpi-arppu">
+        <div class="label">ARPPU</div>
+        <div class="value" id="kpi-arppu-val">$0</div>
+        <div class="change" id="kpi-arppu-sub">avg per transaction</div>
+      </div>
+    </div>
+
+    <!-- Accounts Table -->
+    <div class="section-header">
+      <h2>Overview <span class="count" id="table-count">0</span></h2>
+      <button class="btn btn-outline" style="font-size:11px;" onclick="exportCSV()">⬇ Export</button>
+    </div>
+    <table class="accounts-table">
+      <thead>
+        <tr>
+          <th>Account</th>
+          <th>Total Revenue</th>
+          <th>Transactions</th>
+          <th>Mando's Cut</th>
+          <th>Revenue from New</th>
+          <th>Type</th>
+          <th>Top Earning Type</th>
+        </tr>
+      </thead>
+      <tbody id="accounts-tbody">
+        <tr><td colspan="7" style="text-align:center; padding:40px; color:var(--text-dim);">Loading accounts...</td></tr>
+      </tbody>
+    </table>
+
+    <!-- Today vs Yesterday Comparison -->
+    <div class="comparison-section" id="comparison-section">
+      <h3>&#x1F4CA; Today vs Yesterday <span style="font-size:11px;color:var(--text-dim);font-weight:400;margin-left:8px;">Per-account revenue comparison</span></h3>
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Account</th>
+            <th>Today</th>
+            <th>Yesterday</th>
+            <th>Change</th>
+            <th style="width:180px;">Today vs Yesterday</th>
+          </tr>
+        </thead>
+        <tbody id="comparison-tbody">
+          <tr><td colspan="5" style="text-align:center; padding:30px; color:var(--text-dim);">Loading comparison data...</td></tr>
+        </tbody>
+      </table>
+      <div class="comparison-legend">
+        <span><span class="legend-dot" style="background:var(--accent);"></span> Today</span>
+        <span><span class="legend-dot" style="background:rgba(122,130,153,0.5);"></span> Yesterday</span>
+      </div>
+    </div>
+
+    <!-- Revenue Breakdown -->
+    <div class="revenue-breakdown">
+      <h3>🔥 Revenue Breakdown</h3>
+      <div class="bar-chart" id="revenue-bars"></div>
+    </div>
+    </div><!-- End view-dashboard -->
+
+    <!-- Accounts Overview View -->
+    <div id="view-accounts-overview" class="view">
+      <div class="accounts-grid" id="accounts-overview-grid"></div>
+    </div>
+
+    <!-- Account Insights View -->
+    <div id="view-account-insights" class="view">
+      <div class="select-group">
+        <label>Select Account:</label>
+        <select id="insights-account-select" onchange="renderAccountInsights()">
+          <option value="">Loading accounts...</option>
+        </select>
+      </div>
+      <div id="insights-content"></div>
+    </div>
+
+    <!-- Traffic Metrics View -->
+    <div id="view-traffic-metrics" class="view">
+      <div style="margin-bottom:16px; display:flex; align-items:center; gap:12px;">
+        <span style="font-size:18px; font-weight:600; color:var(--text);">🔗 Link Traffic</span>
+        <span style="font-size:13px; color:var(--accent); background:rgba(255,183,77,0.12); padding:4px 12px; border-radius:20px;" id="traffic-period-badge">Last 30 Days</span>
+        <span style="font-size:12px; color:var(--text-dim);" id="traffic-source-label">via GetAllMyLinks</span>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="label">Total Visitors</div>
+          <div class="value" id="traffic-visitors-val">0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">Total Clicks</div>
+          <div class="value" id="traffic-clicks-val">0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">Overall CTR</div>
+          <div class="value" id="traffic-ctr-val">0%</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">Active Links</div>
+          <div class="value" id="traffic-active-links-val">0</div>
+        </div>
+      </div>
+      <table class="transaction-table">
+        <thead>
+          <tr>
+            <th>Link URL</th>
+            <th>Visitors</th>
+            <th>Clicks</th>
+            <th>CTR %</th>
+            <th>Top Button</th>
+            <th style="width:200px;">Visitors Bar</th>
+          </tr>
+        </thead>
+        <tbody id="traffic-tbody"></tbody>
+      </table>
+      <div style="margin-top:20px; font-size:11px; color:var(--text-dim); display:flex; justify-content:space-between; align-items:center;">
+        <span id="traffic-last-updated">Last updated: —</span>
+        <span>Data from GetAllMyLinks · Last 30 Days · Sync by refreshing session</span>
+      </div>
+    </div>
+
+    <!-- Chatting Metrics View -->
+    <div id="view-chatting-metrics" class="view">
+      <table class="transaction-table">
+        <thead>
+          <tr>
+            <th>Account</th>
+            <th>Message Count</th>
+            <th>Message Revenue</th>
+            <th>Avg Per Message</th>
+          </tr>
+        </thead>
+        <tbody id="chatting-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- Message Tracker View -->
+    <div id="view-message-tracker" class="view">
+      <div class="msg-tracker-header">
+        <h2 style="margin:0;font-size:20px">&#x1F4AC; Message Tracker</h2>
+        <div class="msg-tracker-stats">
+          <div class="msg-stat"><div class="stat-num" id="msg-total-count">0</div><div class="stat-label">Transactions</div></div>
+          <div class="msg-stat"><div class="stat-num" id="msg-paid-count">0</div><div class="stat-label">Paid Messages</div></div>
+          <div class="msg-stat"><div class="stat-num" id="msg-revenue">$0</div><div class="stat-label">Msg Revenue</div></div>
+        </div>
+      </div>
+      <table class="transaction-table">
+        <thead><tr><th>Time</th><th>Account</th><th>Type</th><th>Amount</th><th>Fan ID</th><th>Status</th></tr></thead>
+        <tbody id="tracker-tbody"></tbody>
+      </table>
+      <div class="pagination" style="text-align:center;padding:16px">
+        <button onclick="loadMoreTransactions()" style="background:var(--accent);color:#000;border:none;padding:8px 24px;border-radius:8px;cursor:pointer;font-weight:600">Load More</button>
+      </div>
+    </div>
+
+    <!-- Analytics View -->
+    <div id="view-analytics" class="view">
+      <div class="chart-row">
+        <div class="chart-container">
+          <h3>📊 Daily Revenue</h3>
+          <div class="type-bars" id="daily-revenue-bars"></div>
+        </div>
+        <div class="chart-container">
+          <h3>🏆 Revenue by Type</h3>
+          <div class="type-bars" id="revenue-by-type-bars"></div>
+        </div>
+      </div>
+      <div class="chart-container" style="margin-bottom:24px;">
+        <h3>⭐ Top Performing Accounts</h3>
+        <table class="transaction-table" style="margin-top:16px;">
+          <thead>
+            <tr>
+              <th>Account</th>
+              <th>Revenue</th>
+              <th>Growth</th>
+            </tr>
+          </thead>
+          <tbody id="top-accounts-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Calendar View -->
+    <div id="view-calendar" class="view">
+      <div class="chart-container">
+        <h3>📅 Daily Revenue Heatmap</h3>
+        <div style="margin-top:16px;">
+          <div style="text-align:center; margin-bottom:16px; font-weight:600; font-size:14px;" id="calendar-month-label"></div>
+          <div class="calendar-grid" id="calendar-grid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings View -->
+    <div id="view-settings" class="view">
+      <div class="settings-section">
+        <h3>🔑 API Configuration</h3>
+        <div class="settings-row">
+          <div class="settings-label">API Key</div>
+          <div class="settings-value" id="settings-api-key">••••••••••••••••</div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <h3>⚙️ <div class="settings-section">
+        <h3>&#x1F3A8; Appearance</h3>
+        <div class="settings-row">
+          <div class="settings-label">Theme</div>
+          <div class="settings-value"><div class="theme-toggle"><span id="theme-label">Dark</span><div class="toggle-switch" id="theme-toggle" onclick="toggleTheme()"></div></div></div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <h3>&#x1F514; Notifications</h3>
+        <div class="settings-row">
+          <div class="settings-label">Revenue Alerts</div>
+          <div class="settings-value"><div class="theme-toggle"><span id="notif-label">Off</span><div class="toggle-switch" id="notif-toggle" onclick="toggleNotifications()"></div></div></div>
+        </div>
+        <div class="settings-row">
+          <div class="settings-label">Alert Threshold</div>
+          <div class="settings-value"><select id="notif-threshold" onchange="saveNotifThreshold()" style="background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:4px 8px"><option value="1000">$1,000</option><option value="2500">$2,500</option><option value="5000" selected>$5,000</option><option value="10000">$10,000</option></select></div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <h3>Dashboard Settings</h3>
+        <div class="settings-row">
+          <div class="settings-label">Auto-refresh Interval</div>
+          <div class="settings-value">5 minutes</div>
+        </div>
+        <div class="settings-row">
+          <div class="settings-label">Theme</div>
+          <div class="settings-value">Dark Mode</div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <h3>💰 Revenue Share Configuration</h3>
+        <div id="settings-shares-list"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ── Right Panel ── -->
+  <aside class="right-panel">
+    <div class="system-status">
+      <h4>System Status</h4>
+      <div class="jarvis-orb"></div>
+      <div class="status-text" id="status-text">Connecting...</div>
+    </div>
+
+    <div class="panel-section">
+      <h4>📦 Pipeline</h4>
+      <div id="pipeline-list">
+        <div class="pipeline-item">
+          <span>Drafts</span>
+          <div class="bar-mini"><div class="bar-mini-fill" style="width:60%;background:var(--green);"></div></div>
+          <span class="count">3</span>
+        </div>
+        <div class="pipeline-item">
+          <span>In Review</span>
+          <div class="bar-mini"><div class="bar-mini-fill" style="width:40%;background:var(--red);"></div></div>
+          <span class="count">2</span>
+        </div>
+        <div class="pipeline-item">
+          <span>Ready</span>
+          <div class="bar-mini"><div class="bar-mini-fill" style="width:50%;background:var(--blue);"></div></div>
+          <span class="count">3</span>
+        </div>
+        <div class="pipeline-item">
+          <span>Scheduled</span>
+          <div class="bar-mini"><div class="bar-mini-fill" style="width:30%;background:var(--blue);"></div></div>
+          <span class="count">2</span>
+        </div>
+        <div class="pipeline-item">
+          <span>Published</span>
+          <div class="bar-mini"><div class="bar-mini-fill" style="width:20%;background:var(--green);"></div></div>
+          <span class="count">1</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <h4>📅 Coming Up</h4>
+      <div id="calendar-list">
+        <div class="calendar-item"><div class="cal-dot" style="background:var(--blue);"></div> Next payout cycle <span class="cal-date">Apr 13</span></div>
+        <div class="calendar-item"><div class="cal-dot" style="background:var(--red);"></div> Weekly performance review <span class="cal-date">Apr 14</span></div>
+        <div class="calendar-item"><div class="cal-dot" style="background:var(--green);"></div> Content calendar meeting <span class="cal-date">Apr 15</span></div>
+        <div class="calendar-item"><div class="cal-dot" style="background:var(--purple);"></div> Monthly analytics report <span class="cal-date">Apr 20</span></div>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <h4>⚡ Activity</h4>
+      <div id="activity-list"></div>
+    </div>
+
+    <div class="footer-note">
+      <span id="footer-time"></span><br>
+      Powered by Claude + OnlyMonster
+    </div>
+  </aside>   
+</div>
+
+<script>
+// ── Config ──
+// API calls go through serverless proxy — key is stored server-side
+const API_BASE = '';
+const HEADERS = {};
+
+// Revenue share percentages (Mando's cut)
+const REVENUE_SHARES = {
+  'carlinicki': 0.30,  // Carli Nicki — 30%
+  // All others default to 50%
 };
+function getShare(username) {
+  return REVENUE_SHARES[username] || 0.50;
+}
 
-// ── SMARTER IMAGE ANALYSIS ──
-// Samples background (edges/corners) separately from center (subject)
-function analyzeImage(img) {
-  const canvas = document.createElement("canvas");
-  const size = 150;
-  canvas.width = size;
-  canvas.height = size;
-  const ctx = canvas.getContext("2d");
-  ctx.drawImage(img, 0, 0, size, size);
-  const data = ctx.getImageData(0, 0, size, size).data;
+const COLORS = [
+  '#c9a74e','#3b82f6','#22c55e','#a855f7','#ef4444',
+  '#f59e0b','#06b6d4','#ec4899','#84cc16','#f97316','#6366f1'
+];
 
-  let bg = { blue: 0, green: 0, dark: 0, bright: 0, warm: 0, cyan: 0, total: 0 };
+// ── State ──
+let accounts = [];
+let accountData = {};
+let rawTransactions = {}; // Store raw transactions by platform_account_id
+let currentRange = { start: null, end: null, preset: 'today' };
+let currentView = 'dashboard';
+let trackerPage = 0;
+let allTransactions = []; // For message tracker pagination
+let linkTrackingData = null; // GetAllMyLinks tracking data
 
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      const i = (y * size + x) * 4;
-      const r = data[i], g = data[i+1], b = data[i+2];
-      const brightness = (r + g + b) / 3;
+// ── View System ──
+function switchView(viewName) {
+  // Hide all views
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  // Show selected view
+  const viewEl = $('view-' + viewName);
+  if (viewEl) viewEl.classList.add('active');
 
-      // Background = top 40%, bottom 15%, left/right 20% edges
-      const isEdge = y < size * 0.4 || y > size * 0.85 || x < size * 0.2 || x > size * 0.8;
+  // Update nav active state
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const activeNav = document.querySelector('[data-view="' + viewName + '"]');
+  if (activeNav) activeNav.classList.add('active');
 
-      if (isEdge) {
-        bg.total++;
-        if (b > 100 && (b > r * 1.15 || (g > 120 && b > 100 && r < 150))) bg.blue++;
-        if (g > 130 && b > 130 && r < 160 && Math.abs(g - b) < 60) bg.cyan++;
-        if (g > 90 && g > r * 1.15 && g > b * 1.05) bg.green++;
-        if (brightness < 55) bg.dark++;
-        if (brightness > 170) bg.bright++;
-        if (r > 160 && r > b * 1.5) bg.warm++;
-      }
+  currentView = viewName;
+      // Update mobile nav active state
+      document.querySelectorAll('.mobile-nav-item').forEach(n => n.classList.remove('active'));
+      const activeMobileNav = document.querySelector('.mobile-nav-item[data-view="' + viewName + '"]');
+      if (activeMobileNav) activeMobileNav.classList.add('active');
+
+  // Hide date bar on views that don't use API date ranges
+  const dateBar = document.querySelector('.date-bar');
+  const dateLabel = $('date-range-label');
+  const noDateViews = ['traffic-metrics', 'calendar', 'settings'];
+  if (noDateViews.includes(viewName)) {
+    if (dateBar) dateBar.style.display = 'none';
+    if (dateLabel) dateLabel.style.display = 'none';
+  } else {
+    if (dateBar) dateBar.style.display = '';
+    if (dateLabel) dateLabel.style.display = '';
+  }
+
+  // Render the view
+  if (viewName === 'accounts-overview') renderAccountsOverview();
+  else if (viewName === 'account-insights') initAccountInsights();
+  else if (viewName === 'traffic-metrics') renderTrafficMetrics();
+  else if (viewName === 'chatting-metrics') renderChattingMetrics();
+  else if (viewName === 'message-tracker') { trackerPage = 0; renderMessageTracker(); }
+  else if (viewName === 'analytics') renderAnalytics();
+  else if (viewName === 'calendar') renderCalendarView();
+  else if (viewName === 'settings') renderSettings();
+}
+
+// ── Helpers ──
+function $(id) { return document.getElementById(id); }
+function money(n) { return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function shortName(name) {
+  return name.replace(/[^\w\s'.]/g, '').trim().split(/\s+/).slice(0, 2).join(' ');
+}
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+function now() {
+  return new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+}
+
+// ── API Calls ──
+async function apiFetch(path) {
+  const resp = await fetch('/api/proxy?path=' + encodeURIComponent(path));
+  if (!resp.ok) throw new Error(`API ${resp.status}`);
+  return resp.json();
+}
+
+async function fetchAccounts() {
+  const data = await apiFetch('/api/v0/accounts');
+  return data.accounts || [];
+}
+
+async function fetchTransactions(platformAccountId) {
+  const { start, end } = getDateRange();
+  let allItems = [];
+  let cursor = null;
+  do {
+    let url = `/api/v0/platforms/onlyfans/accounts/${platformAccountId}/transactions?start=${start}&end=${end}`;
+    if (cursor) url += `&cursor=${encodeURIComponent(cursor)}`;
+    const data = await apiFetch(url);
+    allItems = allItems.concat(data.items || []);
+    cursor = data.cursor || null;
+  } while (cursor);
+  return allItems;
+}
+
+// ── Date Range Logic ──
+// All date math uses UTC to match OnlyFans day boundaries (midnight UTC = 7pm EST / 8pm EDT)
+function utcToday() {
+  const now = new Date();
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+}
+
+function getDateRange() {
+  // For live presets (today, 7d, 30d, this-month), always recalculate
+  // end time to "right now" so refreshes pick up new transactions
+  const preset = currentRange.preset;
+  const livePresets = ['today', '7d', '30d', 'this-month'];
+  if (preset && livePresets.includes(preset)) {
+    const now = new Date();
+    const today = utcToday();
+    let start;
+    switch (preset) {
+      case 'today': start = today; break;
+      case '7d': start = new Date(today.getTime() - 7 * 86400000); break;
+      case '30d': start = new Date(today.getTime() - 30 * 86400000); break;
+      case 'this-month': start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)); break;
+      default: start = today;
     }
+    return { start: start.toISOString(), end: now.toISOString() };
+  }
+  if (currentRange.start && currentRange.end) {
+    return { start: currentRange.start, end: currentRange.end };
+  }
+  // Default: today (UTC)
+  const now = new Date();
+  const startOfDay = utcToday();
+  return { start: startOfDay.toISOString(), end: now.toISOString() };
+}
+
+function setPreset(preset) {
+  const now = new Date();
+  const today = utcToday();
+  let start, end;
+
+  switch (preset) {
+    case 'today':
+      start = today;
+      end = now;
+      break;
+    case 'yesterday':
+      start = new Date(today.getTime() - 86400000);
+      end = new Date(today.getTime()); // midnight UTC = end of yesterday
+      break;
+    case '7d':
+      start = new Date(today.getTime() - 7 * 86400000);
+      end = now;
+      break;
+    case '30d':
+      start = new Date(today.getTime() - 30 * 86400000);
+      end = now;
+      break;
+    case 'this-month':
+      start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+      end = now;
+      break;
+    case 'last-month':
+      start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1));
+      end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 0, 23, 59, 59));
+      break;
+    default:
+      start = today;
+      end = now;
+  }
+
+  currentRange = { start: start.toISOString(), end: end.toISOString(), preset };
+
+  // Update UI
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+  const btns = document.querySelectorAll('.preset-btn');
+  const presetNames = ['today','yesterday','7d','30d','this-month','last-month'];
+  const idx = presetNames.indexOf(preset);
+  if (idx >= 0 && btns[idx]) btns[idx].classList.add('active');
+
+  // Update date inputs to reflect (show UTC date)
+  $('date-start').value = start.toISOString().split('T')[0];
+  $('date-end').value = (end === now ? now : end).toISOString().split('T')[0];
+
+  updateDateLabel();
+  renderComparison();
+  refreshData();
+}
+
+function applyCustomRange() {
+  const startVal = $('date-start').value;
+  const endVal = $('date-end').value;
+  if (!startVal || !endVal) return;
+
+  // Parse as UTC dates
+  const start = new Date(startVal + 'T00:00:00.000Z');
+  const end = new Date(endVal + 'T23:59:59.999Z');
+
+  if (start > end) { alert('Start date must be before end date'); return; }
+
+  currentRange = { start: start.toISOString(), end: end.toISOString(), preset: 'custom' };
+
+  // Clear preset highlighting
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+
+  updateDateLabel();
+  refreshData();
+}
+
+function getRangeName() {
+  const p = currentRange.preset;
+  if (p === 'today') return 'Today';
+  if (p === 'yesterday') return 'Yesterday';
+  if (p === '7d') return 'Last 7 Days';
+  if (p === '30d') return 'Last 30 Days';
+  if (p === 'this-month') return 'This Month';
+  if (p === 'last-month') return 'Last Month';
+  const fmt = (d) => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+  return `${fmt(currentRange.start)} — ${fmt(currentRange.end)}`;
+}
+
+function updateDateLabel() {
+  const { start, end } = currentRange;
+  const fmt = (d) => {
+    const dt = new Date(d);
+    return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+  };
+  const s = fmt(start);
+  const e = fmt(end);
+  const label = s === e ? s : `${s} — ${e}`;
+  $('date-range-label').textContent = `Showing data for: ${label}`;
+  $('kpi-revenue-label').textContent = `Total Revenue (${getRangeName()})`;
+}
+
+function initDatePicker() {
+  const now = new Date();
+  const today = utcToday();
+  $('date-start').value = today.toISOString().split('T')[0];
+  $('date-end').value = now.toISOString().split('T')[0];
+  currentRange = { start: today.toISOString(), end: now.toISOString(), preset: 'today' };
+  updateDateLabel();
+}
+
+// ── Render Functions ──
+function renderKPIs() {
+  const totalRevenue = Object.values(accountData).reduce((s, a) => s + a.revenue, 0);
+  const totalTx = Object.values(accountData).reduce((s, a) => s + a.txCount, 0);
+  const totalSpenders = Object.values(accountData).reduce((s, a) => s + a.uniqueFans, 0);
+  const arppu = totalSpenders > 0 ? totalRevenue / totalSpenders : 0;
+  const mandoCut = Object.values(accountData).reduce((s, a) => s + a.mandoCut, 0);
+
+  $('kpi-revenue-val').textContent = money(totalRevenue);
+  $('kpi-revenue-sub').textContent = `Mando's cut: ${money(mandoCut)}`;
+  $('kpi-revenue-sub').className = 'change up';
+
+  $('kpi-accounts-val').textContent = accounts.length;
+  $('kpi-accounts-sub').textContent = 'All active on OnlyFans';
+
+  $('kpi-transactions-val').textContent = totalTx.toLocaleString();
+  $('kpi-transactions-sub').textContent = `${totalSpenders} unique spenders`;
+  $('kpi-transactions-sub').className = 'change';
+
+  $('kpi-arppu-val').textContent = money(arppu);
+  $('kpi-arppu-sub').textContent = 'avg per spender';
+
+  $('tx-badge').textContent = `${totalTx} transactions — ${getRangeName()}`;
+  $('table-count').textContent = accounts.length;
+}
+
+function renderTable() {
+  const sorted = [...accounts].sort((a, b) => {
+    const ra = accountData[a.platform_account_id]?.revenue || 0;
+    const rb = accountData[b.platform_account_id]?.revenue || 0;
+    return rb - ra;
+  });
+
+  const rows = sorted.map(acc => {
+    const d = accountData[acc.platform_account_id] || { revenue: 0, txCount: 0, mandoCut: 0, types: {}, newFanRevenue: 0 };
+    const topType = Object.entries(d.types).sort((a, b) => b[1] - a[1])[0];
+    const isFree = acc.subscribe_price === 0;
+
+    return `<tr>
+      <td>
+        <div class="account-cell">
+          <img src="${acc.avatar || ''}" alt="" onerror="this.style.background='var(--border)';this.src='';">
+          <div>
+            <div class="name">${shortName(acc.name)}</div>
+            <div class="username">@${acc.username}</div>
+          </div>
+        </div>
+      </td>
+      <td class="money">${money(d.revenue)}</td>
+      <td>${d.txCount}</td>
+      <td class="money positive">${money(d.mandoCut)}</td>
+      <td class="money">${money(d.newFanRevenue)}</td>
+      <td><span class="${isFree ? 'tag-free' : 'tag-paid'}">${isFree ? 'FREE' : money(acc.subscribe_price)}</span></td>
+      <td style="color:var(--text-dim);font-size:12px;">${topType ? topType[0].replace('Payment for ','') : '—'}</td>
+    </tr>`;
+  }).join('');
+
+  $('accounts-tbody').innerHTML = rows || '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-dim);">No data</td></tr>';
+}
+
+function renderBars() {
+  const sorted = [...accounts].sort((a, b) => {
+    return (accountData[b.platform_account_id]?.revenue || 0) - (accountData[a.platform_account_id]?.revenue || 0);
+  });
+  const maxRev = Math.max(...sorted.map(a => accountData[a.platform_account_id]?.revenue || 0), 1);
+
+  const bars = sorted.map((acc, i) => {
+    const d = accountData[acc.platform_account_id] || { revenue: 0 };
+    const pct = (d.revenue / maxRev) * 100;
+    const color = COLORS[i % COLORS.length];
+    return `<div class="bar-row">
+      <div class="bar-label" title="${acc.name}">${shortName(acc.name)}</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${Math.max(pct, 2)}%;background:${color};">${pct > 15 ? money(d.revenue) : ''}</div>
+      </div>
+      <div class="bar-amount">${money(d.revenue)}</div>
+    </div>`;
+  }).join('');
+
+  $('revenue-bars').innerHTML = bars;
+}
+
+function renderSidebar() {
+  $('sidebar-count').textContent = `(${accounts.length})`;
+  const list = accounts.slice(0, 4).map(acc => {
+    return `<div class="account-dot"><div class="dot"></div> ${shortName(acc.name)}</div>`;
+  }).join('');
+  const more = accounts.length > 4
+    ? `<div class="more-accounts">+ ${accounts.length - 4} more accounts</div>` : '';
+  $('sidebar-account-list').innerHTML = list + more;
+}
+
+function renderActivity() {
+  const items = [];
+  const totalRev = Object.values(accountData).reduce((s, a) => s + a.revenue, 0);
+  const totalTx = Object.values(accountData).reduce((s, a) => s + a.txCount, 0);
+  const activeCount = Object.values(accountData).filter(a => a.txCount > 0).length;
+
+  const rangeName = getRangeName();
+  items.push({
+    icon: '📊', bg: 'rgba(59,130,246,0.15)',
+    text: `<strong>${totalTx}</strong> transactions across all accounts`,
+    time: rangeName
+  });
+  items.push({
+    icon: '🟢', bg: 'rgba(34,197,94,0.15)',
+    text: `<strong>${activeCount}</strong> accounts with activity`,
+    time: rangeName
+  });
+  if (totalTx > 0) {
+    const arppu = totalRev / Math.max(Object.values(accountData).reduce((s, a) => s + a.uniqueFans, 0), 1);
+    items.push({
+      icon: '⭐', bg: 'rgba(201,167,78,0.15)',
+      text: `ARPPU: <strong>${money(arppu)}</strong> per transaction`,
+      time: 'improving'
+    });
+  }
+
+  $('activity-list').innerHTML = items.map(it => `
+    <div class="activity-item">
+      <div class="act-icon" style="background:${it.bg};">${it.icon}</div>
+      <div>
+        <div class="act-text">${it.text}</div>
+        <div class="act-time">${it.time}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Process Transactions ──
+function processTransactions(acc, transactions) {
+  const username = acc.username;
+  const share = getShare(username);
+  let revenue = 0, newFanRevenue = 0;
+  const types = {};
+  const fanSet = new Set();
+
+  // Store raw transactions for use in other views
+  rawTransactions[acc.platform_account_id] = transactions;
+
+  const OF_CUT = 0.80; // OnlyFans takes 20%, creator gets 80%
+  for (const tx of transactions) {
+    const amt = (Number(tx.amount) || 0) * OF_CUT;
+    revenue += amt;
+    fanSet.add(tx.fan?.id);
+    const t = tx.type || 'Other';
+    types[t] = (types[t] || 0) + amt;
   }
 
   return {
-    bgBluePct: bg.total > 0 ? bg.blue / bg.total : 0,
-    bgCyanPct: bg.total > 0 ? bg.cyan / bg.total : 0,
-    bgGreenPct: bg.total > 0 ? bg.green / bg.total : 0,
-    bgDarkPct: bg.total > 0 ? bg.dark / bg.total : 0,
-    bgBrightPct: bg.total > 0 ? bg.bright / bg.total : 0,
-    bgWarmPct: bg.total > 0 ? bg.warm / bg.total : 0
+    revenue,
+    txCount: transactions.length,
+    mandoCut: revenue * share,
+    sharePercent: share,
+    types,
+    uniqueFans: fanSet.size,
+    newFanRevenue
   };
 }
 
-function detectCategory(img, fileName) {
-  const name = fileName.toLowerCase();
-
-  // Filename keywords (highest priority)
-  if (/pool|swim|bikini|beach|ocean|water|lake|surf|tan|wave/.test(name)) return "pool-beach";
-  if (/dog|pet|cat|puppy|kitten|pup|bunny/.test(name)) return "pet";
-  if (/gym|workout|lift|fitness|muscle|flex/.test(name)) return "gym-fitness";
-  if (/food|eat|brunch|lunch|dinner|coffee|drink|cocktail|wine|restaurant/.test(name)) return "food-drink";
-  if (/car|drive|road|uber|parking|dashboard/.test(name)) return "car";
-  if (/night|club|party|bar|lounge/.test(name)) return "night-out";
-  if (/outfit|fit|dress|ootd|mirror|closet|fashion|style/.test(name)) return "outfit";
-  if (/hike|trail|mountain|nature|park|garden|sunset|sunrise|forest/.test(name)) return "outdoor";
-  if (/morning|bed|lazy|home|cozy|pj|pajama/.test(name)) return "casual";
-
-  // Background color analysis
-  const c = analyzeImage(img);
-
-  // Pool/Beach: ONLY if very strong water colors with no warm tones
-  if (c.bgCyanPct > 0.30 && c.bgWarmPct < 0.03) return "pool-beach";
-  if (c.bgBluePct > 0.35 && c.bgWarmPct < 0.03) return "pool-beach";
-  // Outdoor: strong green
-  if (c.bgGreenPct > 0.20) return "outdoor";
-  if (c.bgGreenPct > 0.12 && c.bgBrightPct > 0.25) return "outdoor";
-  // Night out: very dark
-  if (c.bgDarkPct > 0.60) return "night-out";
-  if (c.bgWarmPct > 0.15 && c.bgDarkPct > 0.35) return "night-out";
-  // Gym: indoor warm lighting
-  if (c.bgWarmPct > 0.06 && c.bgBrightPct > 0.10 && c.bgBluePct < 0.08) return "gym-fitness";
-
-  return "selfie";
-}
-
-// ── STATE ──
-let photos = [];
-let idCounter = 0;
-let dragSrcId = null;
-let usedCaptions = new Set();
-
-function getCaption(category) {
-  const pool = CAPTIONS[category] || CAPTIONS["selfie"];
-  const unused = pool.filter(c => !usedCaptions.has(c));
-  const source = unused.length > 0 ? unused : pool;
-  const pick = source[Math.floor(Math.random() * source.length)];
-  usedCaptions.add(pick);
-  return pick;
-}
-
-function assignAllCaptions() {
-  usedCaptions = new Set();
-  photos.forEach(p => { p.caption = getCaption(p.category); });
-}
-
-// ── DRAW SNAP-STYLE CAPTION ──
-// Matches real Snapchat: thin translucent bar, regular weight white text, centered
-function drawCard(photo) {
-  const canvas = document.getElementById(`canvas-${photo.id}`);
-  if (!canvas || !photo.img) return;
-  const ctx = canvas.getContext("2d");
-  const img = photo.img;
-
-  const W = 1080;
-  const H = 1920;
-  canvas.width = W;
-  canvas.height = H;
-
-  ctx.fillStyle = "#000";
-  ctx.fillRect(0, 0, W, H);
-
-  const scale = Math.max(W / img.width, H / img.height);
-  const dw = img.width * scale;
-  const dh = img.height * scale;
-  ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
-
-  const text = photo.caption;
-  if (!text) return;
-
-  // ── EXACT SNAP STYLE ──
-  // Real Snap caption: white text on dark translucent bar
-  const fontSize = 40;
-  ctx.font = `400 ${fontSize}px "Helvetica Neue", -apple-system, Helvetica, Arial, sans-serif`;
-  ctx.textBaseline = "middle";
-
-  // Bar sizing and position — matches real Snapchat
-  const barHeight = 88;
-  const barY = H * 0.65;
-
-  // Dark translucent bar
-  ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
-  ctx.fillRect(0, barY, W, barHeight);
-
-  // Pure white, matching Snapchat
-  ctx.fillStyle = "#ffffff";
-  ctx.textAlign = "center";
-  ctx.fillText(text, W / 2, barY + barHeight / 2, W - 60);
-}
-
-function updateUI() {
-  const headerBtns = document.getElementById("headerBtns");
-  const stats = document.getElementById("stats");
-  const emptyState = document.getElementById("emptyState");
-  const downloadAllBtn = document.getElementById("downloadAllBtn");
-  const photoCount = document.getElementById("photoCount");
-
-  if (photos.length > 0) {
-    headerBtns.style.display = "flex";
-    stats.classList.remove("hidden");
-    emptyState.classList.add("hidden");
-    downloadAllBtn.textContent = isMobile ? `📲 Save All (${photos.length})` : (photos.length >= 2 ? `📦 Download ZIP (${photos.length})` : `Download (${photos.length})`);
-    photoCount.textContent = `${photos.length} slide${photos.length !== 1 ? "s" : ""} in story`;
-    var saveBtn = document.getElementById("saveToPhotosBtn");
-    if (saveBtn && isMobile) saveBtn.style.display = "inline-block";
-  } else {
-    headerBtns.style.display = "none";
-    stats.classList.add("hidden");
-    emptyState.classList.remove("hidden");
-    var saveBtn2 = document.getElementById("saveToPhotosBtn");
-    if (saveBtn2) saveBtn2.style.display = "none";
-  }
-}
-
-const CAT_LABELS = {
-  "pool-beach": "🏊 Pool / Beach",
-  "selfie": "🤳 Selfie",
-  "outfit": "👗 Outfit",
-  "night-out": "🌙 Night Out",
-  "pet": "🐶 Pet",
-  "food-drink": "🍽️ Food / Drink",
-  "car": "🚗 Car",
-  "gym-fitness": "💪 Gym / Fitness",
-  "outdoor": "🌿 Outdoor",
-  "casual": "☁️ Casual"
-};
-
-function renderGrid() {
-  const flow = document.getElementById("storyFlow");
-  flow.innerHTML = "";
-
-  photos.forEach((photo, idx) => {
-    const card = document.createElement("div");
-    card.className = "card";
-    card.id = `card-${photo.id}`;
-    card.draggable = true;
-    card.dataset.pid = photo.id;
-
-    let selectOpts = Object.keys(CAT_LABELS).map(k =>
-      `<option value="${k}" ${k === photo.category ? "selected" : ""}>${CAT_LABELS[k]}</option>`
-    ).join("");
-
-    card.innerHTML = `
-      <div class="card-order">${idx + 1}</div>
-      <div class="card-tag">
-        <select id="cat-${photo.id}" onchange="changeCategory(${photo.id}, this.value)">
-          ${selectOpts}
-        </select>
-      </div>
-      <canvas id="canvas-${photo.id}" style="width:100%;display:block"></canvas>
-      <div class="card-body">
-        <div class="detected-label">Detected: <b>${CAT_LABELS[photo.category]}</b></div>
-        <textarea id="input-${photo.id}" rows="2">${photo.caption}</textarea>
-        <div class="card-btns">
-          <button class="btn btn-ghost btn-sm" onclick="regenerateOne(${photo.id})">🔄 New</button>
-          <button class="btn btn-primary btn-sm" onclick="downloadOne(${photo.id})">⬇ Save</button>
-          <button class="btn-x" onclick="removePhoto(${photo.id})">✕</button>
-        </div>
-      </div>
-    `;
-    flow.appendChild(card);
-
-    card.addEventListener("dragstart", (e) => {
-      dragSrcId = photo.id;
-      card.classList.add("dragging");
-      e.dataTransfer.effectAllowed = "move";
-    });
-    card.addEventListener("dragend", () => { card.classList.remove("dragging"); });
-    card.addEventListener("dragover", (e) => { e.preventDefault(); card.classList.add("drag-over-card"); });
-    card.addEventListener("dragleave", () => { card.classList.remove("drag-over-card"); });
-    card.addEventListener("drop", (e) => {
-      e.preventDefault();
-      card.classList.remove("drag-over-card");
-      if (dragSrcId === null || dragSrcId === photo.id) return;
-      const fromIdx = photos.findIndex(p => p.id === dragSrcId);
-      const toIdx = photos.findIndex(p => p.id === photo.id);
-      if (fromIdx === -1 || toIdx === -1) return;
-      const [moved] = photos.splice(fromIdx, 1);
-      photos.splice(toIdx, 0, moved);
-      dragSrcId = null;
-      renderGrid();
-    });
-
-    const textarea = document.getElementById(`input-${photo.id}`);
-    textarea.addEventListener("input", () => {
-      photo.caption = textarea.value;
-      drawCard(photo);
-    });
-
-    if (photo.img) drawCard(photo);
-  });
-
-  updateUI();
-  // Update album panel when photos change
-  setTimeout(() => updateAlbumPanel(), 100);
-}
-
-function changeCategory(id, newCat) {
-  const photo = photos.find(p => p.id === id);
-  if (!photo) return;
-  photo.category = newCat;
-  usedCaptions.delete(photo.caption);
-  photo.caption = getCaption(newCat);
-  const ta = document.getElementById(`input-${id}`);
-  if (ta) ta.value = photo.caption;
-  const label = document.querySelector(`#card-${id} .detected-label b`);
-  if (label) label.textContent = CAT_LABELS[newCat];
-  drawCard(photo);
-}
-
-function processFiles(files) {
-  var imageFiles = Array.from(files).filter(function(f) { return f.type.startsWith("image/"); });
-  var queue = imageFiles.slice();
-
-  // Add all photos to state immediately (shows placeholders)
-  queue.forEach(function(file) {
-    var id = ++idCounter;
-    var url = URL.createObjectURL(file);
-    var photo = { id: id, name: file.name, caption: "Analyzing...", url: url, img: null, category: "selfie", _file: file };
-    photos.push(photo);
-  });
-  renderGrid();
-
-  // Process images one at a time to prevent crashes
-  var idx = 0;
-  function processNext() {
-    if (idx >= photos.length) return;
-    var photo = photos[idx];
-    idx++;
-    if (photo.img) { processNext(); return; } // already loaded
-    if (!photo.url) { processNext(); return; }
-    var img = new Image();
-    img.onload = function() {
-      photo.img = img;
-      photo.category = detectCategory(img, photo.name);
-      photo.caption = getCaption(photo.category);
-      renderGrid();
-      // Small delay before next to prevent browser freeze
-      setTimeout(processNext, 50);
-    };
-    img.onerror = function() {
-      photo.caption = "Could not load";
-      renderGrid();
-      setTimeout(processNext, 50);
-    };
-    img.src = photo.url;
-  }
-  processNext();
-}
-
-function regenerateOne(id) {
-  const photo = photos.find(p => p.id === id);
-  if (!photo) return;
-  usedCaptions.delete(photo.caption);
-  photo.caption = getCaption(photo.category);
-  const ta = document.getElementById(`input-${id}`);
-  if (ta) ta.value = photo.caption;
-  drawCard(photo);
-}
-
-function regenerateAll() {
-  assignAllCaptions();
-  renderGrid();
-}
-
-// iOS / mobile detection
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-const isMobile = isIOS || /Android/i.test(navigator.userAgent);
-
-function downloadOne(id) {
-  const photo = photos.find(p => p.id === id);
-  const canvas = document.getElementById(`canvas-${id}`);
-  if (!canvas || !photo) return;
-  const idx = photos.indexOf(photo) + 1;
-  const fileName = `snap_${String(idx).padStart(2,"0")}_${photo.name.replace(/\.[^.]+$/,"")}.jpg`;
-  if (isIOS) {
-    canvas.toBlob(function(blob) {
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], fileName, { type: "image/jpeg" })] })) {
-        navigator.share({ files: [new File([blob], fileName, { type: "image/jpeg" })] }).catch(function() {});
-      } else { openSaveModal([photo]); }
-    }, "image/jpeg", 0.95);
-    return;
-  }
-  if (isMobile) { openSaveModal([photo]); return; }
-  const link = document.createElement("a");
-  link.download = fileName;
-  link.href = canvas.toDataURL("image/jpeg", 0.95);
-  link.click();
-}
-
-function removePhoto(id) {
-  const idx = photos.findIndex(p => p.id === id);
-  if (idx !== -1) {
-    usedCaptions.delete(photos[idx].caption);
-    URL.revokeObjectURL(photos[idx].url);
-    photos.splice(idx, 1);
-  }
-  renderGrid();
-}
-
-function downloadAll() {
-  if (isMobile) { openSaveModal(photos); return; }
-  if (photos.length >= 2) { downloadZip(); } else {
-    photos.forEach(function(photo, i) { setTimeout(function() { downloadOne(photo.id); }, i * 300); });
-  }
-}
-
-function clearAll() {
-  photos.forEach(p => URL.revokeObjectURL(p.url));
-  photos = [];
-  usedCaptions = new Set();
-  renderGrid();
-}
-
-// ── QUESTION GENERATOR ──
-let qgenCategory = "pool-beach";
-
-function initQgen() {
-  const container = document.getElementById("qgenCats");
-  Object.keys(CAT_LABELS).forEach(k => {
-    const btn = document.createElement("button");
-    btn.className = "qgen-cat" + (k === qgenCategory ? " active" : "");
-    btn.textContent = CAT_LABELS[k];
-    btn.onclick = () => {
-      document.querySelectorAll(".qgen-cat").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      qgenCategory = k;
-      generateQuestions();
-    };
-    container.appendChild(btn);
-  });
-  generateQuestions();
-}
-
-function generateQuestions() {
-  const results = document.getElementById("qgenResults");
-  results.innerHTML = "";
-  const pool = CAPTIONS[qgenCategory] || CAPTIONS["selfie"];
-  const shuffled = [...pool].sort(() => Math.random() - 0.5);
-  const picks = shuffled.slice(0, 10);
-
-  picks.forEach((caption) => {
-    const item = document.createElement("div");
-    item.className = "qgen-item";
-    item.innerHTML = `
-      <span>${caption}</span>
-      <button class="copy-btn" onclick="copyCaption(this, '${caption.replace(/'/g, "\\'")}')">Copy</button>
-    `;
-    results.appendChild(item);
-  });
-}
-
-function copyCaption(btn, text) {
-  navigator.clipboard.writeText(text).then(() => {
-    btn.textContent = "Copied!";
-    btn.classList.add("copied");
-    setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 1500);
-  });
-}
-
-function copyAllQuestions() {
-  const items = document.querySelectorAll("#qgenResults .qgen-item span");
-  const all = Array.from(items).map(s => s.textContent).join("\n");
-  navigator.clipboard.writeText(all).then(() => {
-    const btn = document.querySelector(".qgen-header .btn-primary");
-    const orig = btn.textContent;
-    btn.textContent = "✅ Copied!";
-    setTimeout(() => { btn.textContent = orig; }, 1500);
-  });
-}
-
-initQgen();
-
-// Update labels on mobile
-if (isMobile) {
-  var saveBtnInit = document.getElementById("saveToPhotosBtn");
-  if (saveBtnInit) saveBtnInit.style.display = "inline-block";
-}
-
-// ── ALBUM CAPTIONS ──
-// Short catchy hooks that work as ALBUM NAMES — engagement style
-const ALBUM_CAPTIONS = {
-  "pool-beach": [
-    "rate my summer 1-10 ☀️",
-    "who's coming swimming? 💦",
-    "summer dump 🌊",
-    "would you come? 🏊‍♀️",
-    "jealous yet? 🌴",
-    "sun kissed era ☀️",
-    "catch me if you can 💦",
-    "pool day or beach day? 🤔",
-    "wish you were here 💙",
-    "vitamin sea 🌊"
-  ],
-  "selfie": [
-    "rate me 1-10 🤔",
-    "I almost deleted these 😏",
-    "what's the vibe? 💭",
-    "swipe and rate 👀",
-    "pick your favorite 🤔",
-    "which one's the best? 👀",
-    "guess my mood 💭",
-    "main character dump 🎬",
-    "face card check 💳",
-    "do I post too much? 😏"
-  ],
-  "outfit": [
-    "rate the fits 1-10 🤔",
-    "which fit wins? 👀",
-    "fit check dump 👗",
-    "help me pick 🤔",
-    "keep or return? 💭",
-    "style check ✨",
-    "closet clean out 👀",
-    "OOTD dump 👗",
-    "overdressed or nah? 🤔",
-    "first thoughts? 👀"
-  ],
-  "night-out": [
-    "who's coming tonight? 🌙",
-    "rate the night 1-10 ✨",
-    "last night was 🌃",
-    "going out dump 🥂",
-    "who was there? 🌙",
-    "should we go again? 👀",
-    "late night diaries 🌃",
-    "friday or saturday? 🤔",
-    "the night was ✨",
-    "who needs a night out? 🌙"
-  ],
-  "pet": [
-    "rate my baby 1-10 🐶",
-    "who's cuter? 🥺",
-    "say no to this face 🐾",
-    "pet parent dump 💕",
-    "would you steal them? 👀",
-    "obsessed or what? 🥺",
-    "my whole heart 🐾",
-    "cuteness overload 🐶",
-    "tell me they're not the cutest 🥺",
-    "best friend check 💕"
-  ],
-  "food-drink": [
-    "rate my eats 1-10 🍽️",
-    "would you eat this? 👀",
-    "food dump 🤤",
-    "eating good era 🍽️",
-    "order this or that? 🤔",
-    "brunch anyone? 🍳",
-    "foodie check 👀",
-    "calories don't count 😂",
-    "come eat with me 🍽️",
-    "taste test 🤔"
-  ],
-  "car": [
-    "where should I go? 🤔",
-    "road trip dump 🚗",
-    "ride along? 👀",
-    "passenger seat open 🚗",
-    "driving vibes 🎶",
-    "car selfie era 📱",
-    "windows down 🚗",
-    "adventure time? 🤔",
-    "take the long way home 🚗",
-    "who's riding? 👀"
-  ],
-  "gym-fitness": [
-    "rate the progress 1-10 💪",
-    "gym dump 🏋️",
-    "am I making progress? 👀",
-    "grind don't stop 💪",
-    "who's coming to the gym? 🤔",
-    "progress check 📈",
-    "consistency check 💪",
-    "leg day or arm day? 🤔",
-    "earned not given 💪",
-    "gym selfie era 🏋️"
-  ],
-  "outdoor": [
-    "rate the views 1-10 😍",
-    "take me back 🥺",
-    "nature dump 🌿",
-    "would you come here? 🤔",
-    "guess where I am 🗺️",
-    "adventure dump ✨",
-    "golden hour 🌅",
-    "wish you were here 🌿",
-    "explore with me? 🤔",
-    "views for days 😍"
-  ],
-  "casual": [
-    "what should I do? 🤔",
-    "lazy day dump ☁️",
-    "stay in or go out? 🤔",
-    "no plans era 😌",
-    "cozy mode ☁️",
-    "weekend vibes 😌",
-    "doing nothing dump ☁️",
-    "who else is bored? 😂",
-    "chill day check ☁️",
-    "nap or get up? 😴"
-  ]
-};
-
-let currentThumbIdx = 0;
-let thumbScores = [];
-
-// ── THUMBNAIL SCORING ──
-// Picks the most eye-catching: full body > booty > bikini > face selfie
-function scoreForThumbnail(photo) {
-  if (!photo.img) return 0;
-  var canvas = document.createElement("canvas");
-  var size = 80;
-  canvas.width = size; canvas.height = size;
-  var ctx = canvas.getContext("2d");
-  ctx.drawImage(photo.img, 0, 0, size, size);
-  var data = ctx.getImageData(0, 0, size, size).data;
-
-  // Split image into 4 horizontal bands
-  var bands = [0, 0, 0, 0]; // top quarter, upper-mid, lower-mid, bottom quarter
-  var bandCount = [0, 0, 0, 0];
-  var totalSkin = 0;
-  var totalWarm = 0;
-  var pixels = size * size;
-
-  for (var y = 0; y < size; y++) {
-    var band = y < size * 0.25 ? 0 : y < size * 0.5 ? 1 : y < size * 0.75 ? 2 : 3;
-    for (var x = 0; x < size; x++) {
-      var i = (y * size + x) * 4;
-      var r = data[i], g = data[i+1], b = data[i+2];
-      // Broad skin/body detection — warm tones
-      var isSkin = r > 110 && r > b && (r - b) > 20 && g > 60;
-      var isWarm = r > 130 && r > b * 1.15;
-      bandCount[band]++;
-      if (isSkin) { bands[band]++; totalSkin++; }
-      if (isWarm) totalWarm++;
-    }
-  }
-
-  var skinPct = totalSkin / pixels;
-  var bandPcts = bands.map(function(v, i) { return bandCount[i] > 0 ? v / bandCount[i] : 0; });
-  // How many bands have significant skin (>10%)
-  var bandsWithSkin = bandPcts.filter(function(p) { return p > 0.10; }).length;
-  // Lower body skin (bands 2+3)
-  var lowerBodySkin = (bands[2] + bands[3]) / (bandCount[2] + bandCount[3] || 1);
-  // Upper only = face selfie (band 0 has skin, bands 2+3 don't)
-  var isFaceOnly = bandPcts[0] > 0.15 && lowerBodySkin < 0.05;
-
-  var score = 0;
-
-  // TOTAL SKIN — more skin visible = higher score
-  score += skinPct * 300;
-
-  // FULL BODY BONUS — skin across 3+ bands = full body shot
-  if (bandsWithSkin >= 3) score += 150;
-  else if (bandsWithSkin >= 2) score += 50;
-
-  // LOWER BODY BONUS — booty/legs/curves (biggest factor)
-  score += lowerBodySkin * 250;
-
-  // HEAVY PENALTY: Face-only selfie (skin only in top, nothing below)
-  if (isFaceOnly) score -= 200;
-
-  // ALSO PENALIZE: Skin mostly in top half only
-  if (bandPcts[0] > 0.15 && lowerBodySkin < 0.10) score -= 100;
-
-  // Warm tones overall
-  score += (totalWarm / pixels) * 50;
-
-  // Portrait orientation bonus
-  if (photo.img.height > photo.img.width) score += 15;
-
-  return score;
-}
-
-function updateAlbumPanel() {
-  const panel = document.getElementById("albumPanel");
-  if (photos.length < 2) {
-    panel.classList.add("hidden");
-    return;
-  }
-  panel.classList.remove("hidden");
-
-  // Determine dominant category
-  const catCounts = {};
-  photos.forEach(p => { catCounts[p.category] = (catCounts[p.category] || 0) + 1; });
-  const dominantCat = Object.entries(catCounts).sort((a, b) => b[1] - a[1])[0][0];
-
-  // Generate album caption suggestions
-  generateAlbumCaptions(dominantCat);
-
-  // Score all photos for thumbnail
-  thumbScores = photos.map((p, i) => ({ idx: i, photo: p, score: scoreForThumbnail(p) }))
-    .sort((a, b) => b.score - a.score);
-
-  currentThumbIdx = 0;
-  updateThumbDisplay();
-}
-
-function generateAlbumCaptions(dominantCat) {
-  if (!dominantCat) {
-    const catCounts = {};
-    photos.forEach(p => { catCounts[p.category] = (catCounts[p.category] || 0) + 1; });
-    dominantCat = Object.entries(catCounts).sort((a, b) => b[1] - a[1])[0][0];
-  }
-
-  const pool = ALBUM_CAPTIONS[dominantCat] || ALBUM_CAPTIONS["selfie"];
-  const shuffled = [...pool].sort(() => Math.random() - 0.5);
-  const picks = shuffled.slice(0, 5);
-
-  // Set first as default
-  document.getElementById("albumCaption").value = picks[0];
-
-  // Show suggestions
-  const container = document.getElementById("albumSuggestions");
-  container.innerHTML = "";
-  picks.forEach(cap => {
-    const btn = document.createElement("button");
-    btn.className = "album-sug";
-    btn.textContent = cap;
-    btn.onclick = () => { document.getElementById("albumCaption").value = cap; };
-    container.appendChild(btn);
-  });
-}
-
-function updateThumbDisplay() {
-  if (thumbScores.length === 0) return;
-  const entry = thumbScores[currentThumbIdx];
-  const img = document.getElementById("albumThumbImg");
-  img.src = entry.photo.url;
-  const label = document.querySelector(".album-thumb-label");
-  label.textContent = `⭐ #${currentThumbIdx + 1} Best Thumbnail (Slide ${entry.idx + 1})`;
-}
-
-function prevThumb() {
-  if (thumbScores.length === 0) return;
-  currentThumbIdx = (currentThumbIdx - 1 + thumbScores.length) % thumbScores.length;
-  updateThumbDisplay();
-}
-
-function nextThumb() {
-  if (thumbScores.length === 0) return;
-  currentThumbIdx = (currentThumbIdx + 1) % thumbScores.length;
-  updateThumbDisplay();
-}
-
-function copyAlbumCaption() {
-  const cap = document.getElementById("albumCaption").value;
-  navigator.clipboard.writeText(cap).then(() => {
-    const btn = document.querySelector(".album-actions .btn-ghost:nth-child(2)");
-    const orig = btn.textContent;
-    btn.textContent = "✅ Copied!";
-    setTimeout(() => { btn.textContent = orig; }, 1500);
-  });
-}
-
-// ── ZIP DOWNLOAD ──
-async function downloadZip() {
-  if (isMobile) { openSaveModal(photos); return; }
-  var btn = document.querySelector(".album-actions .btn-primary") || document.getElementById("downloadAllBtn");
-  var origText = btn ? btn.textContent : "";
-  if (btn) { btn.textContent = "⏳ Building ZIP..."; btn.disabled = true; }
+// ── Main Data Load ──
+async function loadData() {
+  $('status-text').textContent = 'Fetching accounts...';
+  $('status-text').style.color = 'var(--accent)';
 
   try {
-    var zip = new JSZip();
-    var albumName = document.getElementById("albumCaption").value || "snap_story";
-    var safeName = albumName.replace(/[^a-zA-Z0-9 _-]/g, "").trim() || "snap_story";
-    var folder = zip.folder(safeName);
+    accounts = await fetchAccounts();
+    renderSidebar();
+    $('kpi-accounts-val').textContent = accounts.length;
+    $('status-text').textContent = `Loading ${accounts.length} accounts...`;
 
-    for (var i = 0; i < photos.length; i++) {
-      var photo = photos[i];
-      var canvas = document.getElementById("canvas-" + photo.id);
-      if (!canvas) continue;
-      var dataUrl = canvas.toDataURL("image/jpeg", 0.95);
-      var base64 = dataUrl.split(",")[1];
-      var fileName = "snap_" + String(i + 1).padStart(2, "0") + "_" + photo.name.replace(/\.[^.]+$/, "") + ".jpg";
-      folder.file(fileName, base64, { base64: true });
+    // Fetch transactions for ALL accounts in parallel (with concurrency limit)
+    const CONCURRENCY = 3;
+    let loaded = 0;
+
+    async function loadAccount(acc) {
+      try {
+        const txs = await fetchTransactions(acc.platform_account_id);
+        accountData[acc.platform_account_id] = processTransactions(acc, txs);
+      } catch (e) {
+        console.warn(`Failed to load ${acc.name}:`, e);
+        accountData[acc.platform_account_id] = { revenue: 0, txCount: 0, mandoCut: 0, types: {}, uniqueFans: 0, newFanRevenue: 0, sharePercent: getShare(acc.username) };
+      }
+      loaded++;
+      $('status-text').textContent = `Loaded ${loaded}/${accounts.length}...`;
+      // Progressive render
+      renderKPIs();
+      renderTable();
     }
 
-    var blob = await zip.generateAsync({ type: "blob" });
-    var url = URL.createObjectURL(blob);
-    var link = document.createElement("a");
-    link.href = url;
-    link.download = safeName + ".zip";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    setTimeout(function() { URL.revokeObjectURL(url); }, 5000);
+    // Process in batches
+    for (let i = 0; i < accounts.length; i += CONCURRENCY) {
+      const batch = accounts.slice(i, i + CONCURRENCY);
+      await Promise.all(batch.map(loadAccount));
+    }
+
+    // Final render
+    renderKPIs();
+    renderTable();
+    renderBars();
+    renderActivity();
+    renderComparison();
+
+    $('status-text').textContent = 'All systems online';
+    $('status-text').style.color = 'var(--green)';
+    $('last-updated').textContent = now();
+
   } catch (e) {
-    console.error("ZIP error:", e);
-    alert("Error creating ZIP. Try downloading individually.");
+    $('status-text').textContent = 'Error: ' + e.message;
+    $('status-text').style.color = 'var(--red)';
+    console.error('Dashboard error:', e);
+  }
+}
+
+function refreshData() {
+      
+  accountData = {};
+  rawTransactions = {};
+  $('accounts-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-dim);">Refreshing...</td></tr>';
+  loadData();
+  // Re-render current view if it's not the dashboard
+  if (currentView !== 'dashboard') {
+    setTimeout(() => switchView(currentView), 500);
+  }
+}
+
+function exportCSV() {
+  const rows = [['Account','Username','Revenue','Transactions','Mando Cut','Share %']];
+  const sorted = [...accounts].sort((a, b) => (accountData[b.platform_account_id]?.revenue || 0) - (accountData[a.platform_account_id]?.revenue || 0));
+  for (const acc of sorted) {
+    const d = accountData[acc.platform_account_id] || {};
+    rows.push([shortName(acc.name), acc.username, (d.revenue||0).toFixed(2), d.txCount||0, (d.mandoCut||0).toFixed(2), ((d.sharePercent||0.5)*100)+'%']);
+  }
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `mando-media-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+// ── View Render Functions ──
+
+function renderAccountsOverview() {
+  const html = accounts.map(acc => {
+    const d = accountData[acc.platform_account_id] || { revenue: 0, txCount: 0 };
+    const isFree = acc.subscribe_price === 0;
+    const share = getShare(acc.username);
+    return `<div class="account-card">
+      <img class="avatar" src="${acc.avatar || ''}" alt="" onerror="this.src=''; this.style.background='var(--border)';">
+      <div class="info">
+        <div class="name">${acc.name}</div>
+        <div class="username">@${acc.username}</div>
+      </div>
+      <div class="stats">
+        <div class="stat-item">
+          <div class="stat-value">${money(d.revenue)}</div>
+          <div class="stat-item">Revenue</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${d.txCount}</div>
+          <div class="stat-item">Transactions</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${isFree ? 'FREE' : money(acc.subscribe_price)}</div>
+          <div class="stat-item">Price</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${(share * 100).toFixed(0)}%</div>
+          <div class="stat-item">Share</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  $('accounts-overview-grid').innerHTML = html || '<p style="color:var(--text-dim);">No accounts loaded</p>';
+}
+
+function initAccountInsights() {
+  // Populate account select
+  const opts = accounts.map(a => `<option value="${a.platform_account_id}">${a.name}</option>`).join('');
+  $('insights-account-select').innerHTML = opts;
+  if (accounts.length > 0) {
+    renderAccountInsights();
+  }
+}
+
+function renderAccountInsights() {
+  const selId = $('insights-account-select').value;
+  if (!selId) return;
+  const acc = accounts.find(a => a.platform_account_id === selId);
+  if (!acc) return;
+  const txs = rawTransactions[selId] || [];
+  const d = accountData[selId] || {};
+
+  let html = `<div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="label">Total Revenue</div>
+      <div class="value">${money(d.revenue || 0)}</div>
+      <div class="change" id="insight-mando-cut">Mando's cut: ${money((d.mandoCut || 0))}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">Transactions</div>
+      <div class="value">${d.txCount || 0}</div>
+      <div class="change">Total count</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">Unique Fans</div>
+      <div class="value">${d.uniqueFans || 0}</div>
+      <div class="change">Spenders</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">Revenue Share</div>
+      <div class="value">${((d.sharePercent || 0) * 100).toFixed(0)}%</div>
+      <div class="change">Mando's cut</div>
+    </div>
+  </div>`;
+
+  // Revenue breakdown by type
+  const types = d.types || {};
+  const typeEntries = Object.entries(types).sort((a, b) => b[1] - a[1]);
+  const maxType = Math.max(...typeEntries.map(e => e[1]), 1);
+  const typeBars = typeEntries.map((entry, i) => {
+    const [type, amt] = entry;
+    const pct = (amt / maxType) * 100;
+    const color = COLORS[i % COLORS.length];
+    return `<div class="type-bar-row">
+      <div class="type-bar-label">${type.replace('Payment for ', '')}</div>
+      <div class="type-bar-track">
+        <div class="type-bar-fill" style="width:${Math.max(pct, 2)}%; background:${color};">${pct > 15 ? money(amt) : ''}</div>
+      </div>
+      <div class="type-bar-amount">${money(amt)}</div>
+    </div>`;
+  }).join('');
+
+  html += `<div class="chart-container" style="margin-top:20px; margin-bottom:20px;">
+    <h3>💰 Revenue by Type</h3>
+    <div class="type-bars">${typeBars || '<p style="color:var(--text-dim);">No transactions</p>'}</div>
+  </div>`;
+
+  // Transaction list
+  const sorted = [...txs].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  const rows = sorted.map(tx => {
+    const amt = (Number(tx.amount) || 0) * 0.80;
+    const time = new Date(tx.timestamp).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    return `<tr>
+      <td>${time}</td>
+      <td class="type">${tx.type || 'Other'}</td>
+      <td class="money">${money(amt)}</td>
+      <td style="font-size:11px; color:var(--text-dim);">${tx.fan?.id || '—'}</td>
+    </tr>`;
+  }).join('');
+
+  html += `<h3 style="margin-top:24px; margin-bottom:16px; font-weight:600; font-size:14px;">Recent Transactions</h3>
+  <table class="transaction-table">
+    <thead>
+      <tr>
+        <th>Timestamp</th>
+        <th>Type</th>
+        <th>Amount (Net)</th>
+        <th>Fan ID</th>
+      </tr>
+    </thead>
+    <tbody>${rows || '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text-dim);">No transactions</td></tr>'}</tbody>
+  </table>`;
+
+  $('insights-content').innerHTML = html;
+}
+
+async function loadLinkTracking() {
+  try {
+    const resp = await fetch('link-tracking.json');
+    if (resp.ok) {
+      linkTrackingData = await resp.json();
+    }
+  } catch (e) {
+    console.error('Failed to load link tracking data:', e);
+  }
+}
+
+function renderTrafficMetrics() {
+  // Load link tracking data if not already loaded
+  if (!linkTrackingData) {
+    loadLinkTracking().then(() => renderTrafficMetrics());
+    return;
   }
 
-  btn.textContent = origText;
-  btn.disabled = false;
+  const data = linkTrackingData;
+
+  // Calculate KPIs
+  const totalVisitors = data.totalVisitors || 0;
+  const totalClicks = data.links.reduce((sum, link) => sum + (link.totalClicks || 0), 0);
+  const overallCTR = totalVisitors > 0 ? (totalClicks / totalVisitors * 100) : 0;
+  const activeLinks = data.links.filter(link => link.visitors > 0).length;
+
+  // Update KPI cards
+  $('traffic-visitors-val').textContent = totalVisitors.toLocaleString();
+  $('traffic-clicks-val').textContent = totalClicks.toLocaleString();
+  $('traffic-ctr-val').textContent = overallCTR.toFixed(2) + '%';
+  $('traffic-active-links-val').textContent = activeLinks;
+
+  // Sort links by visitors descending
+  const sortedLinks = [...data.links].sort((a, b) => b.visitors - a.visitors);
+
+  // Find max visitors for bar scaling
+  const maxVisitors = Math.max(...sortedLinks.map(l => l.visitors), 1);
+
+  // Generate table rows
+  const rows = sortedLinks.map((link, idx) => {
+    const visitors = link.visitors || 0;
+    const clicks = link.totalClicks || 0;
+    const ctr = visitors > 0 ? (clicks / visitors * 100) : 0;
+    const pct = (visitors / maxVisitors) * 100;
+
+    // Find top button
+    let topButton = '—';
+    if (link.buttons && link.buttons.length > 0) {
+      const topBtn = link.buttons[0];
+      topButton = `${topBtn.name} (${topBtn.clicks})`;
+    }
+
+    const color = COLORS[idx % COLORS.length];
+
+    return `<tr>
+      <td class="link-cell">${link.url}</td>
+      <td class="number">${visitors.toLocaleString()}</td>
+      <td class="number">${clicks.toLocaleString()}</td>
+      <td class="number">${ctr.toFixed(2)}%</td>
+      <td class="top-button">${topButton}</td>
+      <td class="bar-cell">
+        <div class="link-bar-track">
+          <div class="link-bar-fill" style="width:${Math.max(pct, 2)}%; background:${color};"></div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  $('traffic-tbody').innerHTML = rows;
+
+  // Update last updated timestamp
+  const lastUpdated = new Date(data.lastUpdated);
+  const timeStr = lastUpdated.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  $('traffic-last-updated').textContent = `Last updated: ${timeStr}`;
+
+  // Update period badge from JSON data
+  if (data.period) {
+    $('traffic-period-badge').textContent = data.period;
+  }
 }
 
-// ── SAVE TO CAMERA ROLL MODAL (iOS/Mobile) ──
-function openSaveModal(photoList) {
-  // Remove existing modal if any
-  const existing = document.getElementById("saveModal");
-  if (existing) existing.remove();
+function renderChattingMetrics() {
+  const stats = [];
+  for (const acc of accounts) {
+    const txs = rawTransactions[acc.platform_account_id] || [];
+    let msgCount = 0, msgRev = 0;
+    for (const tx of txs) {
+      if (tx.type === 'Payment for message') {
+        msgCount++;
+        msgRev += (Number(tx.amount) || 0) * 0.80;
+      }
+    }
+    if (msgCount > 0) {
+      stats.push({ acc, msgCount, msgRev, avgPerMsg: msgRev / msgCount });
+    }
+  }
+  stats.sort((a, b) => b.msgRev - a.msgRev);
 
-  const overlay = document.createElement("div");
-  overlay.id = "saveModal";
-  overlay.className = "save-modal-overlay";
+  const rows = stats.map(s => `<tr>
+    <td>${s.acc.name}</td>
+    <td>${s.msgCount}</td>
+    <td class="money">${money(s.msgRev)}</td>
+    <td class="money">${money(s.avgPerMsg)}</td>
+  </tr>`).join('');
 
-  const header = document.createElement("div");
-  header.className = "save-modal-header";
-  header.innerHTML = `<h3>📲 Save to Camera Roll</h3><button class="save-modal-close" onclick="closeSaveModal()">✕ Close</button>`;
-  overlay.appendChild(header);
-
-  const hint = document.createElement("div");
-  hint.className = "save-modal-hint";
-  hint.textContent = 'Hold each image \u2192 tap "Add to Photos"';
-  overlay.appendChild(hint);
-
-  const grid = document.createElement("div");
-  grid.className = "save-modal-grid";
-
-  photoList.forEach((photo, i) => {
-    const canvas = document.getElementById(`canvas-${photo.id}`);
-    if (!canvas) return;
-    const item = document.createElement("div");
-    item.className = "save-modal-item";
-    const img = document.createElement("img");
-    img.src = canvas.toDataURL("image/jpeg", 0.95);
-    img.alt = `Snap ${i + 1}`;
-    item.appendChild(img);
-    const label = document.createElement("div");
-    label.className = "save-modal-label";
-    label.textContent = `${i + 1} of ${photoList.length}`;
-    item.appendChild(label);
-    grid.appendChild(item);
-  });
-
-  overlay.appendChild(grid);
-  document.body.appendChild(overlay);
-  document.body.style.overflow = "hidden";
+  $('chatting-tbody').innerHTML = rows || '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text-dim);">No message transactions</td></tr>';
 }
 
-function closeSaveModal() {
-  const modal = document.getElementById("saveModal");
-  if (modal) modal.remove();
-  document.body.style.overflow = "";
+function renderMessageTracker() {
+  // Collect all transactions with account info
+  allTransactions = [];
+  for (const acc of accounts) {
+    const txs = rawTransactions[acc.platform_account_id] || [];
+    for (const tx of txs) {
+      allTransactions.push({ ...tx, accName: acc.name, accId: acc.platform_account_id });
+    }
+  }
+  allTransactions.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+  // Show first 100
+  const pageSize = 100;
+  const start = trackerPage * pageSize;
+  const pageItems = allTransactions.slice(start, start + pageSize);
+
+  const rows = pageItems.map(tx => {
+    const amt = (Number(tx.amount) || 0) * 0.80;
+    const time = new Date(tx.timestamp).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    return `<tr>
+      <td>${time}</td>
+      <td>${tx.accName}</td>
+      <td class="type">${tx.type || 'Other'}</td>
+      <td class="money">${money(amt)}</td>
+      <td style="font-size:11px;color:var(--text-dim);">${tx.fan?.id || '—'}</td>
+    </tr>`;
+  }).join('');
+
+  $('tracker-tbody').innerHTML = rows || '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-dim);">No transactions</td></tr>';
+  const hasMore = start + pageSize < allTransactions.length;
+  const btn = document.querySelector('#view-message-tracker .pagination button');
+  if (btn) btn.style.display = hasMore ? 'block' : 'none';
 }
 
-// Upload zone
-const zone = document.getElementById("uploadZone");
-const fileInput = document.getElementById("fileInput");
-zone.addEventListener("click", () => fileInput.click());
-zone.addEventListener("dragover", (e) => { e.preventDefault(); zone.classList.add("drag-over"); });
-zone.addEventListener("dragleave", () => { zone.classList.remove("drag-over"); });
-zone.addEventListener("drop", (e) => { e.preventDefault(); zone.classList.remove("drag-over"); processFiles(e.dataTransfer.files); });
-fileInput.addEventListener("change", (e) => { processFiles(e.target.files); e.target.value = ""; });
-</script>
+function loadMoreTransactions() {
+  trackerPage++;
+  renderMessageTracker();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderAnalytics() {
+  // Daily revenue
+  const dailyRevenue = {};
+  for (const acc of accounts) {
+    const txs = rawTransactions[acc.platform_account_id] || [];
+    for (const tx of txs) {
+      const date = new Date(tx.timestamp).toISOString().split('T')[0];
+      const amt = (Number(tx.amount) || 0) * 0.80;
+      dailyRevenue[date] = (dailyRevenue[date] || 0) + amt;
+    }
+  }
+  const dailyEntries = Object.entries(dailyRevenue).sort((a, b) => a[0].localeCompare(b[0]));
+  const maxDaily = Math.max(...dailyEntries.map(e => e[1]), 1);
+  const dailyBars = dailyEntries.map((entry, i) => {
+    const [date, amt] = entry;
+    const pct = (amt / maxDaily) * 100;
+    const dateStr = new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return `<div class="type-bar-row">
+      <div class="type-bar-label">${dateStr}</div>
+      <div class="type-bar-track">
+        <div class="type-bar-fill" style="width:${Math.max(pct, 2)}%; background:var(--blue);">${pct > 15 ? money(amt) : ''}</div>
+      </div>
+      <div class="type-bar-amount">${money(amt)}</div>
+    </div>`;
+  }).join('');
+
+  // Revenue by type across all accounts
+  const typeRevenue = {};
+  for (const acc of accounts) {
+    const txs = rawTransactions[acc.platform_account_id] || [];
+    for (const tx of txs) {
+      const amt = (Number(tx.amount) || 0) * 0.80;
+      const t = tx.type || 'Other';
+      typeRevenue[t] = (typeRevenue[t] || 0) + amt;
+    }
+  }
+  const typeEntries = Object.entries(typeRevenue).sort((a, b) => b[1] - a[1]);
+  const maxType = Math.max(...typeEntries.map(e => e[1]), 1);
+  const typeBars = typeEntries.map((entry, i) => {
+    const [type, amt] = entry;
+    const pct = (amt / maxType) * 100;
+    const color = COLORS[i % COLORS.length];
+    return `<div class="type-bar-row">
+      <div class="type-bar-label">${type.replace('Payment for ', '')}</div>
+      <div class="type-bar-track">
+        <div class="type-bar-fill" style="width:${Math.max(pct, 2)}%; background:${color};">${pct > 15 ? money(amt) : ''}</div>
+      </div>
+      <div class="type-bar-amount">${money(amt)}</div>
+    </div>`;
+  }).join('');
+
+  $('daily-revenue-bars').innerHTML = dailyBars || '<p style="color:var(--text-dim);">No data</p>';
+  $('revenue-by-type-bars').innerHTML = typeBars || '<p style="color:var(--text-dim);">No data</p>';
+
+  // Top accounts
+  const topAccs = [...accounts]
+    .map(a => ({ acc: a, rev: accountData[a.platform_account_id]?.revenue || 0 }))
+    .sort((a, b) => b.rev - a.rev)
+    .slice(0, 10);
+  const topRows = topAccs.map(t => `<tr>
+    <td>${t.acc.name}</td>
+    <td class="money">${money(t.rev)}</td>
+    <td>—</td>
+  </tr>`).join('');
+
+  $('top-accounts-tbody').innerHTML = topRows;
+}
+
+function renderCalendarView() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const monthName = now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  $('calendar-month-label').textContent = monthName;
+
+  // Collect daily revenue
+  const dailyRevenue = {};
+  for (const acc of accounts) {
+    const txs = rawTransactions[acc.platform_account_id] || [];
+    for (const tx of txs) {
+      const date = new Date(tx.timestamp).toISOString().split('T')[0];
+      const amt = (Number(tx.amount) || 0) * 0.80;
+      dailyRevenue[date] = (dailyRevenue[date] || 0) + amt;
+    }
+  }
+  const maxRev = Math.max(...Object.values(dailyRevenue), 1);
+
+  // Draw calendar
+  let html = '<div style="display:grid; grid-template-columns:repeat(7,1fr); gap:8px;">';
+  const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  weekDays.forEach(d => html += `<div class="calendar-header">${d}</div>`);
+
+  const firstDay = new Date(year, month, 1).getDay();
+  for (let i = 0; i < firstDay; i++) html += '<div></div>';
+
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const rev = dailyRevenue[dateStr] || 0;
+    const intensity = rev > 0 ? (rev / maxRev) * 0.8 + 0.2 : 0;
+    const bg = intensity > 0 ? `rgba(201, 167, 78, ${intensity})` : 'transparent';
+    html += `<div class="calendar-day" style="background:${bg}; border-color:${intensity > 0 ? 'var(--accent)' : 'var(--border)'};">
+      <div class="day-num">${day}</div>
+      <div class="day-amount">${rev > 0 ? money(rev) : '—'}</div>
+    </div>`;
+  }
+  html += '</div>';
+  $('calendar-grid').innerHTML = html;
+}
+
+function renderSettings() {
+  const apiKey = API_KEY.substring(0, 20) + '...' + API_KEY.substring(API_KEY.length - 4);
+  $('settings-api-key').textContent = apiKey;
+
+  const sharesList = Object.entries(REVENUE_SHARES)
+    .map(([user, share]) => `<div class="settings-row">
+      <div class="settings-label">${user}</div>
+      <div class="settings-value">${(share * 100).toFixed(0)}%</div>
+    </div>`)
+    .join('');
+  $('settings-shares-list').innerHTML = sharesList + `<div class="settings-row">
+    <div class="settings-label">Default (All Others)</div>
+    <div class="settings-value">50%</div>
+  </div>`;
+}
+
+// ── Init ──
+$('greeting-text').textContent = getGreeting();
+$('footer-time').textContent = new Date().toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+initDatePicker();
+loadLinkTracking();
+
+// Auto-refresh every 5 minutes
+loadData();
+setInterval(refreshData, 5 * 60 * 1000);
+
+    // ===== LOADING SKELETON =====
+    function showKpiSkeleton(){document.querySelectorAll('.kpi-card').forEach(c=>c.classList.add('is-loading'))}
+    function hideKpiSkeleton(){document.querySelectorAll('.kpi-card').forEach(c=>c.classList.remove('is-loading'))}
+
+    // ===== DARK/LIGHT MODE =====
+    function toggleTheme(){
+      var root=document.documentElement,tog=document.getElementById('theme-toggle'),lab=document.getElementById('theme-label');
+      var isLight=root.classList.toggle('light-mode');
+      if(tog)tog.classList.toggle('active',isLight);
+      if(lab)lab.textContent=isLight?'Light':'Dark';
+      try{localStorage.setItem('mm-theme',isLight?'light':'dark')}catch(e){}
+    }
+    function loadTheme(){
+      try{var s=localStorage.getItem('mm-theme');
+      if(s==='light'){document.documentElement.classList.add('light-mode');
+        var t=document.getElementById('theme-toggle'),l=document.getElementById('theme-label');
+        if(t)t.classList.add('active');if(l)l.textContent='Light';
+      }}catch(e){}
+    }
+
+    // ===== NOTIFICATIONS =====
+    var notificationsEnabled=false,notifThreshold=5000,lastNotifiedRevenue=0;
+    function toggleNotifications(){
+      var tog=document.getElementById('notif-toggle'),lab=document.getElementById('notif-label');
+      if(!notificationsEnabled){
+        if('Notification' in window){Notification.requestPermission().then(function(p){
+          if(p==='granted'){notificationsEnabled=true;if(tog)tog.classList.add('active');if(lab)lab.textContent='On';
+            try{localStorage.setItem('mm-notif','on')}catch(e){}
+            new Notification('Mando Media',{body:'Revenue alerts enabled!'});
+          }
+        })}
+      }else{notificationsEnabled=false;if(tog)tog.classList.remove('active');if(lab)lab.textContent='Off';
+        try{localStorage.setItem('mm-notif','off')}catch(e){}
+      }
+    }
+    function saveNotifThreshold(){var s=document.getElementById('notif-threshold');if(s){notifThreshold=parseInt(s.value);try{localStorage.setItem('mm-notif-threshold',s.value)}catch(e){}}}
+    function loadNotifSettings(){
+      try{var s=localStorage.getItem('mm-notif');
+      if(s==='on'&&'Notification' in window&&Notification.permission==='granted'){
+        notificationsEnabled=true;var t=document.getElementById('notif-toggle'),l=document.getElementById('notif-label');
+        if(t)t.classList.add('active');if(l)l.textContent='On';
+      }
+      var th=localStorage.getItem('mm-notif-threshold');
+      if(th){notifThreshold=parseInt(th);var sel=document.getElementById('notif-threshold');if(sel)sel.value=th;}}catch(e){}
+    }
+    function checkRevenueNotification(rev){
+      if(!notificationsEnabled)return;
+      var ms=[1000,2500,5000,7500,10000,15000,20000,25000,50000];
+      for(var i=0;i<ms.length;i++){if(rev>=ms[i]&&lastNotifiedRevenue<ms[i]){
+        new Notification('Revenue Milestone!',{body:'Hit $'+ms[i].toLocaleString()+'! Now at $'+rev.toFixed(2)});
+        lastNotifiedRevenue=ms[i];break;
+      }}
+    }
+
+    // ===== TODAY VS YESTERDAY COMPARISON (per-account) =====
+    var yesterdayAccountData = {};
+    var comparisonLoaded = false;
+
+    async function fetchYesterdayData() {
+      try {
+        var todayUTC = utcToday();
+        var yesterdayStart = new Date(todayUTC.getTime() - 86400000);
+        var yesterdayEnd = todayUTC; // midnight UTC = end of yesterday
+
+        var CONCURRENCY = 3;
+        var loaded = 0;
+
+        async function loadYesterday(acc) {
+          try {
+            var url = '/api/v0/platforms/onlyfans/accounts/' + acc.platform_account_id + '/transactions?start=' + yesterdayStart.toISOString() + '&end=' + yesterdayEnd.toISOString();
+            var allItems = [];
+            var cursor = null;
+            do {
+              var fetchUrl = url;
+              if (cursor) fetchUrl += '&cursor=' + encodeURIComponent(cursor);
+              var data = await apiFetch(fetchUrl);
+              allItems = allItems.concat(data.items || []);
+              cursor = data.cursor || null;
+            } while (cursor);
+
+            var OF_CUT = 0.80;
+            var revenue = 0;
+            var txCount = allItems.length;
+            for (var j = 0; j < allItems.length; j++) {
+              revenue += (Number(allItems[j].amount) || 0) * OF_CUT;
+            }
+            yesterdayAccountData[acc.platform_account_id] = { revenue: revenue, txCount: txCount };
+          } catch (e) {
+            yesterdayAccountData[acc.platform_account_id] = { revenue: 0, txCount: 0 };
+          }
+          loaded++;
+        }
+
+        for (var i = 0; i < accounts.length; i += CONCURRENCY) {
+          var batch = accounts.slice(i, i + CONCURRENCY);
+          await Promise.all(batch.map(loadYesterday));
+        }
+
+        comparisonLoaded = true;
+        renderComparison();
+        updateComparisonBadges();
+      } catch (e) {
+        console.warn('Failed to load yesterday data:', e);
+      }
+    }
+
+    function renderComparison() {
+      if (!comparisonLoaded || accounts.length === 0) return;
+
+      // Only show comparison section when on "Today" preset
+      var section = document.getElementById('comparison-section');
+      if (!section) return;
+      if (currentRange.preset !== 'today') {
+        section.style.display = 'none';
+        return;
+      }
+      section.style.display = '';
+
+      var sorted = accounts.slice().sort(function(a, b) {
+        var ra = (accountData[a.platform_account_id] || {}).revenue || 0;
+        var rb = (accountData[b.platform_account_id] || {}).revenue || 0;
+        return rb - ra;
+      });
+
+      // Find max revenue for bar scaling
+      var maxRev = 1;
+      for (var i = 0; i < sorted.length; i++) {
+        var id = sorted[i].platform_account_id;
+        var todayRev = (accountData[id] || {}).revenue || 0;
+        var yestRev = (yesterdayAccountData[id] || {}).revenue || 0;
+        if (todayRev > maxRev) maxRev = todayRev;
+        if (yestRev > maxRev) maxRev = yestRev;
+      }
+
+      // Totals for summary row
+      var totalToday = 0, totalYesterday = 0;
+
+      var rows = sorted.map(function(acc) {
+        var id = acc.platform_account_id;
+        var todayD = accountData[id] || { revenue: 0, txCount: 0 };
+        var yestD = yesterdayAccountData[id] || { revenue: 0, txCount: 0 };
+        var todayRev = todayD.revenue;
+        var yestRev = yestD.revenue;
+        totalToday += todayRev;
+        totalYesterday += yestRev;
+
+        var diff = todayRev - yestRev;
+        var pctChange, arrow, cls;
+        if (yestRev === 0 && todayRev === 0) {
+          pctChange = '—';
+          arrow = '';
+          cls = 'neutral';
+        } else if (yestRev === 0) {
+          pctChange = 'NEW';
+          arrow = '&#x2191;';
+          cls = 'up';
+        } else {
+          var pct = ((diff / yestRev) * 100).toFixed(1);
+          if (diff >= 0) {
+            arrow = '&#x2191;';
+            cls = 'up';
+            pctChange = '+' + pct + '%';
+          } else {
+            arrow = '&#x2193;';
+            cls = 'down';
+            pctChange = pct + '%';
+          }
+        }
+
+        var todayBarPct = (todayRev / maxRev) * 100;
+        var yestBarPct = (yestRev / maxRev) * 100;
+
+        return '<tr>' +
+          '<td><div class="account-cell">' +
+            '<img src="' + (acc.avatar || '') + '" alt="" onerror="this.style.background=\'var(--border)\';this.src=\'\';">' +
+            '<div><div class="name">' + shortName(acc.name) + '</div>' +
+            '<div class="username">@' + acc.username + '</div></div>' +
+          '</div></td>' +
+          '<td class="money" style="font-weight:700;">' + money(todayRev) + '</td>' +
+          '<td class="money" style="color:var(--text-dim);">' + money(yestRev) + '</td>' +
+          '<td><span class="delta-pill ' + cls + '">' +
+            '<span class="delta-arrow">' + arrow + '</span> ' + pctChange +
+          '</span></td>' +
+          '<td>' +
+            '<div style="display:flex;flex-direction:column;gap:3px;">' +
+              '<div class="comparison-bar-track">' +
+                '<div class="comparison-bar-today" style="width:' + Math.max(todayBarPct, 1) + '%;"></div>' +
+              '</div>' +
+              '<div class="comparison-bar-track">' +
+                '<div class="comparison-bar-yesterday" style="width:' + Math.max(yestBarPct, 1) + '%;"></div>' +
+              '</div>' +
+            '</div>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+
+      // Summary row
+      var totalDiff = totalToday - totalYesterday;
+      var totalCls, totalArrow, totalPctChange;
+      if (totalYesterday === 0 && totalToday === 0) {
+        totalPctChange = '—'; totalArrow = ''; totalCls = 'neutral';
+      } else if (totalYesterday === 0) {
+        totalPctChange = 'NEW'; totalArrow = '&#x2191;'; totalCls = 'up';
+      } else {
+        var totalPct = ((totalDiff / totalYesterday) * 100).toFixed(1);
+        if (totalDiff >= 0) {
+          totalArrow = '&#x2191;'; totalCls = 'up'; totalPctChange = '+' + totalPct + '%';
+        } else {
+          totalArrow = '&#x2193;'; totalCls = 'down'; totalPctChange = totalPct + '%';
+        }
+      }
+      rows += '<tr style="background:rgba(201,167,78,0.06);font-weight:700;">' +
+        '<td style="font-weight:700;color:var(--accent);">TOTAL</td>' +
+        '<td class="money" style="font-weight:700;color:var(--accent);">' + money(totalToday) + '</td>' +
+        '<td class="money" style="color:var(--text-dim);">' + money(totalYesterday) + '</td>' +
+        '<td><span class="delta-pill ' + totalCls + '">' +
+          '<span class="delta-arrow">' + totalArrow + '</span> ' + totalPctChange +
+        '</span></td>' +
+        '<td></td>' +
+      '</tr>';
+
+      document.getElementById('comparison-tbody').innerHTML = rows;
+    }
+
+    function updateComparisonBadges() {
+      var totalToday = getCurrentRevenue();
+      var totalYesterday = 0;
+      Object.values(yesterdayAccountData).forEach(function(d) { totalYesterday += d.revenue || 0; });
+      addBadge('kpi-revenue', totalToday, totalYesterday);
+      var todayTx = getCurrentTxCount();
+      var yesterdayTx = 0;
+      Object.values(yesterdayAccountData).forEach(function(d) { yesterdayTx += d.txCount || 0; });
+      addBadge('kpi-transactions', todayTx, yesterdayTx);
+    }
+    function addBadge(id, cur, prev) {
+      var card = document.getElementById(id); if (!card) return;
+      var b = card.querySelector('.kpi-comparison');
+      if (!b) { b = document.createElement('div'); card.appendChild(b); }
+      if (prev === 0 && cur === 0) { b.className = 'kpi-comparison neutral'; b.textContent = 'No data yesterday'; return; }
+      if (prev === 0) { b.className = 'kpi-comparison up'; b.textContent = '\u2191 New today'; return; }
+      var pct = ((cur - prev) / prev * 100).toFixed(1);
+      if (cur >= prev) { b.className = 'kpi-comparison up'; b.textContent = '\u2191 ' + pct + '% vs yesterday'; }
+      else { b.className = 'kpi-comparison down'; b.textContent = '\u2193 ' + Math.abs(pct) + '% vs yesterday'; }
+    }
+    function getCurrentRevenue() { var t = 0; Object.values(accountData).forEach(function(d) { t += d.revenue || 0; }); return t; }
+    function getCurrentTxCount() { var t = 0; Object.values(accountData).forEach(function(d) { t += d.txCount || 0; }); return t; }
+
+    // ===== MESSAGE TRACKER =====
+    function updateMessageTrackerStats(){
+      var msgTxs=allTransactions.filter(function(t){return(t.type||'').toLowerCase().indexOf('message')>=0});
+      var el1=document.getElementById('msg-total-count'),el2=document.getElementById('msg-paid-count'),el3=document.getElementById('msg-revenue');
+      if(el1)el1.textContent=allTransactions.length;
+      if(el2)el2.textContent=msgTxs.length;
+      if(el3){var r=msgTxs.reduce(function(s,t){return s+(t.amount||0)},0);el3.textContent='$'+r.toFixed(2)}
+    }
+
+    // ===== INIT =====
+    function initNewFeatures(){loadTheme();loadNotifSettings();function waitForAccounts(){if(accounts&&accounts.length>0){fetchYesterdayData()}else{setTimeout(waitForAccounts,2000)}}setTimeout(waitForAccounts,3000)}
+    if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',initNewFeatures)}else{initNewFeatures()}
+
+  </script>
+
 </body>
 </html>
